@@ -16,6 +16,11 @@ class notError extends Error {
 		return this;
 	}
 
+	adopt(error){
+		this.parent = error;
+		return this;
+	}
+
 	getTime(){
 		let date = new Date();
 		this.env.date = {
