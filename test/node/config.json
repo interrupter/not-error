@@ -1,0 +1,8 @@
+{
+	"modules" :{
+		"error":{
+			"whitelist": ["_ENV_NODE_"],
+			"url": "/api/error"
+		}
+	}
+}
