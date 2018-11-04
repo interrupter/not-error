@@ -1,1 +1,1 @@
-module.exports = require('./error.js');
+module.exports = require('./error.node.js');

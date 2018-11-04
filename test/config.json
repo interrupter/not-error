@@ -1,7 +1,0 @@
-{
-	"modules" :{
-		"error":{
-			"whitelist": ["_ENV_NODE_"]
-		}
-	}
-}
