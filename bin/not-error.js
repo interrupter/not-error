@@ -45,10 +45,22 @@ let opts = {
 	'key': 					(argv['key'] || process.env.NOT_NODE_ERROR_KEY  || defOpts['key']),
 	'out': 					(argv.out || defOpts['out']),
 };
+/**
+*	ERROR - notError class
+*	REPORTER - notErrorReporter class
+*	STANDALONE - notErrorStandalone class
+*/
+const TEMPLATE_ERROR = path.join(__dirname, '../tmpl/error.ejs');
+const OUTPUT_NODE_ERROR = path.join(opts.out, 'error.node.js');
+const OUTPUT_BROWSER_ERROR = path.join(opts.out, 'error.browser.js');
 
-const TEMPLATE = path.join(__dirname, '../tmpl/error.ejs');
-const OUTPUT_NODE = path.join(opts.out, 'error.node.js');
-const OUTPUT_BROWSER = path.join(opts.out, 'error.browser.js');
+const TEMPLATE_STANDALONE = path.join(__dirname, '../tmpl/standalone.ejs');
+const OUTPUT_NODE_STANDALONE = path.join(opts.out, 'standalone.node.js');
+const OUTPUT_BROWSER_STANDALONE = path.join(opts.out, 'standalone.browser.js');
+
+const TEMPLATE_REPORTER = path.join(__dirname, '../tmpl/reporter.ejs');
+const OUTPUT_NODE_REPORTER = path.join(opts.out, 'reporter.node.js');
+const OUTPUT_BROWSER_REPORTER = path.join(opts.out, 'reporter.browser.js');
 
 function renderScript(input, options, dest){
 	return new Promise((resolve ,reject)=>{
@@ -67,22 +79,58 @@ function renderScript(input, options, dest){
 
 let tasks = [
 	renderScript(
-		TEMPLATE,
+		TEMPLATE_ERROR,
 		{
 			env: 'node',
 			key: opts.key,
 			url: opts['url-node'],
 		},
-		OUTPUT_NODE
+		OUTPUT_NODE_ERROR
 	),
 	renderScript(
-		TEMPLATE,
+		TEMPLATE_ERROR,
 		{
 			env: 'browser',
 			key: opts.key,
 			url: opts['url-browser'],
 		},
-		OUTPUT_BROWSER
+		OUTPUT_BROWSER_ERROR
+	),
+	renderScript(
+		TEMPLATE_REPORTER,
+		{
+			env: 'node',
+			key: opts.key,
+			url: opts['url-node'],
+		},
+		OUTPUT_NODE_REPORTER
+	),
+	renderScript(
+		TEMPLATE_REPORTER,
+		{
+			env: 'browser',
+			key: opts.key,
+			url: opts['url-browser'],
+		},
+		OUTPUT_BROWSER_REPORTER
+	),
+	renderScript(
+		TEMPLATE_STANDALONE,
+		{
+			env: 'node',
+			key: opts.key,
+			url: opts['url-node'],
+		},
+		OUTPUT_NODE_STANDALONE
+	),
+	renderScript(
+		TEMPLATE_STANDALONE,
+		{
+			env: 'browser',
+			key: opts.key,
+			url: opts['url-browser'],
+		},
+		OUTPUT_BROWSER_STANDALONE
 	)
 ];
 

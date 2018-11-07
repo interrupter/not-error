@@ -1,0 +1,104 @@
+/**
+*	Template of reporter.js
+*	For building for specific environment.
+*	Node.js or Browser
+*	@param {string}	env	node|browser in wich env it will be running
+*	@param {string}	url	URL of report collector
+*	@param {string}	key	key to indetificate reporter
+*/
+
+
+const NOT_NODE_ERROR_URL_BROWSER = '/api/error';
+const NOT_NODE_ERROR_KEY = '';
+
+
+/**
+* Error reporting with features, saving browser info, uri and so on.
+* @module not-error/error
+*/
+class notErrorReporter{
+	constructor(){
+		return this;
+	}
+
+	report(error){
+		let data = this.packError(error);
+		return this._report(data, this.getReportURL());
+	}
+
+	packError(error){
+		let result = {};
+		if (error.parent){
+			result.parent = {
+				columnNumber:		error.parent.columnNumber,
+				fileName:				error.parent.fileName,
+				lineNumber:			error.parent.lineNumber,
+				name:						error.parent.name,
+				message:				error.parent.message,
+				stack:					error.parent.stack
+			};
+		}
+		result.details = {
+			columnNumber:		error.columnNumber,
+			fileName:				error.fileName,
+			lineNumber:			error.lineNumber,
+			name:						error.name,
+			message:				error.message,
+			stack:					error.stack
+		};
+		result.options 	= error.options;
+		result.env 			= error.env;
+		return result;
+	}
+
+
+	/**
+	******************************************************************************************************
+	******************************************************************************************************
+	***	Browser Section
+	******************************************************************************************************
+	******************************************************************************************************
+	**/
+	getReportURL(){
+		if(window.NOT_NODE_ERROR_URL_BROWSER && window.NOT_NODE_ERROR_URL_BROWSER.length>0){
+			return window.NOT_NODE_ERROR_URL_BROWSER;
+		}else if(NOT_NODE_ERROR_URL_BROWSER && NOT_NODE_ERROR_URL_BROWSER.length>0){
+			return NOT_NODE_ERROR_URL_BROWSER;
+		}else{
+			return '/api/error';
+		}
+	}
+
+	getReportKey(){
+		if(window.NOT_NODE_ERROR_KEY && window.NOT_NODE_ERROR_KEY.length>0){
+			return window.NOT_NODE_ERROR_KEY;
+		}else if(NOT_NODE_ERROR_KEY && NOT_NODE_ERROR_KEY.length>0){
+			return NOT_NODE_ERROR_KEY;
+		}else{
+			return '';
+		}
+	}
+
+	_report(data, url){
+		data.key = this.getReportKey();
+		return fetch(url, {
+			method: 			'POST',
+			mode: 				'no-cors',
+			cache: 				'no-cache',
+			credentials: 			'same-origin',
+			headers: 			{
+				'Content-Type': 'application/json; charset=utf-8'
+			},
+			redirect: 		'follow',
+			referrer: 		'no-referrer',
+			body: 				JSON.stringify(data),
+		});
+	}
+
+
+}
+
+
+const service = new notErrorReporter();
+export default service;
+

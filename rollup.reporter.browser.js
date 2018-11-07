@@ -5,15 +5,16 @@ import { terser } from "rollup-plugin-terser";
 import filesize from 'rollup-plugin-filesize';
 
 export default {
-	input: 'src/error.browser.js',
+	input: 'src/reporter.browser.js',
 	output:{
-		name: 'notError',
-		format: 'cjs',
-		file: 'build/error.cjs.js',
+		name: 'notErrorReporter',
+		format: 'iife',
+		file: 'build/reporter.js',
 		sourcemap: false,
 	},
 	plugins: [
 		eslint({
+			fix: true,
 			exclude: ['tmpl/**','build/**', 'node_modules/**', 'css/**', 'js/**', 'test/**', 'bower_components/**', 'assets/*', 'dist/**']
 		}),
 		babel({

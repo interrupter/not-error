@@ -1,4 +1,4 @@
-var notError = (function () {
+var notErrorStandalone = (function () {
 	'use strict';
 
 	/**
@@ -9,16 +9,16 @@ var notError = (function () {
 	*	@param {string}	url	URL of report collector
 	*	@param {string}	key	key to indetificate reporter
 	*/
-
+	const NOT_NODE_ERROR_URL_BROWSER = '/api/error';
 	/**
 	* Error reporting with features, saving browser info, uri and so on.
 	* @module not-error/error
 	*/
-	class notError extends Error {
-	  constructor(message, options = {}, error = null) {
+
+	class notErrorStandalone extends Error {
+	  constructor(message, options = {}) {
 	    super(message);
 	    this.options = options;
-	    this.adopt(error);
 	    this.fill();
 	    this.getTime();
 	    return this;
@@ -31,10 +31,7 @@ var notError = (function () {
 
 
 	  adopt(error) {
-	    if (error) {
-	      this.parent = error;
-	    }
-
+	    this.parent = error;
 	    return this;
 	  }
 	  /**
@@ -50,6 +47,40 @@ var notError = (function () {
 	      offset: date.getTimezoneOffset()
 	    };
 	    return this.env.date;
+	  }
+
+	  report() {
+	    //pack error
+	    let data = this.packError(); //send report to collector
+
+	    return this._report(data, this.getReportURL());
+	  }
+
+	  packError() {
+	    let result = {};
+
+	    if (this.parent) {
+	      result.parent = {
+	        columnNumber: this.parent.columnNumber,
+	        fileName: this.parent.fileName,
+	        lineNumber: this.parent.lineNumber,
+	        message: this.parent.message,
+	        name: this.parent.name,
+	        stack: this.parent.stack
+	      };
+	    }
+
+	    result.details = {
+	      columnNumber: this.columnNumber,
+	      fileName: this.fileName,
+	      lineNumber: this.lineNumber,
+	      name: this.name,
+	      message: this.message,
+	      stack: this.stack
+	    };
+	    result.options = this.options;
+	    result.env = this.env;
+	    return result;
 	  }
 	  /**
 	  ******************************************************************************************************
@@ -83,8 +114,44 @@ var notError = (function () {
 	    return this;
 	  }
 
+	  getReportURL() {
+	    if (window.NOT_NODE_ERROR_URL_BROWSER && window.NOT_NODE_ERROR_URL_BROWSER.length > 0) {
+	      return window.NOT_NODE_ERROR_URL_BROWSER;
+	    } else if (NOT_NODE_ERROR_URL_BROWSER.length > 0) {
+	      return NOT_NODE_ERROR_URL_BROWSER;
+	    } else {
+	      return '/api/error';
+	    }
+	  }
+
+	  getReportKey() {
+	    if (window.NOT_NODE_ERROR_KEY && window.NOT_NODE_ERROR_KEY.length > 0) {
+	      return window.NOT_NODE_ERROR_KEY;
+	    } else {
+	      return '';
+	    }
+	  }
+
+	  _report(data, url) {
+	    data.key = this.getReportKey();
+	    return fetch(url, {
+	      method: 'POST',
+	      mode: 'no-cors',
+	      cache: 'no-cache',
+	      credentials: 'same-origin',
+	      headers: {
+	        'Content-Type': 'application/json; charset=utf-8'
+	      },
+	      redirect: 'follow',
+	      referrer: 'no-referrer',
+	      body: JSON.stringify(data)
+	    });
+	  }
+
 	}
 
-	return notError;
+	const service = new notErrorStandalone();
+
+	return service;
 
 }());

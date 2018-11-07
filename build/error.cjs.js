@@ -3,21 +3,21 @@
 /**
 *	Template of error.js
 *	For building for specific environment.
-*	Node.js or Browser 
+*	Node.js or Browser
 *	@param {string}	env	node|browser in wich env it will be running
 *	@param {string}	url	URL of report collector
 *	@param {string}	key	key to indetificate reporter
 */
-const NOT_ERROR_URL = '/api/error';
+
 /**
 * Error reporting with features, saving browser info, uri and so on.
 * @module not-error/error
 */
-
 class notError extends Error {
-  constructor(message, options = {}) {
+  constructor(message, options = {}, error = null) {
     super(message);
     this.options = options;
+    this.adopt(error);
     this.fill();
     this.getTime();
     return this;
@@ -30,7 +30,10 @@ class notError extends Error {
 
 
   adopt(error) {
-    this.parent = error;
+    if (error) {
+      this.parent = error;
+    }
+
     return this;
   }
   /**
@@ -46,52 +49,6 @@ class notError extends Error {
       offset: date.getTimezoneOffset()
     };
     return this.env.date;
-  }
-  /**
-  *	Filtering out key by `white` list
-  *	@param {object} object hash to be copied according filter `white` list
-  *	@param {array} filter array of sting, which represents keys we want to be
-  *						copied in resulting object from source
-  *	@return {object}		white listed hash
-  */
-
-
-  filterEnv(object, filter) {
-    let result = {};
-
-    for (let t of filter) {
-      if (object.hasOwnProperty(t)) {
-        result[t] = object[t];
-      }
-    }
-
-    return result;
-  }
-
-  report() {
-    //pack error
-    let data = this.packError(); //send report to collector		
-
-    return this.reportToServer(data, this.getReportURL());
-  }
-
-  packError() {
-    let result = {};
-
-    if (this.parent) {
-      result.parent = {
-        columnNumber: this.parent.columnNumber,
-        fileName: this.parent.fileName,
-        lineNumber: this.parent.lineNumber,
-        message: this.parent.message,
-        name: this.parent.name,
-        stack: this.parent.stack
-      };
-    }
-
-    result.options = this.options;
-    result.env = this.env;
-    return result;
   }
   /**
   ******************************************************************************************************
@@ -123,47 +80,6 @@ class notError extends Error {
       }
     };
     return this;
-  }
-
-  getReportURL() {
-    if (window.NOT_ERROR_URL && window.NOT_ERROR_URL.length > 0) {
-      return window.NOT_ERROR_URL;
-    } else if (NOT_ERROR_URL.length > 0) {
-      return NOT_ERROR_URL;
-    } else {
-      return '/api/error';
-    }
-  }
-
-  getReportKey() {
-    if (window.NOT_ERROR_KEY && window.NOT_ERROR_KEY.length > 0) {
-      return window.NOT_ERROR_KEY;
-    } else {
-      return '';
-    }
-  }
-
-  reportError(data, url) {
-    data.key = this.getReportKey();
-    return fetch(url, {
-      method: 'POST',
-      // *GET, POST, PUT, DELETE, etc.
-      mode: 'no-cors',
-      // no-cors, cors, *same-origin
-      cache: 'no-cache',
-      // *default, no-cache, reload, force-cache, only-if-cached
-      credentials: 'same-origin',
-      // include, *same-origin, omit
-      headers: {
-        'Content-Type': 'application/json; charset=utf-8'
-      },
-      redirect: 'follow',
-      // manual, *follow, error
-      referrer: 'no-referrer',
-      // no-referrer, *client
-      body: JSON.stringify(data) // body data type must match "Content-Type" header
-
-    });
   }
 
 }

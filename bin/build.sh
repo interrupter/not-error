@@ -23,6 +23,11 @@ done
 
 NODE_ENV=$ENV ./bin/not-error.js --key $KEY --url-node $URL_NODE --url-browser $URL_BROWSER --out $OUT
 NODE_ENV=$ENV ./node_modules/.bin/eslint ./src/**.js
-NODE_ENV=$ENV ./node_modules/.bin/rollup -c ./rollup.config.js
-NODE_ENV=$ENV ./node_modules/.bin/rollup -c ./rollup.node.js
+NODE_ENV=$ENV ./node_modules/.bin/rollup -c ./rollup.error.browser.js
+NODE_ENV=$ENV ./node_modules/.bin/rollup -c ./rollup.error.node.js
 NODE_ENV=$ENV ./node_modules/.bin/terser --compress --mangle -- build/error.js > ./build/error.min.js
+NODE_ENV=$ENV ./node_modules/.bin/rollup -c ./rollup.reporter.browser.js
+NODE_ENV=$ENV ./node_modules/.bin/rollup -c ./rollup.reporter.node.js
+NODE_ENV=$ENV ./node_modules/.bin/terser --compress --mangle -- build/reporter.js > ./build/reporter.min.js
+NODE_ENV=$ENV ./node_modules/.bin/rollup -c ./rollup.standalone.browser.js
+NODE_ENV=$ENV ./node_modules/.bin/terser --compress --mangle -- build/standalone.js > ./build/standalone.min.js
