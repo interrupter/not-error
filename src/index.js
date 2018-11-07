@@ -3,6 +3,6 @@ module.exports = {
 	notError: require('./error.node.js'),
 	notErrorReporter: require('./reporter.node.js'),
 	paths:{
-		controllers: './controllers'
+		controllers: './src/controllers'
 	}
 };
