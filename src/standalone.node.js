@@ -182,7 +182,7 @@ class notErrorStandalone extends Error {
 				}
 				options.method = 'PUT';
 				options.headers['Content-Length'] = postBody.length;
-				postreq = proto.request(options, function (res) {
+				postreq = proto.request(url, options, function (res) {
 					res.on('data', (chunk) => {
 						responseData += chunk;
 					});
