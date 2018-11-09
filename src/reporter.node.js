@@ -19,7 +19,6 @@ try{
 }
 const https = require('https');
 const http = require('http');
-const querystring = require('querystring');
 
 
 /**
@@ -109,7 +108,7 @@ class notErrorReporter{
 			try{
 					data.key = config.get('key');
 					let options = Object.assign({}, config.get('options') || {secure: true}),
-						postBody = querystring.stringify(data),
+						postBody = JSON.stringify(data),
 						postreq,
 						responseData = '',
 						proto =	this.selectProto(url, options);
@@ -117,8 +116,9 @@ class notErrorReporter{
 						options.headers = {};
 					}
 					options.method = 'PUT';
+					options.body = postBody;
 					options.headers['Content-Length'] = postBody.length;
-					options.headers['Content-Type'] = 'application/x-www-form-urlencoded';
+					options.headers['Content-Type'] = 'application/json';
 					postreq = proto.request(url, options, function (res) {
 						res.on('data', (chunk) => {
 							responseData += chunk;
