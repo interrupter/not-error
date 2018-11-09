@@ -8,11 +8,9 @@
 */
 
 <% if (env === 'node'){ %>
-
 var NOT_NODE_ERROR_URL_NODE = null;
 var NOT_NODE_ERROR_KEY = null;
 var config = null;
-
 try{
 	config = require('not-config').readerForModule('error');
 }catch(e){

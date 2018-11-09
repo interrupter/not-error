@@ -183,7 +183,7 @@ class notErrorStandalone extends Error {
 				if (!options.headers){
 					options.headers = {};
 				}
-				options.method = 'POST';
+				options.method = 'PUT';
 				options.headers['Content-Length'] = postBody.length;
 				postreq = proto.request(options, function (res) {
 					res.on('data', (chunk) => {
@@ -262,7 +262,7 @@ class notErrorStandalone extends Error {
 	_report(data, url){
 		data.key = this.getReportKey();
 		return fetch(url, {
-			method: 			'POST',
+			method: 			'PUT',
 			mode: 				'no-cors',
 			cache: 				'no-cache',
 			credentials: 			'same-origin',
