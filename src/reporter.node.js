@@ -118,6 +118,7 @@ class notErrorReporter{
 					}
 					options.method = 'PUT';
 					options.headers['Content-Length'] = postBody.length;
+					options.headers['Content-Type'] = 'application/x-www-form-urlencoded';
 					postreq = proto.request(url, options, function (res) {
 						res.on('data', (chunk) => {
 							responseData += chunk;
