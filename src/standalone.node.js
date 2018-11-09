@@ -180,7 +180,7 @@ class notErrorStandalone extends Error {
 				if (!options.headers){
 					options.headers = {};
 				}
-				options.method = 'POST';
+				options.method = 'PUT';
 				options.headers['Content-Length'] = postBody.length;
 				postreq = proto.request(options, function (res) {
 					res.on('data', (chunk) => {

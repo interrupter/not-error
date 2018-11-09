@@ -81,7 +81,7 @@ var notErrorReporter = (function () {
 	  _report(data, url) {
 	    data.key = this.getReportKey();
 	    return fetch(url, {
-	      method: 'POST',
+	      method: 'PUT',
 	      mode: 'no-cors',
 	      cache: 'no-cache',
 	      credentials: 'same-origin',
