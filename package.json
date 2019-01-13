@@ -1,6 +1,6 @@
 {
 	"name": "not-error",
-	"version": "0.0.17",
+	"version": "0.0.18",
 	"description": "not-* family error in not- environment",
 	"main": "index.js",
 	"bin": {
@@ -8,12 +8,13 @@
 	},
 	"scripts": {
 		"build": "./bin/build.sh",
-		"prelint": "npm run build",
+		"buildtest": "./bin/build.sh --key=test.key --url-node=/node/api --url-browser=/browser/api",
+		"prelint": "npm run buildtest",
 		"lint": "./node_modules/.bin/eslint ./src/**/**",
 		"pretest": "npm run lint",
-		"test": "_ENV_NODE_='liquid' ./node_modules/.bin/mocha --reporter spec ./test/node && _ENV_NODE_='liquid' electron-mocha  --renderer --reporter spec ./test/browser",
+		"test": "_ENV_NODE_='liquid' NOT_NODE_ERROR_URL_NODE='http://reporter.local/api/key/collect' NOT_NODE_ERROR_KEY='error@reporter.local' ./node_modules/.bin/mocha --reporter spec ./test/node && _ENV_NODE_='liquid' electron-mocha  --renderer --reporter spec ./test/browser",
 		"docs": "./node_modules/.bin/jsdoc -c jsdoc.json",
-		"cover": "_ENV_NODE_='liquid' istanbul cover _mocha $(find ./test/node -name \"*.js\" -not -path \"./node_modules/*\")"
+		"cover": "_ENV_NODE_='liquid' nyc npm run test"
 	},
 	"repository": {
 		"type": "git",
@@ -48,11 +49,48 @@
 		"istanbul": "*",
 		"jsdoc": "^3.5.5",
 		"mocha": "^5.2.0",
+		"nyc": "*",
 		"request": "^2.88.0",
 		"rollup": "^0.66.6",
 		"rollup-plugin-terser": "^3.0.0",
 		"rollup-plugin-babel": "^4.0.3",
 		"rollup-plugin-eslint": "^5.0.0",
 		"rollup-plugin-filesize": "^5.0.1"
-	}
+	},
+	"nyc": {
+				"include": [
+						"index.js",
+						"src/**/**/**.js"
+				],
+				"exclude": [
+						"tests/**/**/**/**.js"
+				],
+				"reporter": [
+						"html"
+				],
+				"check-coverage": true,
+				"per-file": true,
+				"lines": 95,
+				"statements": 95,
+				"functions": 95,
+				"branches": 95,
+				"watermarks": {
+						"lines": [
+								80,
+								95
+						],
+						"functions": [
+								80,
+								95
+						],
+						"branches": [
+								80,
+								95
+						],
+						"statements": [
+								80,
+								95
+						]
+				}
+		}
 }

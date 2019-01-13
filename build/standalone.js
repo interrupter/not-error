@@ -136,9 +136,7 @@ var notErrorStandalone = (function () {
 	    data.key = this.getReportKey();
 	    return fetch(url, {
 	      method: 'PUT',
-	      mode: 'no-cors',
 	      cache: 'no-cache',
-	      credentials: 'same-origin',
 	      headers: {
 	        'Content-Type': 'application/json; charset=utf-8'
 	      },

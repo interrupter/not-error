@@ -16,13 +16,14 @@ var notErrorReporter = (function () {
 	*/
 
 	class notErrorReporter {
-	  constructor() {
+	  constructor(envFirst = false) {
+	    this.envFirst = envFirst;
 	    return this;
 	  }
 
-	  report(error) {
+	  report(error, notSecure) {
 	    let data = this.packError(error);
-	    return this._report(data, this.getReportURL());
+	    return this._report(data, this.getReportURL(), notSecure);
 	  }
 
 	  packError(error) {
@@ -82,9 +83,7 @@ var notErrorReporter = (function () {
 	    data.key = this.getReportKey();
 	    return fetch(url, {
 	      method: 'PUT',
-	      mode: 'no-cors',
 	      cache: 'no-cache',
-	      credentials: 'same-origin',
 	      headers: {
 	        'Content-Type': 'application/json; charset=utf-8'
 	      },

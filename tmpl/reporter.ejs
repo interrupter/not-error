@@ -29,13 +29,14 @@ const NOT_NODE_ERROR_KEY = '<%-key%>';
 * @module not-error/error
 */
 class notErrorReporter{
-	constructor(){
+	constructor(envFirst = false){
+		this.envFirst = envFirst;
 		return this;
 	}
 
-	report(error){
+	report(error, notSecure){
 		let data = this.packError(error);
-		return this._report(data, this.getReportURL());
+		return this._report(data, this.getReportURL(), notSecure);
 	}
 
 	packError(error){

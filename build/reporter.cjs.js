@@ -15,13 +15,14 @@ const NOT_NODE_ERROR_URL_BROWSER = '/api/error';
 */
 
 class notErrorReporter {
-  constructor() {
+  constructor(envFirst = false) {
+    this.envFirst = envFirst;
     return this;
   }
 
-  report(error) {
+  report(error, notSecure) {
     let data = this.packError(error);
-    return this._report(data, this.getReportURL());
+    return this._report(data, this.getReportURL(), notSecure);
   }
 
   packError(error) {
@@ -81,9 +82,7 @@ class notErrorReporter {
     data.key = this.getReportKey();
     return fetch(url, {
       method: 'PUT',
-      mode: 'no-cors',
       cache: 'no-cache',
-      credentials: 'same-origin',
       headers: {
         'Content-Type': 'application/json; charset=utf-8'
       },

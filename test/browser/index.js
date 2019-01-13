@@ -2,6 +2,9 @@ const expect = require('chai').expect,
 	notError = require('../../build/error.cjs.js'),
 	notErrorReporter = require('../../build/reporter.cjs.js');
 
+window.NOT_NODE_ERROR_KEY = 'error@reporter.local';
+window.NOT_NODE_ERROR_URL_BROWSER = 'http://reporter.local/api/key/collect';
+
 describe("browser", function() {
 	describe("common", function() {
 		it("no options is passed", function() {
@@ -31,7 +34,25 @@ describe("browser", function() {
 
 		it('getReportURL', function() {
 			let URL = notErrorReporter.getReportURL();
-			expect(URL).to.be.equal('/api/error');
+			expect(URL).to.be.equal(window.NOT_NODE_ERROR_URL_BROWSER);
+		});
+
+		it('reporting', function(done) {
+			let code = Math.random();
+			notErrorReporter.report(new notError('Test browser error', {code}))
+				.then(async (response)=>{
+					let data = await response.json();
+					if (response.status == 200){
+						if(data.results[0].options.code == code){
+							done();
+						}else{
+							done(new Error('Validation code is wrong!'));	
+						}
+					}else{
+						done(new Error(data.message));
+					}
+				})
+				.catch(done);
 		});
 	});
 });

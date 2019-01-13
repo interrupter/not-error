@@ -77,6 +77,21 @@ class notError extends Error {
         href: window.location.href,
         hostname: window.location.hostname,
         pathname: window.location.pathname
+      },
+      navigator: {
+        appName: navigator.appName,
+        appCodeName: navigator.appCodeName,
+        appVersion: navigator.appVersion,
+        userAgent: navigator.userAgent,
+        platform: navigator.platform,
+        language: navigator.language,
+        product: navigator.product,
+        onLine: navigator.onLine,
+        cookieEnabled: navigator.cookieEnabled
+      },
+      window: {
+        height: window.innerHeight,
+        width: window.innerWidth
       }
     };
     return this;

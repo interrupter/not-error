@@ -2,7 +2,12 @@
 	"modules" :{
 		"error":{
 			"whitelist": ["_ENV_NODE_"],
-			"url": "/api/error"
+			"url": "/api/error",
+			"options": {
+				"headers":{
+					"X-HEADER-KEY": "fake ID"
+				}
+			}
 		}
 	}
 }

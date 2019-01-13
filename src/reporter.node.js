@@ -26,13 +26,14 @@ const http = require('http');
 * @module not-error/error
 */
 class notErrorReporter{
-	constructor(){
+	constructor(envFirst = false){
+		this.envFirst = envFirst;
 		return this;
 	}
 
-	report(error){
+	report(error, notSecure){
 		let data = this.packError(error);
-		return this._report(data, this.getReportURL());
+		return this._report(data, this.getReportURL(), notSecure);
 	}
 
 	packError(error){
@@ -69,7 +70,20 @@ class notErrorReporter{
 	******************************************************************************************************
 	**/
 
+	useENV(){
+		this.envFirst = true;
+		return this;
+	}
+
 	getReportURL(){
+		if(this.envFirst){
+			if(
+				typeof process.env.NOT_NODE_ERROR_URL_NODE !== 'undefined' &&
+				process.env.NOT_NODE_ERROR_URL_NODE &&
+				process.env.NOT_NODE_ERROR_URL_NODE.length > 0 ){
+				return process.env.NOT_NODE_ERROR_URL_NODE;
+			}
+		}
 		if ((config && config.get('url') && config.get('url').length > 3)){
 			return config.get('url');
 		}else{
@@ -84,12 +98,24 @@ class notErrorReporter{
 	}
 
 	getReportKey(){
-		if(window.NOT_NODE_ERROR_KEY && window.NOT_NODE_ERROR_KEY.length > 0){
-			return window.NOT_NODE_ERROR_KEY;
-		}else if(NOT_NODE_ERROR_KEY && NOT_NODE_ERROR_KEY.length > 0){
-			return NOT_NODE_ERROR_KEY;
+		if(this.envFirst){
+			if(
+				typeof process.env.NOT_NODE_ERROR_KEY !== 'undefined' &&
+				process.env.NOT_NODE_ERROR_KEY &&
+				process.env.NOT_NODE_ERROR_KEY.length > 0 ){
+				return process.env.NOT_NODE_ERROR_KEY;
+			}
+		}
+		if ((config && config.get('key') && config.get('key').length > 3)){
+			return config.get('key');
 		}else{
-			return '';
+			if(process.env.NOT_NODE_ERROR_KEY && process.env.NOT_NODE_ERROR_KEY.length > 0){
+				return process.env.NOT_NODE_ERROR_KEY;
+			}else if(NOT_NODE_ERROR_KEY && NOT_NODE_ERROR_KEY.length > 0){
+				return NOT_NODE_ERROR_KEY;
+			}else{
+				return '';
+			}
 		}
 	}
 
@@ -103,41 +129,41 @@ class notErrorReporter{
 		}
 	}
 
-	_report(data, url){
+	_report(data, url, notSecure){
 		return new Promise((resolve, reject)=>{
 			try{
-					data.key = config.get('key');
-					let options = Object.assign({}, config.get('options') || {secure: true}),
-						postBody = JSON.stringify(data),
-						postreq,
-						responseData = '',
-						proto =	this.selectProto(url, options);
-					if (!options.headers){
-						options.headers = {};
-					}
-					options.method = 'PUT';
-					options.body = postBody;
-					options.headers['Content-Length'] = postBody.length;
-					options.headers['Content-Type'] = 'application/json';
-					postreq = proto.request(url, options, function (res) {
-						res.on('data', (chunk) => {
-							responseData += chunk;
-						});
-						res.on('end', () => {
-							if (res.statusCode == 200){
-								let jsonResponse = JSON.parse(responseData);
-								resolve(jsonResponse);
-							}else{
-								reject({statusCode: res.statusCode, content:responseData});
-							}
-						});
+				data.key = this.getReportKey();
+				let options = Object.assign({}, config.get('options') || {secure: true}),
+					postBody = JSON.stringify(data),
+					postreq,
+					responseData = '';
+				if(notSecure === true){
+					options.secure = false;
+				}
+				let	proto =	this.selectProto(url, options);
+				if (!options.headers){
+					options.headers = {};
+				}
+				options.method = 'PUT';
+				options.body = postBody;
+				options.headers['Content-Length'] = postBody.length;
+				options.headers['Content-Type'] = 'application/json';
+				postreq = proto.request(url, options, function (res) {
+					res.on('data', (chunk) => {
+						responseData += chunk;
 					});
-					postreq.on('error', (e) => {
-						reject(e);
+					res.on('end', () => {
+						if (res.statusCode == 200){
+							let jsonResponse = JSON.parse(responseData);
+							resolve(jsonResponse);
+						}else{
+							reject({statusCode: res.statusCode, content:responseData});
+						}
 					});
-					postreq.write(postBody);
-					postreq.end();
-
+				});
+				postreq.on('error', reject);
+				postreq.write(postBody);
+				postreq.end();
 			}catch(e){
 				reject(e);
 			}
