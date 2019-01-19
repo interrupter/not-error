@@ -16,8 +16,8 @@ var config = null;
 try{
 	config = require('not-config').readerForModule('error');
 }catch(e){
-	NOT_NODE_ERROR_URL_NODE = '/api/error';
-	NOT_NODE_ERROR_KEY = '';
+	NOT_NODE_ERROR_URL_NODE = '/node/api';
+	NOT_NODE_ERROR_KEY = 'test.key';
 }
 const https = require('https');
 const http = require('http');
@@ -171,9 +171,13 @@ class notErrorStandalone extends Error {
 	_report(data, url){
 		return new Promise((resolve, reject)=>{
 			try{
-				data.key = config.get('key');
+				let report ={
+					key: this.getReportKey(),
+					type: 'error',
+					report: data
+				};
 				let options = Object.assign({}, config.get('options') || {secure: true}),
-					postBody = JSON.stringify(data),
+					postBody = JSON.stringify(report),
 					postreq,
 					responseData = '',
 					proto =	this.selectProto(url, options);

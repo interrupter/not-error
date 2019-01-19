@@ -14,8 +14,8 @@ var config = null;
 try{
 	config = require('not-config').readerForModule('error');
 }catch(e){
-	NOT_NODE_ERROR_URL_NODE = '/api/error';
-	NOT_NODE_ERROR_KEY = '';
+	NOT_NODE_ERROR_URL_NODE = '/node/api';
+	NOT_NODE_ERROR_KEY = 'test.key';
 }
 const https = require('https');
 const http = require('http');
@@ -132,9 +132,13 @@ class notErrorReporter{
 	_report(data, url, notSecure){
 		return new Promise((resolve, reject)=>{
 			try{
-				data.key = this.getReportKey();
+				let report = {
+					key: this.getReportKey(),
+					report: data,
+					type: 'error'
+				};
 				let options = Object.assign({}, config.get('options') || {secure: true}),
-					postBody = JSON.stringify(data),
+					postBody = JSON.stringify(report),
 					postreq,
 					responseData = '';
 				if(notSecure === true){

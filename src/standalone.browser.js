@@ -8,8 +8,8 @@
 */
 
 
-const NOT_NODE_ERROR_URL_BROWSER = '/api/error';
-const NOT_NODE_ERROR_KEY = '';
+const NOT_NODE_ERROR_URL_BROWSER = '/browser/api';
+const NOT_NODE_ERROR_KEY = 'test.key';
 
 
 /**
@@ -130,7 +130,12 @@ class notErrorStandalone extends Error {
 	}
 
 	_report(data, url){
-		data.key = this.getReportKey();
+		let report = {
+			key: this.getReportKey(),
+			report: data,
+			type: 'error'
+		};
+
 		return fetch(url, {
 			method: 			'PUT',
 			cache: 				'no-cache',
@@ -139,7 +144,7 @@ class notErrorStandalone extends Error {
 			},
 			redirect: 		'follow',
 			referrer: 		'no-referrer',
-			body: 				JSON.stringify(data),
+			body: 				JSON.stringify(report),
 		});
 	}
 

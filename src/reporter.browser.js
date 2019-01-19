@@ -8,8 +8,8 @@
 */
 
 
-const NOT_NODE_ERROR_URL_BROWSER = '/api/error';
-const NOT_NODE_ERROR_KEY = '';
+const NOT_NODE_ERROR_URL_BROWSER = '/browser/api';
+const NOT_NODE_ERROR_KEY = 'test.key';
 
 
 /**
@@ -81,7 +81,11 @@ class notErrorReporter{
 	}
 
 	_report(data, url){
-		data.key = this.getReportKey();
+		let report = {
+			report: data,
+			type: 'error',
+			key: this.getReportKey(),
+		};
 		return fetch(url, {
 			method: 			'PUT',
 			cache: 				'no-cache',
@@ -90,7 +94,7 @@ class notErrorReporter{
 			},
 			redirect: 		'follow',
 			referrer: 		'no-referrer',
-			body: 				JSON.stringify(data),
+			body: 				JSON.stringify(report),
 		});
 	}
 
