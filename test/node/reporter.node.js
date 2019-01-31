@@ -72,14 +72,14 @@ describe("node error reporter", function() {
 
 		it('getReportURL from not-config', function() {
 			let URL = notErrorReporter.getReportURL();
-			expect(URL).to.be.equal('/api/error');
+			expect(URL).to.be.equal('/api/key/collect');
 		});
 
 		it('getReportURL from config with envFirst == true', function(){
 			notErrorReporter.envFirst = true;
 			process.env.NOT_NODE_ERROR_URL_NODE = '';
 			let URL = notErrorReporter.getReportURL();
-			expect(URL).to.be.equal('/api/error');
+			expect(URL).to.be.equal('/api/key/collect');
 		});
 
 		it('getReportURL from ENV with empty config and envFirst == false', function(){
@@ -140,7 +140,7 @@ describe("node error reporter", function() {
 						done(new Error('No results in response'));
 					}
 				})
-				.catch(done);
+				.catch((res)=> done(new Error(res.statusCode)));
 		});
 
 		it('reporting failure - Invalid key', function(done) {
