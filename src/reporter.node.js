@@ -161,7 +161,7 @@ class notErrorReporter{
 							let jsonResponse = JSON.parse(responseData);
 							resolve(jsonResponse);
 						}else{
-							reject({statusCode: res.statusCode, content:responseData});
+							reject({statusCode: res.statusCode, content:responseData, payload: postBody});
 						}
 					});
 				});
