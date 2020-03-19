@@ -151,11 +151,15 @@ describe("node error reporter", function() {
 					done(new Error('Response is ok'));
 				})
 				.catch(async(err)=>{
-					let res = JSON.parse(err.content);
-					if(err.statusCode == 404 && res.message == 'Invalid key'){
-						done();
-					}else{
-						done(err);
+					try{
+						 let res = JSON.parse(err.content);
+						 if(err.statusCode == 404 && res.message == 'Invalid key'){
+	 						done();
+	 					}else{
+	 						done(err);
+	 					}
+					}catch(e){
+						done(e);
 					}
 				});
 		});
@@ -164,14 +168,15 @@ describe("node error reporter", function() {
 			notErrorReporter.envFirst = true;
 			process.env.NOT_NODE_ERROR_URL_NODE = '';
 			notErrorReporter.report(new notError('Test node error'), true)
-				.then((response)=>{
+				.then(()=>{
 					done(new Error('Response is ok'));
 				})
 				.catch((err)=>{
-					if(err instanceof TypeError && err.name ==='TypeError [ERR_INVALID_DOMAIN_NAME]'){
+					if(err instanceof TypeError && err.code ==='ERR_INVALID_URL'){
 						done();
+					}else{
+						done(err);
 					}
-					else{	done(err);}
 				});
 		});
 
@@ -179,11 +184,11 @@ describe("node error reporter", function() {
 			notErrorReporter.envFirst = true;
 			process.env.NOT_NODE_ERROR_URL_NODE = '';
 			notErrorReporter.report(new notError('Test node error'), false)
-				.then((response)=>{
+				.then(()=>{
 					done(new Error('Response is ok'));
 				})
 				.catch((err)=>{
-					if(err instanceof TypeError && err.name ==='TypeError [ERR_INVALID_DOMAIN_NAME]'){
+					if(err instanceof TypeError && err.code ==='ERR_INVALID_URL'){
 						done();
 					}
 					else{	done(err);}

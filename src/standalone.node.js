@@ -16,8 +16,8 @@ var config = null;
 try{
 	config = require('not-config').readerForModule('error');
 }catch(e){
-	NOT_NODE_ERROR_URL_NODE = '/api/error';
-	NOT_NODE_ERROR_KEY = '';
+	NOT_NODE_ERROR_URL_NODE = '/node/api';
+	NOT_NODE_ERROR_KEY = 'test.key';
 }
 const https = require('https');
 const http = require('http');
@@ -109,7 +109,7 @@ class notErrorStandalone extends Error {
 	filterEnv(object, filter){
 		let result = {};
 		for(let t of filter){
-			if(object.hasOwnProperty(t)){
+			if(Object.prototype.hasOwnProperty.call(object, t)){
 				result[t] = object[t];
 			}
 		}

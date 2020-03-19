@@ -64,7 +64,7 @@ class notError extends Error {
 	filterEnv(object, filter){
 		let result = {};
 		for(let t of filter){
-			if(object.hasOwnProperty(t)){
+			if(Object.prototype.hasOwnProperty.call(object, t)){
 				result[t] = object[t];
 			}
 		}

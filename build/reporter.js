@@ -9,7 +9,8 @@ var notErrorReporter = (function () {
 	*	@param {string}	url	URL of report collector
 	*	@param {string}	key	key to indetificate reporter
 	*/
-	const NOT_NODE_ERROR_URL_BROWSER = '/api/error';
+	const NOT_NODE_ERROR_URL_BROWSER = '/browser/api';
+	const NOT_NODE_ERROR_KEY = 'test.key';
 	/**
 	* Error reporting with features, saving browser info, uri and so on.
 	* @module not-error/error
@@ -64,7 +65,7 @@ var notErrorReporter = (function () {
 	  getReportURL() {
 	    if (window.NOT_NODE_ERROR_URL_BROWSER && window.NOT_NODE_ERROR_URL_BROWSER.length > 0) {
 	      return window.NOT_NODE_ERROR_URL_BROWSER;
-	    } else if (NOT_NODE_ERROR_URL_BROWSER.length > 0) {
+	    } else if ( NOT_NODE_ERROR_URL_BROWSER.length > 0) {
 	      return NOT_NODE_ERROR_URL_BROWSER;
 	    } else {
 	      return '/api/error';
@@ -74,6 +75,8 @@ var notErrorReporter = (function () {
 	  getReportKey() {
 	    if (window.NOT_NODE_ERROR_KEY && window.NOT_NODE_ERROR_KEY.length > 0) {
 	      return window.NOT_NODE_ERROR_KEY;
+	    } else if ( NOT_NODE_ERROR_KEY.length > 0) {
+	      return NOT_NODE_ERROR_KEY;
 	    } else {
 	      return '';
 	    }

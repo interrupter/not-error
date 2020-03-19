@@ -8,8 +8,8 @@
 */
 
 
-const NOT_NODE_ERROR_URL_BROWSER = '/api/error';
-const NOT_NODE_ERROR_KEY = '';
+const NOT_NODE_ERROR_URL_BROWSER = '/browser/api';
+const NOT_NODE_ERROR_KEY = 'test.key';
 
 
 /**
