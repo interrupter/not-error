@@ -29,7 +29,7 @@ class notErrorReporter{
 
 	packError(error){
 		let result = {};
-		if (error.parent){
+		if (Object.prototype.hasOwnProperty.call(error, 'parent') && typeof error.parent !== 'undefined' && error.parent){
 			result.parent = {
 				columnNumber:		error.parent.columnNumber,
 				fileName:				error.parent.fileName,
@@ -71,9 +71,9 @@ class notErrorReporter{
 	}
 
 	getReportKey(){
-		if(window.NOT_NODE_ERROR_KEY && window.NOT_NODE_ERROR_KEY.length>0){
+		if(window.NOT_NODE_ERROR_KEY && window.NOT_NODE_ERROR_KEY.length > 0){
 			return window.NOT_NODE_ERROR_KEY;
-		}else if(NOT_NODE_ERROR_KEY && NOT_NODE_ERROR_KEY.length>0){
+		}else if(NOT_NODE_ERROR_KEY && NOT_NODE_ERROR_KEY.length > 0){
 			return NOT_NODE_ERROR_KEY;
 		}else{
 			return '';

@@ -29,7 +29,7 @@ var notErrorReporter = (function () {
 	  packError(error) {
 	    let result = {};
 
-	    if (error.parent) {
+	    if (Object.prototype.hasOwnProperty.call(error, 'parent') && typeof error.parent !== 'undefined' && error.parent) {
 	      result.parent = {
 	        columnNumber: error.parent.columnNumber,
 	        fileName: error.parent.fileName,
