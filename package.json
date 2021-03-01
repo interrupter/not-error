@@ -12,7 +12,7 @@
 				"prelint": "npm run buildtest",
 				"lint": "./node_modules/.bin/eslint ./src/**/**",
 				"pretest": "npm run lint",
-				"test": "_ENV_NODE_='liquid' NOT_NODE_ERROR_URL_NODE='http://reporter.local/api/key/collect' NOT_NODE_ERROR_KEY='error@reporter.local' ./node_modules/.bin/mocha --reporter spec ./test/node && _ENV_NODE_='liquid' electron-mocha  --renderer --reporter spec ./test/browser",
+				"test": "_ENV_NODE_='liquid' NOT_NODE_ERROR_URL_NODE='https://reporter.local/api/key/collect' NOT_NODE_ERROR_KEY='error@reporter.local' ./node_modules/.bin/mocha --reporter spec ./test/node && _ENV_NODE_='liquid' electron-mocha  --renderer --reporter spec ./test/browser",
 				"docs": "./node_modules/.bin/jsdoc -c jsdoc.json",
 				"cover": "_ENV_NODE_='liquid' nyc npm run test"
 		},

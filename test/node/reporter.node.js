@@ -92,7 +92,7 @@ describe("node error reporter", function() {
 			configReader.set('modules:error:url','');
 			process.env.NOT_NODE_ERROR_URL_NODE = '';
 			let URL = notErrorReporter.getReportURL();
-			expect(URL).to.be.equal('/api/error');
+			expect(URL).to.be.equal('https://appmon.ru/api/key/collect');
 		});
 
 		it('getReportKey from not-config', function() {
@@ -127,7 +127,7 @@ describe("node error reporter", function() {
 			let code = Math.random();
 			configReader.set('modules:error:options', null);
 			notErrorReporter.envFirst = true;
-			notErrorReporter.report(new notError('Test node error', {code}), true)
+			notErrorReporter.report(new notError('Test node error', {code}), false)
 				.then(async (response)=>{
 					if(response && response.results && Array.isArray(response.results)){
 						let data = response.results;
@@ -140,13 +140,16 @@ describe("node error reporter", function() {
 						done(new Error('No results in response'));
 					}
 				})
-				.catch((res)=> done(new Error(res.statusCode)));
+				.catch((res)=> {
+					console.error(res);
+					done(new Error(res.message, res.statusCode))
+				});
 		});
 
 		it('reporting failure - Invalid key', function(done) {
 			notErrorReporter.envFirst = true;
 			process.env.NOT_NODE_ERROR_KEY = '';
-			notErrorReporter.report(new notError('Test node error'), true)
+			notErrorReporter.report(new notError('Test node error'), false)
 				.then((response)=>{
 					done(new Error('Response is ok'));
 				})
@@ -167,7 +170,7 @@ describe("node error reporter", function() {
 		it('reporting failure - TypeError ERR_INVALID_DOMAIN_NAME', function(done) {
 			notErrorReporter.envFirst = true;
 			process.env.NOT_NODE_ERROR_URL_NODE = '';
-			notErrorReporter.report(new notError('Test node error'), true)
+			notErrorReporter.report(new notError('Test node error'), false)
 				.then(()=>{
 					done(new Error('Response is ok'));
 				})
