@@ -39,6 +39,7 @@ describe("browser", function() {
 
 		it('reporting', function(done) {
 			let code = Math.random();
+			window.NOT_NODE_ERROR_URL_BROWSER = 'https://reporter.local/api/key/collect';
 			notErrorReporter.report(new notError('Test browser error', {code}))
 				.then(async (response)=>{
 					let data = await response.json();
@@ -46,7 +47,7 @@ describe("browser", function() {
 						if(data.results[0].options.code == code){
 							done();
 						}else{
-							done(new Error('Validation code is wrong!'));	
+							done(new Error('Validation code is wrong!'));
 						}
 					}else{
 						done(new Error(data.message));
