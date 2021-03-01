@@ -8,9 +8,8 @@
 */
 
 
-const NOT_NODE_ERROR_URL_BROWSER = '/api/error';
+const NOT_NODE_ERROR_URL_BROWSER = 'https://appmon.ru/api/key/collect';
 const NOT_NODE_ERROR_KEY = '';
-
 
 /**
 * Error reporting with features, saving browser info, uri and so on.
@@ -104,4 +103,3 @@ class notErrorReporter{
 
 const service = new notErrorReporter();
 export default service;
-

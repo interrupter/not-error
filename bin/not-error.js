@@ -17,8 +17,8 @@ const argv = require('yargs').argv,
 	ejs = require('ejs');
 
 let defOpts = {
-	'url-node': 		'/api/error',
-	'url-browser':	'/api/error',
+	'url-node': 		'https://appmon.ru/api/key/collect',
+	'url-browser':	'https://appmon.ru/api/key/collect',
 	'key': 					'',
 	'out': 					path.join(__dirname, '../src'),
 };

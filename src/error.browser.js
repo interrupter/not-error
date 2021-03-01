@@ -90,10 +90,6 @@ class notError extends Error {
 		};
 		return this;
 	}
-
-
 }
 
-
 export default notError;
-

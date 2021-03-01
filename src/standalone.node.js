@@ -5,10 +5,11 @@
 *	@param {string}	env	node|browser in wich env it will be running
 *	@param {string}	url	URL of report collector
 *	@param {string}	key	key to indetificate reporter
-*/
+**/
 
 
 
+const NOT_NODE_ERROR_URL_NODE_DEFAULT = 'https://appmon.ru/api/key/collect';
 var NOT_NODE_ERROR_URL_NODE = null;
 var NOT_NODE_ERROR_KEY = null;
 var config = null;
@@ -16,13 +17,11 @@ var config = null;
 try{
 	config = require('not-config').readerForModule('error');
 }catch(e){
-	NOT_NODE_ERROR_URL_NODE = '/api/error';
+	NOT_NODE_ERROR_URL_NODE = 'https://appmon.ru/api/key/collect';
 	NOT_NODE_ERROR_KEY = '';
 }
 const https = require('https');
 const http = require('http');
-
-
 
 /**
 * Error reporting with features, saving browser info, uri and so on.
@@ -78,6 +77,7 @@ class notErrorStandalone extends Error {
 				stack:					this.parent.stack
 			};
 		}
+
 		result.details = {
 			columnNumber:		this.columnNumber,
 			fileName:				this.fileName,
@@ -86,6 +86,7 @@ class notErrorStandalone extends Error {
 			message:				this.message,
 			stack:					this.stack
 		};
+
 		result.options 	= this.options;
 		result.env 			= this.env;
 		return result;
@@ -143,7 +144,7 @@ class notErrorStandalone extends Error {
 			}else if(NOT_NODE_ERROR_URL_NODE && NOT_NODE_ERROR_URL_NODE.length>3){
 				return NOT_NODE_ERROR_URL_NODE;
 			}else{
-				return '/api/error';
+				return NOT_NODE_ERROR_URL_NODE_DEFAULT;
 			}
 		}
 	}
@@ -216,4 +217,3 @@ class notErrorStandalone extends Error {
 
 
 module.exports = new notErrorStandalone();
-

@@ -8,13 +8,14 @@
 */
 
 
+const NOT_NODE_ERROR_URL_NODE_DEFAULT = 'https://appmon.ru/api/key/collect';
 var NOT_NODE_ERROR_URL_NODE = null;
 var NOT_NODE_ERROR_KEY = null;
 var config = null;
 try{
 	config = require('not-config').readerForModule('error');
 }catch(e){
-	NOT_NODE_ERROR_URL_NODE = '/api/error';
+	NOT_NODE_ERROR_URL_NODE = 'https://appmon.ru/api/key/collect';
 	NOT_NODE_ERROR_KEY = '';
 }
 const https = require('https');
@@ -92,7 +93,7 @@ class notErrorReporter{
 			}else if(NOT_NODE_ERROR_URL_NODE && NOT_NODE_ERROR_URL_NODE.length>3){
 				return NOT_NODE_ERROR_URL_NODE;
 			}else{
-				return '/api/error';
+				return NOT_NODE_ERROR_URL_NODE_DEFAULT;
 			}
 		}
 	}

@@ -5,10 +5,11 @@
 *	@param {string}	env	node|browser in wich env it will be running
 *	@param {string}	url	URL of report collector
 *	@param {string}	key	key to indetificate reporter
-*/
+**/
 
 
-const NOT_NODE_ERROR_URL_BROWSER = '/api/error';
+const NOT_NODE_ERROR_URL_NODE_DEFAULT = 'https://appmon.ru/api/key/collect';
+const NOT_NODE_ERROR_URL_BROWSER = 'https://appmon.ru/api/key/collect';
 const NOT_NODE_ERROR_KEY = '';
 
 
@@ -66,6 +67,7 @@ class notErrorStandalone extends Error {
 				stack:					this.parent.stack
 			};
 		}
+
 		result.details = {
 			columnNumber:		this.columnNumber,
 			fileName:				this.fileName,
@@ -74,6 +76,7 @@ class notErrorStandalone extends Error {
 			message:				this.message,
 			stack:					this.stack
 		};
+
 		result.options 	= this.options;
 		result.env 			= this.env;
 		return result;
@@ -115,12 +118,12 @@ class notErrorStandalone extends Error {
 		}else if(NOT_NODE_ERROR_URL_BROWSER && NOT_NODE_ERROR_URL_BROWSER.length>0){
 			return NOT_NODE_ERROR_URL_BROWSER;
 		}else{
-			return '/api/error';
+			return NOT_NODE_ERROR_URL_NODE_DEFAULT;
 		}
 	}
 
 	getReportKey(){
-		if(window.NOT_NODE_ERROR_KEY && window.NOT_NODE_ERROR_KEY.length>0){
+		if(window.NOT_NODE_ERROR_KEY && window.NOT_NODE_ERROR_KEY.length > 0){
 			return window.NOT_NODE_ERROR_KEY;
 		}else if(NOT_NODE_ERROR_KEY && NOT_NODE_ERROR_KEY.length>0){
 			return NOT_NODE_ERROR_KEY;
