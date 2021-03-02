@@ -90,11 +90,11 @@ process.on('unhandledRejection', (reason) => {
 });
 
 process.on('warning', (warning) => {
-	reporter.reportError(`Warning: ${warning}`, { type: 'warning', warning }, new Error(warning)));
+	reporter.reportError(`Warning: ${warning}`, { type: 'warning', warning }, new Error(warning));
 });
 
 process.on('exit', (code) => {
-  reporter.reportError(`Server process exit`, { type: 'event', code }, new Error('Shutdown')));
+  reporter.reportError(`Server process exit`, { type: 'event', code }, new Error('Shutdown'));
 });
 
 module.exports = reporter;
