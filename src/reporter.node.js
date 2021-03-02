@@ -157,13 +157,10 @@ class notErrorReporter{
 				if (!options.headers){
 					options.headers = {};
 				}
-				const random = Math.random()+''+ Math.random()+''+ Math.random();
-				const boundary = `------------------------${random}-------------------------------`;
 				options.method = 'PUT';
 				options.body = postBody;
 				options.headers['Content-Length'] = Buffer.byteLength(postBody, 'utf8');
-				options.headers['Content-Type'] = 'application/json; charset=UTF-8';
-				options.headers['Content-Type'] = `multipart/form-data; boundary=${boundary}`;
+				options.headers['Content-Type'] = 'application/json';
 				postreq = proto.request(url, options, function (res) {
 					res.on('data', (chunk) => {
 						responseData += chunk;
