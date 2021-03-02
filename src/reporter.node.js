@@ -20,6 +20,7 @@ try{
 }
 const https = require('https');
 const http = require('http');
+const notError = require('./error.node.js');
 
 
 /**
@@ -34,7 +35,11 @@ class notErrorReporter{
 
 	report(error, notSecure){
 		let data = this.packError(error);
-		return this._report(data, this.getReportURL(), notSecure);
+		return this._report(data, this.getReportURL(), notSecure, 'error');
+	}
+
+	reportError(name, opts = {}, parent = null, notSecure){
+		return this._report(new notError(name, opts, parent), notSecure);
 	}
 
 	packError(error){
@@ -130,13 +135,13 @@ class notErrorReporter{
 		}
 	}
 
-	_report(data, url, notSecure){
+	_report(data, url, notSecure, type = 'error'){
 		return new Promise((resolve, reject)=>{
 			try{
 				let report = {
 					key: this.getReportKey(),
 					report: data,
-					type: 'error'
+					type
 				};
 				let options = Object.assign({}, config.get('options') || {secure: true}),
 					postBody = JSON.stringify(report),
@@ -179,5 +184,23 @@ class notErrorReporter{
 }
 
 
-module.exports = new notErrorReporter();
+const reporter = new notErrorReporter();
+
+process.on('uncaughtExceptionMonitor', (err, origin) => {
+	reporter.reportError(origin, {origin}, e);
+});
+
+process.on('unhandledRejection', (reason) => {
+	reporter.reportError('unhandledRejection', { reason }, new Error(reson));
+});
+
+process.on('warning', (warning) => {
+	reporter.reportError(`Warning: ${warning}`, { type: 'warning', warning }, new Error(warning)));
+});
+
+process.on('exit', (code) => {
+  reporter.reportError(`Server process exit`, { type: 'event', code }, new Error('Shutdown')));
+});
+
+module.exports = reporter;
 

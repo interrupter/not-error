@@ -10,6 +10,7 @@
 
 const NOT_NODE_ERROR_URL_BROWSER = 'https://appmon.ru/api/key/collect';
 const NOT_NODE_ERROR_KEY = '';
+import notError from './error.browser.js';
 
 
 /**
@@ -24,7 +25,11 @@ class notErrorReporter{
 
 	report(error, notSecure){
 		let data = this.packError(error);
-		return this._report(data, this.getReportURL(), notSecure);
+		return this._report(data, this.getReportURL(), notSecure, 'error');
+	}
+
+	reportError(name, opts = {}, parent = null, notSecure){
+		return this._report(new notError(name, opts, parent), notSecure);
 	}
 
 	packError(error){

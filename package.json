@@ -1,6 +1,6 @@
 {
 		"name": "not-error",
-		"version": "0.0.28",
+		"version": "0.0.29",
 		"description": "not-* family error in not- environment",
 		"main": "index.js",
 		"bin": {
