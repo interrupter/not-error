@@ -131,7 +131,7 @@ var notErrorReporter = (function () {
 	    }
 
 	    reportError(name, opts = {}, parent = null, notSecure) {
-	      return this._report(new notError(name, opts, parent), notSecure);
+	      return this.report(new notError(name, opts, parent), notSecure);
 	    }
 
 	    packError(error) {
