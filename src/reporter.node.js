@@ -187,19 +187,19 @@ class notErrorReporter{
 const reporter = new notErrorReporter();
 
 process.on('uncaughtExceptionMonitor', (err, origin) => {
-	reporter.reportError(origin, {origin}, e);
+	reporter.reportError(origin, {origin}, err);
 });
 
 process.on('unhandledRejection', (reason) => {
-	reporter.reportError('unhandledRejection', { reason }, new Error(reson));
+	reporter.reportError('unhandledRejection', { reason }, new Error(reason));
 });
 
 process.on('warning', (warning) => {
-	reporter.reportError(`Warning: ${warning}`, { type: 'warning', warning }, new Error(warning)));
+	reporter.reportError(`Warning: ${warning}`, { type: 'warning', warning }, new Error(warning));
 });
 
 process.on('exit', (code) => {
-  reporter.reportError(`Server process exit`, { type: 'event', code }, new Error('Shutdown')));
+	reporter.reportError(`Server process exit`, { type: 'event', code }, new Error('Shutdown'));
 });
 
 module.exports = reporter;
