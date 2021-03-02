@@ -18,6 +18,7 @@ try{
 	NOT_NODE_ERROR_URL_NODE = 'https://appmon.ru/api/key/collect';
 	NOT_NODE_ERROR_KEY = '';
 }
+const Buffer = require('buffer').Buffer;
 const https = require('https');
 const http = require('http');
 const LOG = require('not-log')(module, 'notReporter');
@@ -156,10 +157,13 @@ class notErrorReporter{
 				if (!options.headers){
 					options.headers = {};
 				}
+				const random = Math.random()+''+ Math.random()+''+ Math.random();
+				const boundary = `------------------------${random}-------------------------------`;
 				options.method = 'PUT';
 				options.body = postBody;
-				options.headers['Content-Length'] = postBody.length;
-				options.headers['Content-Type'] = 'application/json';
+				options.headers['Content-Length'] = Buffer.byteLength(postBody, 'utf8');
+				options.headers['Content-Type'] = 'application/json; charset=UTF-8';
+				options.headers['Content-Type'] = `multipart/form-data; boundary=${boundary}`;
 				postreq = proto.request(url, options, function (res) {
 					res.on('data', (chunk) => {
 						responseData += chunk;
