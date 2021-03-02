@@ -37,6 +37,9 @@ class notErrorReporter{
 	}
 
 	report(error, notSecure){
+		if(!(error instanceof notError)){
+			error = new notError(error.message, {}, error);
+		}
 		let data = this.packError(error);
 		return this._report(data, this.getReportURL(), notSecure, 'error');
 	}
