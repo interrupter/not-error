@@ -20,13 +20,16 @@ try{
 }
 const https = require('https');
 const http = require('http');
+const LOG = require('not-log')(module, 'notReporter');
 const notError = require('./error.node.js');
 <% }else{ %>
+var service;
+const LOG = window.console;
 const NOT_NODE_ERROR_URL_BROWSER = '<%-url%>';
 const NOT_NODE_ERROR_KEY = '<%-key%>';
 import notError from './error.browser.js';
 <% }%>
-
+try{
 /**
 * Error reporting with features, saving browser info, uri and so on.
 * @module not-error/error
@@ -82,23 +85,28 @@ class notErrorReporter{
 const reporter = new notErrorReporter();
 
 process.on('uncaughtExceptionMonitor', (err, origin) => {
-	reporter.reportError(origin, {origin}, err);
+	reporter.reportError(origin, {origin}, err).catch(exc=>LOG.error(exc));
 });
 
 process.on('unhandledRejection', (reason) => {
-	reporter.reportError('unhandledRejection', { reason }, new Error(reason));
+	reporter.reportError('unhandledRejection', { reason }, new Error(reason)).catch(exc=>LOG.error(exc));;
 });
 
 process.on('warning', (warning) => {
-	reporter.reportError(`Warning: ${warning}`, { type: 'warning', warning }, new Error(warning));
+	reporter.reportError(`Warning: ${warning}`, { type: 'warning', warning }, new Error(warning)).catch(exc=>LOG.error(exc));;
 });
 
 process.on('exit', (code) => {
-	reporter.reportError(`Server process exit`, { type: 'event', code }, new Error('Shutdown'));
+	reporter.reportError(`Server process exit`, { type: 'event', code }, new Error('Shutdown')).catch(exc=>LOG.error(exc));;
 });
-
 module.exports = reporter;
+}catch(err){
+	LOG.error(err);
+};
 <% }else{ %>
-const service = new notErrorReporter();
+	service = new notErrorReporter();
+}catch(err){
+	LOG.error(err);
+}
 export default service;
 <% }%>
