@@ -125,8 +125,20 @@
 			});
 
 			process.on('exit', (code) => {
-				this.reportError(`Server process exit`, { type: 'event', code }, new Error('Shutdown')).catch(exc=>LOG.error(exc));;
+				this.reportError(`Server process exit`, { uptime: process.uptime(), type: 'event', code }, new Error('Exit')).catch(exc=>LOG.error(exc));;
 			});
+
+			const onSignal = (signal)=>{
+				this.reportError(`Signal received ${signal}`, {
+					uptime: process.uptime(),
+					type: 'event',
+					signal
+				}, new Error('Signal')).catch(exc=>LOG.error(exc));;
+			};
+
+			process.on('SIGINT', onSignal);
+			process.on('SIGTERM', onSignal);
+
 			this.processWatching = true;
 		}
 	}
