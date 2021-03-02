@@ -22,6 +22,7 @@ try{
 	class notErrorReporter{
 		constructor(envFirst = false){
 			this.envFirst = envFirst;
+			this.processWatching = false;
 			return this;
 		}
 

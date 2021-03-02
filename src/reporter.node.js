@@ -31,6 +31,7 @@ try{
 class notErrorReporter{
 	constructor(envFirst = false){
 		this.envFirst = envFirst;
+		this.processWatching = false;
 		return this;
 	}
 
@@ -181,27 +182,33 @@ class notErrorReporter{
 		});
 	}
 
+	watchProcess(){
+		if(!this.processWatching){
+			process.on('uncaughtExceptionMonitor', (err, origin) => {
+				this.reportError(origin, {origin}, err).catch(exc => LOG.error(exc));
+			});
+
+			process.on('unhandledRejection', (reason) => {
+				this.reportError('unhandledRejection', { reason }, new Error(reason)).catch(exc=>LOG.error(exc));;
+			});
+
+			process.on('warning', (warning) => {
+				this.reportError(`Warning: ${warning}`, { type: 'warning', warning }, new Error(warning)).catch(exc=>LOG.error(exc));;
+			});
+
+			process.on('exit', (code) => {
+				this.reportError(`Server process exit`, { type: 'event', code }, new Error('Shutdown')).catch(exc=>LOG.error(exc));;
+			});
+			this.processWatching = true;
+		}
+	}
+
 
 }
 
 
 const reporter = new notErrorReporter();
 
-process.on('uncaughtExceptionMonitor', (err, origin) => {
-	reporter.reportError(origin, {origin}, err).catch(exc=>LOG.error(exc));
-});
-
-process.on('unhandledRejection', (reason) => {
-	reporter.reportError('unhandledRejection', { reason }, new Error(reason)).catch(exc=>LOG.error(exc));;
-});
-
-process.on('warning', (warning) => {
-	reporter.reportError(`Warning: ${warning}`, { type: 'warning', warning }, new Error(warning)).catch(exc=>LOG.error(exc));;
-});
-
-process.on('exit', (code) => {
-	reporter.reportError(`Server process exit`, { type: 'event', code }, new Error('Shutdown')).catch(exc=>LOG.error(exc));;
-});
 module.exports = reporter;
 }catch(err){
 	LOG.error(err);
