@@ -156,7 +156,7 @@ describe("node error reporter", function() {
 				.catch(async(err)=>{
 					try{
 						 let res = JSON.parse(err.content);
-						 if(err.statusCode == 404 && res.message == 'Invalid key'){
+						 if(err.statusCode == 404 && res.message == 'Invalid key or origin of request'){
 	 						done();
 	 					}else{
 	 						done(err);

@@ -21,6 +21,7 @@ try{
 const Buffer = require('buffer').Buffer;
 const https = require('https');
 const http = require('http');
+const path = require('path');
 const LOG = require('not-log')(module, 'notReporter');
 const notError = require('./error.node.js');
 
@@ -48,26 +49,61 @@ class notErrorReporter{
 		return this.report(new notError(name, opts, parent), notSecure);
 	}
 
+	parseStack(stack){
+		try{
+			let line = stack.split("\n")[3];
+		  let res = [...line.matchAll(/\sat\s(.+)\s\((.+)\)/gi)][0];
+		  let functionFullPath = res[1].split('.');
+		  let functionName = functionFullPath[functionFullPath.length - 1],
+		    file = res[2].split(':'),
+		    fileName = file[0],
+		    fileLine = file[1],
+				fileInfo, fileDir;
+			if(path){
+				fileInfo = path?path.parse(fileName):false;
+				if(fileInfo){
+					fileDir = fileInfo.dir.split('/').pop();
+				}
+			}
+		  return {
+		    functionName: functionName,         //name of function
+		    type: fileDir,              				//logic type of function
+		    fileName,             							//filename
+		    lineNumber: parseInt(fileLine)    	//number of line in file
+		  };
+		}catch(e){
+			LOG.error(e);
+			return false;
+		}
+	}
+
+	extractDataFromError(err){
+		let res = {
+			columnNumber:		err.columnNumber,
+			fileName:				err.fileName,
+			lineNumber:			err.lineNumber,
+			name:						err.name,
+			message:				err.message,
+			stack:					err.stack
+		};
+		if(res.stack){
+			let stackInfo = this.parseStack(res.stack);
+			if(stackInfo){
+				if(!res.fileName){ 			res.fileName = stackInfo.fileName;							}
+				if(!res.lineNumber){ 		res.lineNumber = stackInfo.lineNumber;					}
+				if(!res.functionName){ 	res.functionName = stackInfo.functionName;			}
+				if(!res.type){ 					res.type = stackInfo.type;											}
+			}
+		}
+		return res;
+	}
+
 	packError(error){
 		let result = {};
 		if (Object.prototype.hasOwnProperty.call(error, 'parent') && typeof error.parent !== 'undefined' && error.parent){
-			result.parent = {
-				columnNumber:		error.parent.columnNumber,
-				fileName:				error.parent.fileName,
-				lineNumber:			error.parent.lineNumber,
-				name:						error.parent.name,
-				message:				error.parent.message,
-				stack:					error.parent.stack
-			};
+			result.parent = this.extractDataFromError(error.parent);
 		}
-		result.details = {
-			columnNumber:		error.columnNumber,
-			fileName:				error.fileName,
-			lineNumber:			error.lineNumber,
-			name:						error.name,
-			message:				error.message,
-			stack:					error.stack
-		};
+		result.details = this.extractDataFromError(error);
 		result.options 	= error.options;
 		result.env 			= error.env;
 		return result;
