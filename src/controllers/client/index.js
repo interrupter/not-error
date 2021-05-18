@@ -1,3 +1,3 @@
 let manifest = {};
 
-export {manifest};
+export  default {manifest};

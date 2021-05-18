@@ -5,4 +5,4 @@ import notError from './../../error.browser.js';
 let manifest = {};
 let services = {nsErrorReporter};
 
-export {manifest, notError, notErrorReporter, services};
+export default {manifest, notError, notErrorReporter, services};
