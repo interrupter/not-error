@@ -112,7 +112,7 @@ class notErrorReporter{
 		result.details 	= this.extractDataFromError(error);
 		result.options 	= error.options;
 		result.env 			= error.env;
-		result.origin 	= this.origin;
+		result.origin 	= this.origin?this.origin:{};
 		return result;
 	}
 
