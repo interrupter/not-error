@@ -12,6 +12,7 @@ const NOT_NODE_ERROR_URL_NODE_DEFAULT = 'https://appmon.ru/api/key/collect';
 var NOT_NODE_ERROR_URL_NODE = null;
 var NOT_NODE_ERROR_KEY = null;
 var config = null;
+var service = null;
 try{
 	config = require('not-config').readerForModule('error');
 }catch(e){
@@ -25,7 +26,7 @@ const path = require('path');
 const LOG = require('not-log')(module, 'notReporter');
 const notError = require('./error.node.js');
 
-try{
+
 /**
 * Error reporting with features, saving browser info, uri and so on.
 * @module not-error/error
@@ -34,7 +35,12 @@ class notErrorReporter{
 	constructor(envFirst = false){
 		this.envFirst = envFirst;
 		this.processWatching = false;
+		this.origin = {};
 		return this;
+	}
+
+	setOrigin(origin){
+		this.origin = origin;
 	}
 
 	report(error, notSecure){
@@ -103,9 +109,10 @@ class notErrorReporter{
 		if (Object.prototype.hasOwnProperty.call(error, 'parent') && typeof error.parent !== 'undefined' && error.parent){
 			result.parent = this.extractDataFromError(error.parent);
 		}
-		result.details = this.extractDataFromError(error);
+		result.details 	= this.extractDataFromError(error);
 		result.options 	= error.options;
 		result.env 			= error.env;
+		result.origin 	= this.origin;
 		return result;
 	}
 
@@ -259,10 +266,11 @@ class notErrorReporter{
 }
 
 
-const reporter = new notErrorReporter();
 
-module.exports = reporter;
+try{
+	service = new notErrorReporter();
 }catch(err){
 	LOG.error(err);
-};
+}
+module.exports = service;
 

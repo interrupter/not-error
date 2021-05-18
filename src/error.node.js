@@ -83,7 +83,7 @@ class notError extends Error {
 		this.env = {
 			browser: 	false,
 			node: 		true,
-			versions: 	Object.assign({}, process.versions),
+			versions: Object.assign({}, process.versions),
 			vars: 		this.filterEnv(process.env, this.options.whitelist || ['NODE_ENV'])
 		};
 		return this;

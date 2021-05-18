@@ -75,6 +75,7 @@ var notError = (function () {
 	        protocol: window.location.protocol,
 	        search: window.location.search,
 	        host: window.location.host,
+	        url: window.location.url,
 	        href: window.location.href,
 	        hostname: window.location.hostname,
 	        pathname: window.location.pathname
