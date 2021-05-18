@@ -8,7 +8,6 @@
 */
 
 
-const path = false;
 const LOG = window.console;
 const NOT_NODE_ERROR_URL_BROWSER = 'https://appmon.ru/api/key/collect';
 const NOT_NODE_ERROR_KEY = '';
@@ -45,20 +44,16 @@ class notErrorReporter{
 
 	parseStack(stack){
 		try{
-			let line = stack.split("\n")[3];
-		  let res = [...line.matchAll(/\sat\s(.+)\s\((.+)\)/gi)][0];
-		  let functionFullPath = res[1].split('.');
-		  let functionName = functionFullPath[functionFullPath.length - 1],
-		    file = res[2].split(':'),
-		    fileName = file[0],
-		    fileLine = file[1],
-				fileInfo, fileDir;
-			if(path){
-				fileInfo = path?path.parse(fileName):false;
-				if(fileInfo){
-					fileDir = fileInfo.dir.split('/').pop();
-				}
-			}
+			
+			let line = stack.split("\n")[0].replace('"', '');
+			let res = [...line.matchAll(/(.*)@(.+):(\d+):(\d+)/gi)][0];
+			let functionName = res[1].replace('/' , '').replace('\\' , '').replace('>', '').replace('<', ''),
+				  file = res[2],
+				parts = file.split('/'),
+				  fileName = parts.length?parts[parts.length-1]:'',
+				fileDir = parts.length>1?parts[parts.length-2]:'',
+				  fileLine = res[3];
+			
 		  return {
 		    functionName: functionName,         //name of function
 		    type: fileDir,              				//logic type of function

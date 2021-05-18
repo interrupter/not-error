@@ -57,6 +57,7 @@ class notErrorReporter{
 
 	parseStack(stack){
 		try{
+			
 			let line = stack.split("\n")[3];
 		  let res = [...line.matchAll(/\sat\s(.+)\s\((.+)\)/gi)][0];
 		  let functionFullPath = res[1].split('.');
@@ -71,6 +72,7 @@ class notErrorReporter{
 					fileDir = fileInfo.dir.split('/').pop();
 				}
 			}
+			
 		  return {
 		    functionName: functionName,         //name of function
 		    type: fileDir,              				//logic type of function
