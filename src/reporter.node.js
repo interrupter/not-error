@@ -55,10 +55,25 @@ class notErrorReporter{
 		return this.report(new notError(name, opts, parent), notSecure);
 	}
 
-	parseStack(stack){
+	static PARASITES = ['report@', 'notError@'];
+
+	isLineParasite(line){
+		return this.PARASITES.some((str) => line.includes(str));
+	}
+
+	trunkStack(stack){
+		let lines = stack.split("\n");
+		while(lines.length && this.isLineParasite(lines[0])){
+			lines.shift();
+		}
+		return lines;
+	}
+
+	parseStack(rawStack){
 		try{
+			let stack = this.trunkStack(rawStack);
 			
-			let line = stack.split("\n")[3];
+			let line = stack[3];
 		  let res = [...line.matchAll(/\sat\s(.+)\s\((.+)\)/gi)][0];
 		  let functionFullPath = res[1].split('.');
 		  let functionName = functionFullPath[functionFullPath.length - 1],
@@ -266,7 +281,6 @@ class notErrorReporter{
 
 
 }
-
 
 
 try{

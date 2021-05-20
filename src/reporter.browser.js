@@ -42,17 +42,32 @@ class notErrorReporter{
 		return this.report(new notError(name, opts, parent), notSecure);
 	}
 
-	parseStack(stack){
+	static PARASITES = ['report@', 'notError@'];
+
+	isLineParasite(line){
+		return this.PARASITES.some((str) => line.includes(str));
+	}
+
+	trunkStack(stack){
+		let lines = stack.split("\n");
+		while(lines.length && this.isLineParasite(lines[0])){
+			lines.shift();
+		}
+		return lines;
+	}
+
+	parseStack(rawStack){
 		try{
+			let stack = this.trunkStack(rawStack);
 			
-			let line = stack.split("\n")[0].replace('"', '');
+			let line = stack[0];
 			let res = [...line.matchAll(/(.*)@(.+):(\d+):(\d+)/gi)][0];
 			let functionName = res[1].replace('/' , '').replace('\\' , '').replace('>', '').replace('<', ''),
-				  file = res[2],
+			  file = res[2],
 				parts = file.split('/'),
-				  fileName = parts.length?parts[parts.length-1]:'',
+			  fileName = parts.length?parts[parts.length-1]:'',
 				fileDir = parts.length>1?parts[parts.length-2]:'',
-				  fileLine = res[3];
+			  fileLine = res[3];
 			
 		  return {
 		    functionName: functionName,         //name of function
@@ -147,7 +162,6 @@ class notErrorReporter{
 
 
 }
-
 
 
 export default notErrorReporter;
