@@ -108,6 +108,7 @@ class notError extends Error {
 *	@param {string}	url	URL of report collector
 *	@param {string}	key	key to indetificate reporter
 */
+const PARASITES = ['report@', 'notError@'];
 const LOG = window.console;
 const NOT_NODE_ERROR_URL_BROWSER = 'https://appmon.ru/api/key/collect';
 /**
@@ -140,9 +141,24 @@ class notErrorReporter {
     return this.report(new notError(name, opts, parent), notSecure);
   }
 
-  parseStack(stack) {
+  isLineParasite(line) {
+    return PARASITES.some(str => line.includes(str));
+  }
+
+  trunkStack(stack) {
+    let lines = stack.split("\n");
+
+    while (lines.length && this.isLineParasite(lines[0])) {
+      lines.shift();
+    }
+
+    return lines;
+  }
+
+  parseStack(rawStack) {
     try {
-      let line = stack.split("\n")[0].replace('"', '');
+      let stack = this.trunkStack(rawStack);
+      let line = stack[0];
       let res = [...line.matchAll(/(.*)@(.+):(\d+):(\d+)/gi)][0];
       let functionName = res[1].replace('/', '').replace('\\', '').replace('>', '').replace('<', ''),
           file = res[2],

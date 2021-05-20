@@ -7,6 +7,8 @@
 *	@param {string}	key	key to indetificate reporter
 */
 
+const PARASITES = ['report@', 'notError@'];
+
 
 const LOG = window.console;
 const NOT_NODE_ERROR_URL_BROWSER = 'https://appmon.ru/api/key/collect';
@@ -42,10 +44,8 @@ class notErrorReporter{
 		return this.report(new notError(name, opts, parent), notSecure);
 	}
 
-	static PARASITES = ['report@', 'notError@'];
-
 	isLineParasite(line){
-		return this.PARASITES.some((str) => line.includes(str));
+		return PARASITES.some((str) => line.includes(str));
 	}
 
 	trunkStack(stack){
