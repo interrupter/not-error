@@ -12,8 +12,8 @@ const LINES_TO_CAPTURE = 6;
 
 
 const LOG = window.console;
-const NOT_NODE_ERROR_URL_BROWSER = '/browser/api';
-const NOT_NODE_ERROR_KEY = 'test.key';
+const NOT_NODE_ERROR_URL_BROWSER = 'https://appmon.ru/api/key/collect';
+const NOT_NODE_ERROR_KEY = '';
 import notError from './error.browser.js';
 
 
@@ -135,7 +135,7 @@ class notErrorReporter{
 	async tryToGetSourceBlock(result){
 		if(result.details.filePath && !isNaN(result.details.lineNumber)){
 			try{
-				let text = await this.loadSources(result);
+				let text = await this.loadSources(result.details.filePath);
 				if(text){
 					let lines = this.extractLinesFromFile(text, parseInt(result.details.lineNumber));
 					result.lines = lines;

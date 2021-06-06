@@ -19,8 +19,8 @@ var service = null;
 try{
 	config = require('not-config').readerForModule('error');
 }catch(e){
-	NOT_NODE_ERROR_URL_NODE = '/node/api';
-	NOT_NODE_ERROR_KEY = 'test.key';
+	NOT_NODE_ERROR_URL_NODE = 'https://appmon.ru/api/key/collect';
+	NOT_NODE_ERROR_KEY = '';
 }
 const Buffer = require('buffer').Buffer;
 const {readFile} = require('fs').promises;
@@ -153,7 +153,7 @@ class notErrorReporter{
 	async tryToGetSourceBlock(result){
 		if(result.details.filePath && !isNaN(result.details.lineNumber)){
 			try{
-				let text = await this.loadSources(result);
+				let text = await this.loadSources(result.details.filePath);
 				if(text){
 					let lines = this.extractLinesFromFile(text, parseInt(result.details.lineNumber));
 					result.lines = lines;
