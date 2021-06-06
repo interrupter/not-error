@@ -60,14 +60,18 @@ describe("node error reporter", function() {
 			expect(mod).to.be.equal(http);
 		})
 
-		it('packError', function() {
+		it('packError', function(done) {
 			let err = new notError('some error', {i: 1});
 			err.adopt(new Error('not same error'));
-			let packed = notErrorReporter.packError(err);
-			expect(packed.details.message).to.be.equal('some error');
-			expect(packed.parent.message).to.be.equal('not same error');
-			expect(packed.parent.name).to.be.equal('Error');
-			expect(packed.options.i).to.be.equal(1);
+			notErrorReporter.packError(err)
+				.then((packed)=>{
+					expect(packed.details.message).to.be.equal('some error');
+					expect(packed.parent.message).to.be.equal('not same error');
+					expect(packed.parent.name).to.be.equal('Error');
+					expect(packed.options.i).to.be.equal(1);
+					done();
+				})
+				.catch(done);
 		});
 
 		it('getReportURL from not-config', function() {

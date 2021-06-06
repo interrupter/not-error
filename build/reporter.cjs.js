@@ -68,6 +68,9 @@ class notError extends Error {
     this.env = {
       browser: true,
       node: false,
+      document: {
+        title: document.title
+      },
       location: {
         hash: window.location.hash,
         port: window.location.port,
@@ -101,16 +104,18 @@ class notError extends Error {
 }
 
 /**
-*	Template of reporter.js
-*	For building for specific environment.
-*	Node.js or Browser
-*	@param {string}	env	node|browser in wich env it will be running
-*	@param {string}	url	URL of report collector
-*	@param {string}	key	key to indetificate reporter
+*  Template of reporter.js
+*  For building for specific environment.
+*  Node.js or Browser
+*  @param {string}  env  node|browser in wich env it will be running
+*  @param {string}  url  URL of report collector
+*  @param {string}  key  key to indetificate reporter
 */
 const PARASITES = ['report@', 'notError@'];
+const LINES_TO_CAPTURE = 6;
 const LOG = window.console;
-const NOT_NODE_ERROR_URL_BROWSER = 'https://appmon.ru/api/key/collect';
+const NOT_NODE_ERROR_URL_BROWSER = '/browser/api';
+const NOT_NODE_ERROR_KEY = 'test.key';
 /**
 * Error reporting with features, saving browser info, uri and so on.
 * @module not-error/error
@@ -128,13 +133,16 @@ class notErrorReporter {
     this.origin = origin;
   }
 
-  report(error, notSecure) {
+  async report(error, notSecure) {
+    let local = false;
+
     if (!(error instanceof notError)) {
       error = new notError(error.message, {}, error);
+      local = true;
     }
 
-    let data = this.packError(error);
-    return this._report(data, this.getReportURL(), notSecure, 'error');
+    let data = await this.packError(error, local);
+    return await this._report(data, this.getReportURL(), notSecure, 'error');
   }
 
   reportError(name, opts = {}, parent = null, notSecure) {
@@ -160,19 +168,27 @@ class notErrorReporter {
       let stack = this.trunkStack(rawStack);
       let line = stack[0];
       let res = [...line.matchAll(/(.*)@(.+):(\d+):(\d+)/gi)][0];
+
+      if (!res) {
+        return {};
+      }
+
       let functionName = res[1].replace('/', '').replace('\\', '').replace('>', '').replace('<', ''),
-          file = res[2],
-          parts = file.split('/'),
+          filePath = res[2],
+          parts = filePath.split('/'),
           fileName = parts.length ? parts[parts.length - 1] : '',
           fileDir = parts.length > 1 ? parts[parts.length - 2] : '',
           fileLine = res[3];
       return {
+        stack,
         functionName: functionName,
         //name of function
         type: fileDir,
         //logic type of function
         fileName,
         //filename
+        filePath,
+        //full file url
         lineNumber: parseInt(fileLine) //number of line in file
 
       };
@@ -182,7 +198,7 @@ class notErrorReporter {
     }
   }
 
-  extractDataFromError(err) {
+  extractDataFromError(err, local) {
     let res = {
       columnNumber: err.columnNumber,
       fileName: err.fileName,
@@ -195,21 +211,45 @@ class notErrorReporter {
     if (res.stack) {
       let stackInfo = this.parseStack(res.stack);
 
-      if (stackInfo) {
-        if (!res.fileName) {
-          res.fileName = stackInfo.fileName;
-        }
+      if (stackInfo && stackInfo.stack) {
+        if (local) {
+          res.stack = stackInfo.stack.join("\n");
 
-        if (!res.lineNumber) {
-          res.lineNumber = stackInfo.lineNumber;
-        }
+          if (stackInfo.fileName) {
+            res.fileName = stackInfo.fileName;
+          }
 
-        if (!res.functionName) {
-          res.functionName = stackInfo.functionName;
-        }
+          if (stackInfo.lineNumber) {
+            res.lineNumber = stackInfo.lineNumber;
+          }
 
-        if (!res.type) {
-          res.type = stackInfo.type;
+          if (stackInfo.functionName) {
+            res.functionName = stackInfo.functionName;
+          }
+
+          if (stackInfo.type) {
+            res.type = stackInfo.type;
+          }
+
+          if (stackInfo.filePath) {
+            res.filePath = stackInfo.filePath;
+          }
+        } else {
+          if (!res.fileName) {
+            res.fileName = stackInfo.fileName;
+          }
+
+          if (!res.lineNumber) {
+            res.lineNumber = stackInfo.lineNumber;
+          }
+
+          if (!res.functionName) {
+            res.functionName = stackInfo.functionName;
+          }
+
+          if (!res.type) {
+            res.type = stackInfo.type;
+          }
         }
       }
     }
@@ -217,17 +257,62 @@ class notErrorReporter {
     return res;
   }
 
-  packError(error) {
+  async packError(error, local = false) {
     let result = {};
 
     if (Object.prototype.hasOwnProperty.call(error, 'parent') && typeof error.parent !== 'undefined' && error.parent) {
-      result.parent = this.extractDataFromError(error.parent);
+      result.parent = this.extractDataFromError(error.parent, local);
     }
 
-    result.details = this.extractDataFromError(error);
+    result.details = this.extractDataFromError(error, local);
+    await this.tryToGetSourceBlock(result);
     result.options = error.options;
     result.env = error.env;
     result.origin = this.origin ? this.origin : {};
+    return result;
+  }
+
+  async tryToGetSourceBlock(result) {
+    if (result.details.filePath && !isNaN(result.details.lineNumber)) {
+      try {
+        let text = await this.loadSources(result);
+
+        if (text) {
+          let lines = this.extractLinesFromFile(text, parseInt(result.details.lineNumber));
+          result.lines = lines;
+        }
+      } catch (e) {
+        return false;
+      }
+    }
+  }
+
+  extractLinesFromFile(text, targetLine) {
+    let lines = text.split("\n");
+    targetLine = parseInt(result.details.lineNumber) - 1;
+    let fromLine = targetLine - LINES_TO_CAPTURE;
+    let toLine = targetLine + LINES_TO_CAPTURE;
+
+    if (fromLine < 0) {
+      fromLine = 0;
+    }
+
+    if (toLine > lines.length - 1) {
+      toLine = lines.length - 1;
+    }
+
+    let result = [];
+
+    for (let t = fromLine; t < toLine; t++) {
+      result.push({
+        l: t + 1,
+        txt: lines[t],
+        color: {
+          danger: targetLine === t
+        }
+      });
+    }
+
     return result;
   }
   /**
@@ -252,6 +337,8 @@ class notErrorReporter {
   getReportKey() {
     if (window.NOT_NODE_ERROR_KEY && window.NOT_NODE_ERROR_KEY.length > 0) {
       return window.NOT_NODE_ERROR_KEY;
+    } else if (NOT_NODE_ERROR_KEY.length > 0) {
+      return NOT_NODE_ERROR_KEY;
     } else {
       return '';
     }
@@ -273,6 +360,16 @@ class notErrorReporter {
       referrer: 'no-referrer',
       body: JSON.stringify(report)
     });
+  }
+
+  async loadSources(filePath) {
+    let res = await fetch(filePath);
+
+    if (parseInt(res.status) === 200) {
+      return await res.text();
+    } else {
+      return false;
+    }
   }
 
 }

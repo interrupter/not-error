@@ -42,3 +42,12 @@
 			body: 				JSON.stringify(report),
 		});
 	}
+
+	async loadSources(filePath){
+		let res = await fetch(filePath);
+		if(parseInt(res.status) === 200){
+			return await res.text();
+		}else{
+			return false;
+		}
+	}

@@ -1,13 +1,14 @@
 /**
-*	Template of reporter.js
-*	For building for specific environment.
-*	Node.js or Browser
-*	@param {string}	env	node|browser in wich env it will be running
-*	@param {string}	url	URL of report collector
-*	@param {string}	key	key to indetificate reporter
+*  Template of reporter.js
+*  For building for specific environment.
+*  Node.js or Browser
+*  @param {string}  env  node|browser in wich env it will be running
+*  @param {string}  url  URL of report collector
+*  @param {string}  key  key to indetificate reporter
 */
 
 const PARASITES = ['report@', 'notError@'];
+const LINES_TO_CAPTURE = 6;
 
 
 const NOT_NODE_ERROR_URL_NODE_DEFAULT = 'https://appmon.ru/api/key/collect';
@@ -18,10 +19,11 @@ var service = null;
 try{
 	config = require('not-config').readerForModule('error');
 }catch(e){
-	NOT_NODE_ERROR_URL_NODE = 'https://appmon.ru/api/key/collect';
-	NOT_NODE_ERROR_KEY = '';
+	NOT_NODE_ERROR_URL_NODE = '/node/api';
+	NOT_NODE_ERROR_KEY = 'test.key';
 }
 const Buffer = require('buffer').Buffer;
+const {readFile} = require('fs').promises;
 const https = require('https');
 const http = require('http');
 const path = require('path');
@@ -45,12 +47,14 @@ class notErrorReporter{
 		this.origin = origin;
 	}
 
-	report(error, notSecure){
+	async report(error, notSecure){
+		let local = false;
 		if(!(error instanceof notError)){
 			error = new notError(error.message, {}, error);
+			local = true;
 		}
-		let data = this.packError(error);
-		return this._report(data, this.getReportURL(), notSecure, 'error');
+		let data = await this.packError(error, local);
+		return await this._report(data, this.getReportURL(), notSecure, 'error');
 	}
 
 	reportError(name, opts = {}, parent = null, notSecure){
@@ -74,12 +78,13 @@ class notErrorReporter{
 			let stack = this.trunkStack(rawStack);
 			
 			let line = stack[3];
-		  let res = [...line.matchAll(/\sat\s(.+)\s\((.+)\)/gi)][0];
-		  let functionFullPath = res[1].split('.');
-		  let functionName = functionFullPath[functionFullPath.length - 1],
-		    file = res[2].split(':'),
-		    fileName = file[0],
-		    fileLine = file[1],
+			let res = [...line.matchAll(/\sat\s(.+)\s\((.+)\)/gi)][0];
+			let functionFullPath = res[1].split('.');
+			let functionName = functionFullPath[functionFullPath.length - 1],
+				file = res[2].split(':'),
+				fileName = file[0],
+				filePath = file[0],
+				fileLine = file[1],
 				fileInfo, fileDir;
 			if(path){
 				fileInfo = path?path.parse(fileName):false;
@@ -88,48 +93,92 @@ class notErrorReporter{
 				}
 			}
 			
-		  return {
-		    functionName: functionName,         //name of function
-		    type: fileDir,              				//logic type of function
-		    fileName,             							//filename
-		    lineNumber: parseInt(fileLine)    	//number of line in file
-		  };
+			return {
+				stack,
+				functionName: functionName,         //name of function
+				type: fileDir,                      //logic type of function
+				fileName,                           //filename
+				filePath,                            //full file url
+				lineNumber: parseInt(fileLine)      //number of line in file
+			};
 		}catch(e){
 			LOG.error(e);
 			return false;
 		}
 	}
 
-	extractDataFromError(err){
+	extractDataFromError(err, local){
 		let res = {
-			columnNumber:		err.columnNumber,
-			fileName:				err.fileName,
-			lineNumber:			err.lineNumber,
-			name:						err.name,
-			message:				err.message,
-			stack:					err.stack
+			columnNumber:    err.columnNumber,
+			fileName:        err.fileName,
+			lineNumber:      err.lineNumber,
+			name:            err.name,
+			message:        err.message,
+			stack:          err.stack
 		};
 		if(res.stack){
 			let stackInfo = this.parseStack(res.stack);
-			if(stackInfo){
-				if(!res.fileName){ 			res.fileName = stackInfo.fileName;							}
-				if(!res.lineNumber){ 		res.lineNumber = stackInfo.lineNumber;					}
-				if(!res.functionName){ 	res.functionName = stackInfo.functionName;			}
-				if(!res.type){ 					res.type = stackInfo.type;											}
+			if(stackInfo && stackInfo.stack){
+				if(local){
+					res.stack = stackInfo.stack.join("\n");
+					if(stackInfo.fileName){       res.fileName = stackInfo.fileName;              }
+					if(stackInfo.lineNumber){     res.lineNumber = stackInfo.lineNumber;          }
+					if(stackInfo.functionName){   res.functionName = stackInfo.functionName;      }
+					if(stackInfo.type){           res.type = stackInfo.type;                      }
+					if(stackInfo.filePath){       res.filePath = stackInfo.filePath;              }
+				}else{
+					if(!res.fileName){       res.fileName = stackInfo.fileName;              }
+					if(!res.lineNumber){     res.lineNumber = stackInfo.lineNumber;          }
+					if(!res.functionName){   res.functionName = stackInfo.functionName;      }
+					if(!res.type){           res.type = stackInfo.type;                      }
+				}
 			}
 		}
 		return res;
 	}
 
-	packError(error){
+	async packError(error, local = false){
 		let result = {};
 		if (Object.prototype.hasOwnProperty.call(error, 'parent') && typeof error.parent !== 'undefined' && error.parent){
-			result.parent = this.extractDataFromError(error.parent);
+			result.parent = this.extractDataFromError(error.parent, local);
 		}
-		result.details 	= this.extractDataFromError(error);
-		result.options 	= error.options;
-		result.env 			= error.env;
-		result.origin 	= this.origin?this.origin:{};
+		result.details   = this.extractDataFromError(error, local);
+		await this.tryToGetSourceBlock(result);
+		result.options   = error.options;
+		result.env       = error.env;
+		result.origin   = this.origin?this.origin:{};
+		return result;
+	}
+
+	async tryToGetSourceBlock(result){
+		if(result.details.filePath && !isNaN(result.details.lineNumber)){
+			try{
+				let text = await this.loadSources(result);
+				if(text){
+					let lines = this.extractLinesFromFile(text, parseInt(result.details.lineNumber));
+					result.lines = lines;
+				}
+			}catch(e){
+				return false;
+			}
+		}
+	}
+
+	extractLinesFromFile(text, targetLine){
+		let lines = text.split("\n");
+		targetLine = parseInt(result.details.lineNumber) - 1;
+		let fromLine = (targetLine - LINES_TO_CAPTURE);
+		let toLine = (targetLine + LINES_TO_CAPTURE);
+		if(fromLine < 0){
+			fromLine = 0;
+		}
+		if(toLine > lines.length - 1){
+			toLine = lines.length - 1;
+		}
+		let result = [];
+		for(let t = fromLine; t < toLine; t++){
+			result.push({l: t + 1, txt: lines[t], color: { danger: targetLine === t} });
+		}
 		return result;
 	}
 
@@ -277,6 +326,10 @@ class notErrorReporter{
 
 			this.processWatching = true;
 		}
+	}
+
+	async loadSources(filePath){
+		return await readFile(filePath);
 	}
 
 

@@ -62,6 +62,9 @@ class notError extends Error {
 		this.env = {
 			browser: true,
 			node: false,
+			document: {
+				title: document.title
+			},
 			location: {
 				hash: 			window.location.hash,
 				port:				window.location.port,
@@ -74,19 +77,19 @@ class notError extends Error {
 				pathname: 	window.location.pathname,
 			},
 			navigator:{
-				appName: navigator.appName,
-				appCodeName: navigator.appCodeName,
-				appVersion: navigator.appVersion,
-				userAgent: navigator.userAgent,
-				platform: navigator.platform,
-				language: navigator.language,
-				product: navigator.product,
-				onLine: navigator.onLine,
-				cookieEnabled:navigator.cookieEnabled,
+				appName: 				navigator.appName,
+				appCodeName: 		navigator.appCodeName,
+				appVersion: 		navigator.appVersion,
+				userAgent: 			navigator.userAgent,
+				platform: 			navigator.platform,
+				language: 			navigator.language,
+				product: 				navigator.product,
+				onLine: 				navigator.onLine,
+				cookieEnabled:	navigator.cookieEnabled,
 			},
 			window:{
-				height: window.innerHeight,
-				width: window.innerWidth,
+				height: 				window.innerHeight,
+				width: 					window.innerWidth,
 			}
 		};
 		return this;

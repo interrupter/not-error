@@ -7,8 +7,8 @@ const manifest = {};
 const services = {nsErrorReporter};
 
 export {
-  manifest,
-  notError,
-  notErrorReporter,
-  services
+	manifest,
+	notError,
+	notErrorReporter,
+	services
 };

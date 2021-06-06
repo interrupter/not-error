@@ -68,6 +68,9 @@ class notError extends Error {
     this.env = {
       browser: true,
       node: false,
+      document: {
+        title: document.title
+      },
       location: {
         hash: window.location.hash,
         port: window.location.port,

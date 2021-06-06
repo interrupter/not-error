@@ -142,3 +142,7 @@
 			this.processWatching = true;
 		}
 	}
+
+	async loadSources(filePath){
+		return await readFile(filePath);
+	}
