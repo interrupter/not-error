@@ -329,7 +329,7 @@ class notErrorReporter{
 	}
 
 	async loadSources(filePath){
-		return await readFile(filePath);
+		return await readFile(filePath, 'utf8');
 	}
 
 
