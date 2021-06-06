@@ -288,7 +288,7 @@ class notErrorReporter {
 
   extractLinesFromFile(text, targetLine) {
     let lines = text.split("\n");
-    targetLine = parseInt(result.details.lineNumber) - 1;
+    targetLine = parseInt(targetLine) - 1;
     let fromLine = targetLine - LINES_TO_CAPTURE;
     let toLine = targetLine + LINES_TO_CAPTURE;
 
