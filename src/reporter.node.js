@@ -40,11 +40,16 @@ class notErrorReporter{
 		this.envFirst = envFirst;
 		this.processWatching = false;
 		this.origin = {};
+		
 		return this;
 	}
 
 	setOrigin(origin){
 		this.origin = origin;
+	}
+
+	setRegisterAll(registerAll = true){
+		this.registerAll = registerAll;
 	}
 
 	async report(error, notSecure){

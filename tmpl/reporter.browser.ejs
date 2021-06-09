@@ -51,3 +51,9 @@
 			return false;
 		}
 	}
+
+	registerError(ev){
+		if(this.registerAll){
+			this.report(ev);
+		}
+	}

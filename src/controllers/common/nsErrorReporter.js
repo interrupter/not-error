@@ -5,6 +5,7 @@ class nsErrorReporter{
 		this.app = app;
 		this.reporter = new notErrorReporter();
 		this.reporter.setOrigin({ server: window.location.host });
+		this.reporter.setRegisterAll(this.app.getOptions('module.error.registerAll', true));
 	}
 
 	report(e){

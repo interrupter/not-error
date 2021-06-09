@@ -26,11 +26,18 @@ class notErrorReporter{
 		this.envFirst = envFirst;
 		this.processWatching = false;
 		this.origin = {};
+		
+		window.addEventListener('error', this.registerError.bind(this));
+		
 		return this;
 	}
 
 	setOrigin(origin){
 		this.origin = origin;
+	}
+
+	setRegisterAll(registerAll = true){
+		this.registerAll = registerAll;
 	}
 
 	async report(error, notSecure){
@@ -218,6 +225,12 @@ class notErrorReporter{
 			return await res.text();
 		}else{
 			return false;
+		}
+	}
+
+	registerError(ev){
+		if(this.registerAll){
+			this.report(ev);
 		}
 	}
 
