@@ -104,6 +104,7 @@ class notErrorReporter{
 				if(local){
 					res.stack = stackInfo.stack.join("\n");
 					if(stackInfo.fileName){       res.fileName = stackInfo.fileName;              }
+					if(stackInfo.columnNumber){     res.columnNumber = stackInfo.columnNumber;          }
 					if(stackInfo.lineNumber){     res.lineNumber = stackInfo.lineNumber;          }
 					if(stackInfo.functionName){   res.functionName = stackInfo.functionName;      }
 					if(stackInfo.type){           res.type = stackInfo.type;                      }
@@ -111,6 +112,7 @@ class notErrorReporter{
 				}else{
 					if(!res.fileName){       res.fileName = stackInfo.fileName;              }
 					if(!res.lineNumber){     res.lineNumber = stackInfo.lineNumber;          }
+					if(!res.columnNumber){     res.columnNumber = stackInfo.columnNumber;          }
 					if(!res.functionName){   res.functionName = stackInfo.functionName;      }
 					if(!res.type){           res.type = stackInfo.type;                      }
 				}

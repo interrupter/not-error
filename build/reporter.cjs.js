@@ -218,6 +218,10 @@ class notErrorReporter {
             res.fileName = stackInfo.fileName;
           }
 
+          if (stackInfo.columnNumber) {
+            res.columnNumber = stackInfo.columnNumber;
+          }
+
           if (stackInfo.lineNumber) {
             res.lineNumber = stackInfo.lineNumber;
           }
@@ -240,6 +244,10 @@ class notErrorReporter {
 
           if (!res.lineNumber) {
             res.lineNumber = stackInfo.lineNumber;
+          }
+
+          if (!res.columnNumber) {
+            res.columnNumber = stackInfo.columnNumber;
           }
 
           if (!res.functionName) {
