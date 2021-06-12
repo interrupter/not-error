@@ -132,21 +132,14 @@ class notErrorReporter{
 	}
 
 	extractDataFromError(err, local){
-		let res = {
-			columnNumber:    err.columnNumber,
-			fileName:        err.fileName,
-			lineNumber:      err.lineNumber,
-			name:            err.name,
-			message:        err.message,
-			stack:          err.stack
-		};
+		let res = err.getDetails();
 		if(res.stack){
 			let stackInfo = this.parseStack(res.stack);
 			if(stackInfo && stackInfo.stack){
 				if(local){
 					res.stack = stackInfo.stack.join("\n");
 					if(stackInfo.fileName){       res.fileName = stackInfo.fileName;              }
-					if(stackInfo.columnNumber){     res.columnNumber = stackInfo.columnNumber;          }
+					if(stackInfo.columnNumber){   res.columnNumber = stackInfo.columnNumber;          }
 					if(stackInfo.lineNumber){     res.lineNumber = stackInfo.lineNumber;          }
 					if(stackInfo.functionName){   res.functionName = stackInfo.functionName;      }
 					if(stackInfo.type){           res.type = stackInfo.type;                      }
@@ -154,7 +147,7 @@ class notErrorReporter{
 				}else{
 					if(!res.fileName){       res.fileName = stackInfo.fileName;              }
 					if(!res.lineNumber){     res.lineNumber = stackInfo.lineNumber;          }
-					if(!res.columnNumber){     res.columnNumber = stackInfo.columnNumber;          }
+					if(!res.columnNumber){   res.columnNumber = stackInfo.columnNumber;          }
 					if(!res.functionName){   res.functionName = stackInfo.functionName;      }
 					if(!res.type){           res.type = stackInfo.type;                      }
 				}
@@ -165,9 +158,6 @@ class notErrorReporter{
 
 	async packError(error, local = false){
 		let result = {};
-		if (Object.prototype.hasOwnProperty.call(error, 'parent') && typeof error.parent !== 'undefined' && error.parent){
-			result.parent = this.extractDataFromError(error.parent, local);
-		}
 		result.details   = this.extractDataFromError(error, local);
 		await this.tryToGetSourceBlock(result);
 		result.options   = error.options;

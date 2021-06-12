@@ -37,6 +37,31 @@ var notError = (function () {
 
 	    return this;
 	  }
+
+	  getStack() {
+	    if (this.parent) {
+	      return this.parent.stack;
+	    } else {
+	      return this.stack;
+	    }
+	  }
+
+	  getDetails() {
+	    let src = this;
+
+	    if (this.parent) {
+	      src = this.parent;
+	    }
+
+	    return {
+	      columnNumber: src.columnNumber,
+	      fileName: src.fileName,
+	      lineNumber: src.lineNumber,
+	      name: src.name,
+	      message: src.message,
+	      stack: src.stack
+	    };
+	  }
 	  /**
 	  *	Updating this.env.date property
 	  *	@return  {object}	{timestamp, offset}

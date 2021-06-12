@@ -37,6 +37,31 @@ var notErrorReporter = (function () {
 
 	    return this;
 	  }
+
+	  getStack() {
+	    if (this.parent) {
+	      return this.parent.stack;
+	    } else {
+	      return this.stack;
+	    }
+	  }
+
+	  getDetails() {
+	    let src = this;
+
+	    if (this.parent) {
+	      src = this.parent;
+	    }
+
+	    return {
+	      columnNumber: src.columnNumber,
+	      fileName: src.fileName,
+	      lineNumber: src.lineNumber,
+	      name: src.name,
+	      message: src.message,
+	      stack: src.stack
+	    };
+	  }
 	  /**
 	  *	Updating this.env.date property
 	  *	@return  {object}	{timestamp, offset}
@@ -204,14 +229,7 @@ var notErrorReporter = (function () {
 	  }
 
 	  extractDataFromError(err, local) {
-	    let res = {
-	      columnNumber: err.columnNumber,
-	      fileName: err.fileName,
-	      lineNumber: err.lineNumber,
-	      name: err.name,
-	      message: err.message,
-	      stack: err.stack
-	    };
+	    let res = err.getDetails();
 
 	    if (res.stack) {
 	      let stackInfo = this.parseStack(res.stack);
@@ -272,11 +290,6 @@ var notErrorReporter = (function () {
 
 	  async packError(error, local = false) {
 	    let result = {};
-
-	    if (Object.prototype.hasOwnProperty.call(error, 'parent') && typeof error.parent !== 'undefined' && error.parent) {
-	      result.parent = this.extractDataFromError(error.parent, local);
-	    }
-
 	    result.details = this.extractDataFromError(error, local);
 	    await this.tryToGetSourceBlock(result);
 	    result.options = error.options;

@@ -27,9 +27,7 @@ describe("browser", function() {
 			err.adopt(new Error('not same error'));
 			(new notErrorReporter()).packError(err)
 				.then((packed)=>{
-					expect(packed.details.message).to.be.equal('some error');
-					expect(packed.parent.message).to.be.equal('not same error');
-					expect(packed.parent.name).to.be.equal('Error');
+					expect(packed.details.message).to.be.equal('not same error');
 					expect(packed.options.i).to.be.equal(1);
 					done();
 				})
