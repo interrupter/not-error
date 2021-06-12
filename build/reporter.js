@@ -385,7 +385,7 @@ var notErrorReporter = (function () {
 
 	  registerError(ev) {
 	    if (this.registerAll) {
-	      this.report(ev);
+	      this.report(ev.error);
 	    }
 	  }
 
