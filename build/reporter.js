@@ -197,10 +197,19 @@ var notErrorReporter = (function () {
 	    try {
 	      let stack = this.trunkStack(rawStack);
 	      let line = stack[0];
+
+	      if (!line) {
+	        return {
+	          stack
+	        };
+	      }
+
 	      let res = [...line.matchAll(/(.*)@(.+):(\d+):(\d+)/gi)][0];
 
-	      if (!res) {
-	        return {};
+	      if (!res || res.length < 2) {
+	        return {
+	          stack
+	        };
 	      }
 
 	      let functionName = res[1].replace('/', '').replace('\\', '').replace('>', '').replace('<', ''),

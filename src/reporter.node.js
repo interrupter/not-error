@@ -83,7 +83,9 @@ class notErrorReporter{
 			let stack = this.trunkStack(rawStack);
 			
 			let line = stack[3];
+			if(!line){ return {stack};}
 			let res = [...line.matchAll(/\sat\s(.+)\s\((.+)\)/gi)][0];
+			if(!res || res.length < 2){ return {stack}; }
 			let functionFullPath = res[1].split('.');
 			let functionName = functionFullPath[functionFullPath.length - 1],
 				file = res[2].split(':'),
