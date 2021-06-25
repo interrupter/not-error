@@ -12,8 +12,8 @@ const LINES_TO_CAPTURE = 6;
 
 
 const LOG = window.console;
-const NOT_NODE_ERROR_URL_BROWSER = 'https://appmon.ru/api/key/collect';
-const NOT_NODE_ERROR_KEY = '';
+const NOT_NODE_ERROR_URL_BROWSER = '/browser/api';
+const NOT_NODE_ERROR_KEY = 'test.key';
 import notError from './error.browser.js';
 
 
@@ -74,7 +74,7 @@ class notErrorReporter{
 			if(!line){return {stack};}
 			let res = [...line.matchAll(/(.*)@(.+):(\d+):(\d+)/gi)][0];
 			if(!res || res.length < 2 ){ return {stack}; }
-			let functionName = res[1].replace('/' , '').replace('\\' , '').replace('>', '').replace('<', ''),
+			let functionName = res[1].replaceAll('/' , '').replaceAll('\\' , '').replaceAll('>', '').replaceAll('<', ''),
 				filePath = res[2],
 				parts = filePath.split('/'),
 				fileName = parts.length?parts[parts.length-1]:'',

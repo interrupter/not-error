@@ -19,8 +19,8 @@ var service = null;
 try{
 	config = require('not-config').readerForModule('error');
 }catch(e){
-	NOT_NODE_ERROR_URL_NODE = 'https://appmon.ru/api/key/collect';
-	NOT_NODE_ERROR_KEY = '';
+	NOT_NODE_ERROR_URL_NODE = '/node/api';
+	NOT_NODE_ERROR_KEY = 'test.key';
 }
 const Buffer = require('buffer').Buffer;
 const {readFile} = require('fs').promises;
@@ -82,7 +82,7 @@ class notErrorReporter{
 		try{
 			let stack = this.trunkStack(rawStack);
 			
-			let line = stack[3];
+			let line = stack[1];
 			if(!line){ return {stack};}
 			let res = [...line.matchAll(/\sat\s(.+)\s\((.+)\)/gi)][0];
 			if(!res || res.length < 2){ return {stack}; }
