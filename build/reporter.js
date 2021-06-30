@@ -140,8 +140,7 @@ var notErrorReporter = (function () {
 	const PARASITES = ['report@', 'notError@'];
 	const LINES_TO_CAPTURE = 6;
 	const LOG = window.console;
-	const NOT_NODE_ERROR_URL_BROWSER = '/browser/api';
-	const NOT_NODE_ERROR_KEY = 'test.key';
+	const NOT_NODE_ERROR_URL_BROWSER = 'https://appmon.ru/api/key/collect';
 	/**
 	* Error reporting with features, saving browser info, uri and so on.
 	* @module not-error/error
@@ -373,8 +372,6 @@ var notErrorReporter = (function () {
 	  getReportKey() {
 	    if (window.NOT_NODE_ERROR_KEY && window.NOT_NODE_ERROR_KEY.length > 0) {
 	      return window.NOT_NODE_ERROR_KEY;
-	    } else if (NOT_NODE_ERROR_KEY.length > 0) {
-	      return NOT_NODE_ERROR_KEY;
 	    } else {
 	      return '';
 	    }

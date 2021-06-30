@@ -12,8 +12,8 @@ const LINES_TO_CAPTURE = 6;
 
 
 const LOG = window.console;
-const NOT_NODE_ERROR_URL_BROWSER = '/browser/api';
-const NOT_NODE_ERROR_KEY = 'test.key';
+const NOT_NODE_ERROR_URL_BROWSER = 'https://appmon.ru/api/key/collect';
+const NOT_NODE_ERROR_KEY = '';
 import notError from './error.browser.js';
 
 
