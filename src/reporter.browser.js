@@ -9,6 +9,14 @@
 
 const PARASITES = ['report@', 'notError@'];
 const LINES_TO_CAPTURE = 6;
+const STACK_PROPS = [
+	'fileName',
+	'filePath',
+	'lineNumber',
+	'columnNumber',
+	'functionName',
+	'type',
+];
 
 
 const LOG = window.console;
@@ -102,18 +110,13 @@ class notErrorReporter{
 			if(stackInfo && stackInfo.stack){
 				if(local){
 					res.stack = stackInfo.stack.join("\n");
-					if(stackInfo.fileName){       res.fileName = stackInfo.fileName;              }
-					if(stackInfo.columnNumber){   res.columnNumber = stackInfo.columnNumber;          }
-					if(stackInfo.lineNumber){     res.lineNumber = stackInfo.lineNumber;          }
-					if(stackInfo.functionName){   res.functionName = stackInfo.functionName;      }
-					if(stackInfo.type){           res.type = stackInfo.type;                      }
-					if(stackInfo.filePath){       res.filePath = stackInfo.filePath;              }
+					STACK_PROPS.forEach((j) => {
+						if(stackInfo[j]){ res[j] = stackInfo[j];}
+					});
 				}else{
-					if(!res.fileName){       res.fileName = stackInfo.fileName;              }
-					if(!res.lineNumber){     res.lineNumber = stackInfo.lineNumber;          }
-					if(!res.columnNumber){   res.columnNumber = stackInfo.columnNumber;          }
-					if(!res.functionName){   res.functionName = stackInfo.functionName;      }
-					if(!res.type){           res.type = stackInfo.type;                      }
+					STACK_PROPS.forEach((j) => {
+						if(!res[j]){res[j] = stackInfo[j];}
+					});
 				}
 			}
 		}
