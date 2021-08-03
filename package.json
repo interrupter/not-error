@@ -1,8 +1,9 @@
 {
 		"name": "not-error",
-		"version": "0.0.62",
+		"version": "0.0.63",
 		"description": "not-* family error in not- environment",
 		"main": "index.js",
+		"types": "./build/types.d.ts",
 		"bin": {
 				"not-error": "./bin/not-error.js"
 		},

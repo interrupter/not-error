@@ -16,7 +16,9 @@
 	}
 
 	getReportKey(){
-		if(window.NOT_NODE_ERROR_KEY && window.NOT_NODE_ERROR_KEY.length > 0){
+		if(typeof this.key !== 'undefined'){
+			return this.key;
+		}else	if(window.NOT_NODE_ERROR_KEY && window.NOT_NODE_ERROR_KEY.length > 0){
 			return window.NOT_NODE_ERROR_KEY;
 		}else if(NOT_NODE_ERROR_KEY && NOT_NODE_ERROR_KEY.length > 0){
 			return NOT_NODE_ERROR_KEY;

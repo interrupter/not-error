@@ -45,6 +45,7 @@ const notError = require('./error.node.js');
 */
 class notErrorReporter{
 	constructor(envFirst = false){
+		this.key = undefined;
 		this.envFirst = envFirst;
 		this.processWatching = false;
 		this.origin = {};
@@ -54,10 +55,17 @@ class notErrorReporter{
 
 	setOrigin(origin){
 		this.origin = origin;
+		return this;
+	}
+
+	setKey(key){
+		this.key = key;
+		return this;
 	}
 
 	setRegisterAll(registerAll = true){
 		this.registerAll = registerAll;
+		return this;
 	}
 
 	async report(error, notSecure){
@@ -229,7 +237,9 @@ class notErrorReporter{
 				return process.env.NOT_NODE_ERROR_KEY;
 			}
 		}
-		if ((config && config.get('key') && config.get('key').length > 3)){
+		if(typeof this.key !== 'undefined'){
+			return this.key;
+		}else	if ((config && config.get('key') && config.get('key').length > 3)){
 			return config.get('key');
 		}else{
 			if(process.env.NOT_NODE_ERROR_KEY && process.env.NOT_NODE_ERROR_KEY.length > 0){

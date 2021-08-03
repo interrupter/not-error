@@ -148,6 +148,7 @@ const NOT_NODE_ERROR_URL_BROWSER = 'https://appmon.ru/api/key/collect';
 
 class notErrorReporter {
   constructor(envFirst = false) {
+    this.key = undefined;
     this.envFirst = envFirst;
     this.processWatching = false;
     this.origin = {};
@@ -157,10 +158,17 @@ class notErrorReporter {
 
   setOrigin(origin) {
     this.origin = origin;
+    return this;
+  }
+
+  setKey(key) {
+    this.key = key;
+    return this;
   }
 
   setRegisterAll(registerAll = true) {
     this.registerAll = registerAll;
+    return this;
   }
 
   async report(error, notSecure) {
@@ -337,7 +345,9 @@ class notErrorReporter {
   }
 
   getReportKey() {
-    if (window.NOT_NODE_ERROR_KEY && window.NOT_NODE_ERROR_KEY.length > 0) {
+    if (typeof this.key !== 'undefined') {
+      return this.key;
+    } else if (window.NOT_NODE_ERROR_KEY && window.NOT_NODE_ERROR_KEY.length > 0) {
       return window.NOT_NODE_ERROR_KEY;
     } else {
       return '';

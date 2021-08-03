@@ -42,7 +42,9 @@
 				return process.env.NOT_NODE_ERROR_KEY;
 			}
 		}
-		if ((config && config.get('key') && config.get('key').length > 3)){
+		if(typeof this.key !== 'undefined'){
+			return this.key;
+		}else	if ((config && config.get('key') && config.get('key').length > 3)){
 			return config.get('key');
 		}else{
 			if(process.env.NOT_NODE_ERROR_KEY && process.env.NOT_NODE_ERROR_KEY.length > 0){

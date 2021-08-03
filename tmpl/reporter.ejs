@@ -50,6 +50,7 @@ import notError from './error.browser.js';
 */
 class notErrorReporter{
 	constructor(envFirst = false){
+		this.key = undefined;
 		this.envFirst = envFirst;
 		this.processWatching = false;
 		this.origin = {};
@@ -61,10 +62,17 @@ class notErrorReporter{
 
 	setOrigin(origin){
 		this.origin = origin;
+		return this;
+	}
+
+	setKey(key){
+		this.key = key;
+		return this;
 	}
 
 	setRegisterAll(registerAll = true){
 		this.registerAll = registerAll;
+		return this;
 	}
 
 	async report(error, notSecure){
