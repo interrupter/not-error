@@ -44,7 +44,9 @@ const notError = require('./error.node.js');
 * @module not-error/error
 */
 class notErrorReporter{
+
 	constructor(envFirst = false){
+		this.url = undefined;
 		this.key = undefined;
 		this.envFirst = envFirst;
 		this.processWatching = false;
@@ -60,6 +62,11 @@ class notErrorReporter{
 
 	setKey(key){
 		this.key = key;
+		return this;
+	}
+
+	setURL(url){
+		this.url = url;
 		return this;
 	}
 
@@ -215,7 +222,9 @@ class notErrorReporter{
 				return process.env.NOT_NODE_ERROR_URL_NODE;
 			}
 		}
-		if ((config && config.get('url') && config.get('url').length > 3)){
+		if(typeof this.url !== 'undefined'){
+			return this.url;
+		}else	if ((config && config.get('url') && config.get('url').length > 3)){
 			return config.get('url');
 		}else{
 			if(process.env.NOT_NODE_ERROR_URL_NODE && process.env.NOT_NODE_ERROR_URL_NODE.length>0){

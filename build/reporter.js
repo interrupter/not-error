@@ -149,6 +149,7 @@ var notErrorReporter = (function () {
 
 	class notErrorReporter {
 	  constructor(envFirst = false) {
+	    this.url = undefined;
 	    this.key = undefined;
 	    this.envFirst = envFirst;
 	    this.processWatching = false;
@@ -164,6 +165,11 @@ var notErrorReporter = (function () {
 
 	  setKey(key) {
 	    this.key = key;
+	    return this;
+	  }
+
+	  setURL(url) {
+	    this.url = url;
 	    return this;
 	  }
 
@@ -336,7 +342,9 @@ var notErrorReporter = (function () {
 
 
 	  getReportURL() {
-	    if (window.NOT_NODE_ERROR_URL_BROWSER && window.NOT_NODE_ERROR_URL_BROWSER.length > 0) {
+	    if (typeof this.url !== 'undefined') {
+	      return this.url;
+	    } else if (window.NOT_NODE_ERROR_URL_BROWSER && window.NOT_NODE_ERROR_URL_BROWSER.length > 0) {
 	      return window.NOT_NODE_ERROR_URL_BROWSER;
 	    } else if (NOT_NODE_ERROR_URL_BROWSER.length > 0) {
 	      return NOT_NODE_ERROR_URL_BROWSER;

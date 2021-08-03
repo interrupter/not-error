@@ -20,7 +20,9 @@
 				return process.env.NOT_NODE_ERROR_URL_NODE;
 			}
 		}
-		if ((config && config.get('url') && config.get('url').length > 3)){
+		if(typeof this.url !== 'undefined'){
+			return this.url;
+		}else	if ((config && config.get('url') && config.get('url').length > 3)){
 			return config.get('url');
 		}else{
 			if(process.env.NOT_NODE_ERROR_URL_NODE && process.env.NOT_NODE_ERROR_URL_NODE.length>0){
