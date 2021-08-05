@@ -458,7 +458,38 @@ var notErrorReporter = (function () {
       return false;
     },
     parse: function parse(res) {
-      if (res) ; else {
+      if (res) {
+        //separation of different types of data
+        var functionFullPath = res[1].split('.');
+        var file = res[2]; //extraction of exact values
+
+        var pathParts = file.split('/');
+        var fileName = pathParts[pathParts.length - 1];
+        pathParts.pop();
+        var filePath = pathParts.join('/');
+        var lineNumber = parseInt(res[3]);
+        var columnNumber = parseInt(res[4]);
+        var functionName = functionFullPath[functionFullPath.length - 1];
+
+        if (functionName.replaceAll) {
+          functionName = functionName.replaceAll('/', '').replaceAll('\\', '').replaceAll('>', '').replaceAll('<', '');
+        }
+
+        var fileDir;
+
+        if (pathParts && pathParts.length) {
+          fileDir = pathParts.pop();
+        }
+
+        return {
+          file: fileName,
+          path: filePath,
+          line: lineNumber,
+          column: columnNumber,
+          "function": functionName,
+          type: fileDir
+        };
+      } else {
         return false;
       }
     }
@@ -885,7 +916,6 @@ var notErrorReporter = (function () {
     }, {
       key: "_report",
       value: function _report(data, url) {
-        console.log(data);
         var report = {
           report: data,
           type: 'error',

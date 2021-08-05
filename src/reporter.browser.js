@@ -33,7 +33,32 @@ const FILE_LINE_PARSERS = [
 		},
 		parse: (res)=>{
 			if(res){
-
+				//separation of different types of data
+				let functionFullPath = res[1].split('.');
+				let file = res[2];
+				//extraction of exact values
+				let pathParts = file.split('/');
+				let fileName = pathParts[pathParts.length - 1];
+				pathParts.pop();
+				let filePath = pathParts.join('/');
+				let lineNumber = parseInt(res[3]);
+				let columnNumber = parseInt(res[4]);
+				let functionName = functionFullPath[functionFullPath.length - 1];
+				if (functionName.replaceAll){
+					functionName = functionName.replaceAll('/' , '').replaceAll('\\' , '').replaceAll('>', '').replaceAll('<', '');
+				}
+				let fileDir;
+				if(pathParts && pathParts.length){
+					fileDir = pathParts.pop();
+				}
+				return {
+					file: fileName,
+					path: filePath,
+					line: lineNumber,
+					column: columnNumber,
+					function: functionName,
+					type: fileDir,
+				};
 			}else{
 				return false;
 			}
@@ -307,7 +332,6 @@ class notErrorReporter{
 	}
 
 	_report(data, url){
-		console.log(data);
 		let report = {
 			report: data,
 			type: 'error',
