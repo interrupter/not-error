@@ -128,6 +128,8 @@ class notError extends Error {
 
 }
 
+/* global path */
+
 /**
 *  Template of reporter.js
 *  For building for specific environment.
@@ -138,21 +140,112 @@ class notError extends Error {
 */
 const PARASITES = ['report@', 'notError@'];
 const LINES_TO_CAPTURE = 6;
-const STACK_PROPS = ['fileName', 'filePath', 'lineNumber', 'columnNumber', 'functionName', 'type'];
+const STACK_PROPS = ['fileName', 'filePath', 'fileDir', 'lineNumber', 'columnNumber', 'functionName'];
+const FILE_LINE_PARSERS = [{
+  test: line => {
+    const tester = /(.*)@(.+):(\d+):(\d+)/gi;
+    let matches = [...line.matchAll(tester)];
+
+    if (matches.length) {
+      let res = matches[0];
+
+      if (res && res.length > 2) {
+        return res;
+      }
+    }
+
+    return false;
+  },
+  parse: res => {
+    if (res) ; else {
+      return false;
+    }
+  }
+}, {
+  test: line => {
+    const tester = /\sat\s(.+)\s\((.+)\)/gi;
+    let matches = [...line.matchAll(tester)];
+
+    if (matches.length) {
+      let res = matches[0];
+
+      if (res && res.length > 2) {
+        return res;
+      }
+    }
+
+    return false;
+  },
+  parse: res => {
+    if (res) {
+      //separation of different types of data
+      let functionFullPath = res[1].split('.');
+      let file = res[2].split(':'); //extraction of exact values
+
+      let fileName = file[0];
+      let filePath = file[0];
+      let lineNumber = parseInt(file[1]);
+      let columnNumber = parseInt(file[2]);
+      let functionName = functionFullPath[functionFullPath.length - 1];
+
+      if (functionName.replaceAll) {
+        functionName = functionName.replaceAll('/', '').replaceAll('\\', '').replaceAll('>', '').replaceAll('<', '');
+      }
+
+      let fileInfo, fileDir;
+
+      try {
+        if (path) {
+          fileInfo = path ? path.parse(fileName) : false;
+
+          if (fileInfo) {
+            fileDir = fileInfo.dir.split('/').pop();
+          }
+        }
+      } catch (e) {}
+
+      return {
+        fileName,
+        filePath,
+        lineNumber,
+        columnNumber,
+        functionName,
+        fileDir
+      };
+    } else {
+      return false;
+    }
+  }
+}];
 const LOG = window.console;
 const NOT_NODE_ERROR_URL_BROWSER = 'https://appmon.ru/api/key/collect';
+const DEFAULT_OPTIONS = {
+  envFirst: false,
+  origin: {},
+  url: undefined,
+  key: undefined,
+  registerAll: true
+};
 /**
 * Error reporting with features, saving browser info, uri and so on.
 * @module not-error/error
 */
 
 class notErrorReporter {
-  constructor(envFirst = false) {
-    this.url = undefined;
-    this.key = undefined;
+  constructor(opts = DEFAULT_OPTIONS) {
+    let {
+      envFirst,
+      origin,
+      url,
+      key,
+      registerAll
+    } = opts;
     this.envFirst = envFirst;
     this.processWatching = false;
-    this.origin = {};
+    this.setOrigin(origin);
+    this.setKey(key);
+    this.setURL(url);
+    this.setRegisterAll(registerAll);
     window.addEventListener('error', this.registerError.bind(this));
     return this;
   }
@@ -180,7 +273,7 @@ class notErrorReporter {
   async report(error, notSecure) {
     let local = false;
 
-    if (!(error instanceof notError)) {
+    if (error.constructor.name !== 'notError') {
       error = new notError(error.message, {}, error);
       local = true;
     }
@@ -207,43 +300,62 @@ class notErrorReporter {
     return lines;
   }
 
+  __stackFirstLineParser(line) {
+    let result;
+    let parser = FILE_LINE_PARSERS.find(itm => {
+      return result = itm.test(line);
+    });
+
+    if (parser) {
+      return parser.parse(result);
+    }
+
+    return false;
+  }
+
+  __stackFirstLineSearcher(stack) {
+    for (let i = 0; stack.length > i; i++) {
+      let line = stack[i];
+
+      if (!line) {
+        continue;
+      }
+
+      let res = this.__stackFirstLineParser(line);
+
+      if (res) {
+        return res;
+      } else {
+        continue;
+      }
+    }
+
+    return false;
+  }
+
   parseStack(rawStack) {
     try {
       let stack = this.trunkStack(rawStack);
-      let line = stack[0];
 
-      if (!line) {
+      let res = this.__stackFirstLineSearcher(stack);
+
+      if (!res) {
         return {
           stack
         };
       }
 
-      let res = [...line.matchAll(/(.*)@(.+):(\d+):(\d+)/gi)][0];
+      let fileinfo = this.__stackFirstLineSearcher(stack);
 
-      if (!res || res.length < 2) {
+      if (!fileinfo) {
         return {
           stack
         };
       }
 
-      let functionName = res[1].replaceAll('/', '').replaceAll('\\', '').replaceAll('>', '').replaceAll('<', ''),
-          filePath = res[2],
-          parts = filePath.split('/'),
-          fileName = parts.length ? parts[parts.length - 1] : '',
-          fileDir = parts.length > 1 ? parts[parts.length - 2] : '',
-          fileLine = res[3];
       return {
         stack,
-        functionName: functionName,
-        //name of function
-        type: fileDir,
-        //logic type of function
-        fileName,
-        //filename
-        filePath,
-        //full file url
-        lineNumber: parseInt(fileLine) //number of line in file
-
+        ...fileinfo
       };
     } catch (e) {
       LOG.error(e);

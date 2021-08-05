@@ -46,7 +46,6 @@ describe("browser", function() {
 				.then(async (response)=>{
 					let data = await response.json();
 					if (response.status == 200){
-						console.log(JSON.stringify(data.results[0], null, 4));
 						if(data.results[0].options.code == code){
 							done();
 						}else{
@@ -57,6 +56,44 @@ describe("browser", function() {
 					}
 				})
 				.catch(done);
+		});
+	});
+
+	describe("stack parser", function(){
+		it('browser test env stack', (done)=>{
+			let notErrorReporterStandalone = require('../../src/reporter.node.js');
+			let reporter = new notErrorReporterStandalone({});
+			const raw = `Error: Test browser error
+			    at Context.<anonymous> (/home/cypher/proj/not-lib/not-error/test/browser/index.js:45:36)
+					at callFnAsync (/home/cypher/proj/not-lib/not-error/node_modules/mocha/lib/runnable.js:394:21)
+					at Test.Runnable.run (/home/cypher/proj/not-lib/not-error/node_modules/mocha/lib/runnable.js:338:7)
+					at Runner.runTest (/home/cypher/proj/not-lib/not-error/node_modules/mocha/lib/runner.js:677:10)
+					at /home/cypher/proj/not-lib/not-error/node_modules/mocha/lib/runner.js:801:12
+					at next (/home/cypher/proj/not-lib/not-error/node_modules/mocha/lib/runner.js:594:14)
+					at /home/cypher/proj/not-lib/not-error/node_modules/mocha/lib/runner.js:604:7
+					at next (/home/cypher/proj/not-lib/not-error/node_modules/mocha/lib/runner.js:486:14)
+					at Immediate._onImmediate (/home/cypher/proj/not-lib/not-error/node_modules/mocha/lib/runner.js:572:5)
+					at processImmediate (internal/timers.js:461:21)`;
+			let stack = reporter.parseStack(raw);
+			expect(stack.lineNumber).to.be.equal(45);
+			expect(stack.filePath).to.be.equal('/home/cypher/proj/not-lib/not-error/test/browser/index.js');
+			expect(stack.fileName).to.be.equal('/home/cypher/proj/not-lib/not-error/test/browser/index.js');
+			expect(stack.functionName).to.be.equal('anonymous');
+			expect(stack.fileDir).to.be.equal('browser');
+			done();
+		});
+
+		it('server test env stack', (done)=>{
+			let notErrorReporterStandalone = require('../../src/reporter.node.js');
+			let reporter = new notErrorReporterStandalone({});
+			const raw = new Error('test error').stack;
+			let stack = reporter.parseStack(raw);
+			expect(typeof stack.lineNumber).to.be.equal('number');
+			expect(stack.filePath).to.be.equal('/home/cypher/proj/not-lib/not-error/test/browser/index.js');
+			expect(stack.fileName).to.be.equal('/home/cypher/proj/not-lib/not-error/test/browser/index.js');
+			expect(stack.functionName).to.be.equal('anonymous');
+			expect(stack.fileDir).to.be.equal('browser');
+			done();
 		});
 	});
 });

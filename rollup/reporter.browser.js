@@ -18,7 +18,7 @@ export default {
 			exclude: ['tmpl/**','build/**', 'node_modules/**', 'css/**', 'js/**', 'test/**', 'bower_components/**', 'assets/*', 'dist/**']
 		}),
 		babel({
-			babelrc: false,
+			babelrc: true,
 			exclude: ['tmpl/**','build/**', 'node_modules/**', 'css/**', 'js/**', 'test/**', 'bower_components/**', 'assets/*', 'dist/**']
 		}),
 		filesize()

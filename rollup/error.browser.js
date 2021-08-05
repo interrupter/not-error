@@ -19,7 +19,14 @@ export default {
 		}),
 		babel({
 			babelrc: false,
-			exclude: ['tmpl/**','build/**', 'node_modules/**', 'css/**', 'js/**', 'test/**', 'bower_components/**', 'assets/*', 'dist/**']
+			exclude: ['tmpl/**','build/**', 'node_modules/**', 'css/**', 'js/**', 'test/**', 'bower_components/**', 'assets/*', 'dist/**'],
+			plugins:[
+				'@babel/plugin-proposal-object-rest-spread'
+			],
+			presets:[
+        "@babel/preset-env",
+        "@babel/preset-react"
+    	]
 		}),
 		filesize()
 	]
