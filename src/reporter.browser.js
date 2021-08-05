@@ -1,4 +1,3 @@
-/* global path */
 /**
 *  Template of reporter.js
 *  For building for specific environment.
@@ -11,12 +10,12 @@
 const PARASITES = ['report@', 'notError@'];
 const LINES_TO_CAPTURE = 6;
 const STACK_PROPS = [
-	'fileName',
-	'filePath',
-	'fileDir',
-	'lineNumber',
-	'columnNumber',
-	'functionName',
+	'file',
+	'path',
+	'type',
+	'line',
+	'column',
+	'function',
 ];
 
 const FILE_LINE_PARSERS = [
@@ -58,30 +57,27 @@ const FILE_LINE_PARSERS = [
 				let functionFullPath = res[1].split('.');
 				let file = res[2].split(':');
 				//extraction of exact values
-				let fileName = file[0];
-				let filePath = file[0];
+				let pathParts = file[0].split('/');
+				let fileName = pathParts[pathParts.length - 1];
+				pathParts.pop();
+				let filePath = pathParts.join('/');
 				let lineNumber = parseInt(file[1]);
 				let columnNumber = parseInt(file[2]);
 				let functionName = functionFullPath[functionFullPath.length - 1];
 				if (functionName.replaceAll){
 					functionName = functionName.replaceAll('/' , '').replaceAll('\\' , '').replaceAll('>', '').replaceAll('<', '');
 				}
-				let fileInfo, fileDir;
-				try{
-					if(path){
-						fileInfo = path?path.parse(fileName):false;
-						if(fileInfo){
-							fileDir = fileInfo.dir.split('/').pop();
-						}
-					}
-				}catch(e){}
+				let fileDir;
+				if(pathParts && pathParts.length){
+					fileDir = pathParts.pop();
+				}
 				return {
-					fileName,
-					filePath,
-					lineNumber,
-					columnNumber,
-					functionName,
-					fileDir,
+					file: fileName,
+					path: filePath,
+					line: lineNumber,
+					column: columnNumber,
+					function: functionName,
+					type: fileDir,
 				};
 			}else{
 				return false;
@@ -311,6 +307,7 @@ class notErrorReporter{
 	}
 
 	_report(data, url){
+		console.log(data);
 		let report = {
 			report: data,
 			type: 'error',

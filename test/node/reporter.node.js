@@ -242,11 +242,11 @@ describe("node error reporter", function() {
      at async notRoute.executeFunction (/var/server/reporter/reporter/node_modules/not-node/src/manifest/route.js:148:18)
      at async notRoute.executeRoute (/var/server/reporter/reporter/node_modules/not-node/src/manifest/route.js:133:20)`;
 			let stack = reporter.parseStack(raw);
-			expect(stack.lineNumber).to.be.equal(39);
-			expect(stack.filePath).to.be.equal('/var/server/reporter/reporter/node_modules/not-key/src/logics/key.js');
-			expect(stack.fileName).to.be.equal('/var/server/reporter/reporter/node_modules/not-key/src/logics/key.js');
-			expect(stack.functionName).to.be.equal('collect');
-			expect(stack.fileDir).to.be.equal('logics');
+			expect(stack.line).to.be.equal(39);
+			expect(stack.path).to.be.equal('/var/server/reporter/reporter/node_modules/not-key/src/logics');
+			expect(stack.file).to.be.equal('key.js');
+			expect(stack.function).to.be.equal('collect');
+			expect(stack.type).to.be.equal('logics');
 			done();
 		});
 
@@ -255,11 +255,11 @@ describe("node error reporter", function() {
 			let reporter = new notErrorReporterStandalone({});
 			const raw = new Error('test error').stack;
 			let stack = reporter.parseStack(raw);
-			expect(typeof stack.lineNumber).to.be.equal('number');
-			expect(stack.filePath).to.be.equal('/home/cypher/proj/not-lib/not-error/test/node/reporter.node.js');
-			expect(stack.fileName).to.be.equal('/home/cypher/proj/not-lib/not-error/test/node/reporter.node.js');
-			expect(stack.functionName).to.be.equal('<anonymous>');
-			expect(stack.fileDir).to.be.equal('node');
+			expect(typeof stack.line).to.be.equal('number');
+			expect(stack.path).to.be.equal('/home/cypher/proj/not-lib/not-error/test/node');
+			expect(stack.file).to.be.equal('reporter.node.js');
+			expect(stack.function).to.be.equal('<anonymous>');
+			expect(stack.type).to.be.equal('node');
 			done();
 		});
 	});

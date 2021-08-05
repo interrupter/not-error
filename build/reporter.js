@@ -430,8 +430,6 @@ var notErrorReporter = (function () {
     return notError;
   }( /*#__PURE__*/_wrapNativeSuper(Error));
 
-  /* global path */
-
   /**
   *  Template of reporter.js
   *  For building for specific environment.
@@ -442,7 +440,7 @@ var notErrorReporter = (function () {
   */
   var PARASITES = ['report@', 'notError@'];
   var LINES_TO_CAPTURE = 6;
-  var STACK_PROPS = ['fileName', 'filePath', 'fileDir', 'lineNumber', 'columnNumber', 'functionName'];
+  var STACK_PROPS = ['file', 'path', 'type', 'line', 'column', 'function'];
   var FILE_LINE_PARSERS = [{
     test: function test(line) {
       var tester = /(.*)@(.+):(\d+):(\d+)/gi;
@@ -486,8 +484,10 @@ var notErrorReporter = (function () {
         var functionFullPath = res[1].split('.');
         var file = res[2].split(':'); //extraction of exact values
 
-        var fileName = file[0];
-        var filePath = file[0];
+        var pathParts = file[0].split('/');
+        var fileName = pathParts[pathParts.length - 1];
+        pathParts.pop();
+        var filePath = pathParts.join('/');
         var lineNumber = parseInt(file[1]);
         var columnNumber = parseInt(file[2]);
         var functionName = functionFullPath[functionFullPath.length - 1];
@@ -496,25 +496,19 @@ var notErrorReporter = (function () {
           functionName = functionName.replaceAll('/', '').replaceAll('\\', '').replaceAll('>', '').replaceAll('<', '');
         }
 
-        var fileInfo, fileDir;
+        var fileDir;
 
-        try {
-          if (path) {
-            fileInfo = path ? path.parse(fileName) : false;
-
-            if (fileInfo) {
-              fileDir = fileInfo.dir.split('/').pop();
-            }
-          }
-        } catch (e) {}
+        if (pathParts && pathParts.length) {
+          fileDir = pathParts.pop();
+        }
 
         return {
-          fileName: fileName,
-          filePath: filePath,
-          lineNumber: lineNumber,
-          columnNumber: columnNumber,
-          functionName: functionName,
-          fileDir: fileDir
+          file: fileName,
+          path: filePath,
+          line: lineNumber,
+          column: columnNumber,
+          "function": functionName,
+          type: fileDir
         };
       } else {
         return false;
@@ -891,6 +885,7 @@ var notErrorReporter = (function () {
     }, {
       key: "_report",
       value: function _report(data, url) {
+        console.log(data);
         var report = {
           report: data,
           type: 'error',

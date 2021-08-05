@@ -75,11 +75,11 @@ describe("browser", function() {
 					at Immediate._onImmediate (/home/cypher/proj/not-lib/not-error/node_modules/mocha/lib/runner.js:572:5)
 					at processImmediate (internal/timers.js:461:21)`;
 			let stack = reporter.parseStack(raw);
-			expect(stack.lineNumber).to.be.equal(45);
-			expect(stack.filePath).to.be.equal('/home/cypher/proj/not-lib/not-error/test/browser/index.js');
-			expect(stack.fileName).to.be.equal('/home/cypher/proj/not-lib/not-error/test/browser/index.js');
-			expect(stack.functionName).to.be.equal('anonymous');
-			expect(stack.fileDir).to.be.equal('browser');
+			expect(stack.line).to.be.equal(45);
+			expect(stack.path).to.be.equal('/home/cypher/proj/not-lib/not-error/test/browser');
+			expect(stack.file).to.be.equal('index.js');
+			expect(stack.function).to.be.equal('anonymous');
+			expect(stack.type).to.be.equal('browser');
 			done();
 		});
 
@@ -88,11 +88,11 @@ describe("browser", function() {
 			let reporter = new notErrorReporterStandalone({});
 			const raw = new Error('test error').stack;
 			let stack = reporter.parseStack(raw);
-			expect(typeof stack.lineNumber).to.be.equal('number');
-			expect(stack.filePath).to.be.equal('/home/cypher/proj/not-lib/not-error/test/browser/index.js');
-			expect(stack.fileName).to.be.equal('/home/cypher/proj/not-lib/not-error/test/browser/index.js');
-			expect(stack.functionName).to.be.equal('anonymous');
-			expect(stack.fileDir).to.be.equal('browser');
+			expect(typeof stack.line).to.be.equal('number');
+			expect(stack.path).to.be.equal('/home/cypher/proj/not-lib/not-error/test/browser');
+			expect(stack.file).to.be.equal('index.js');
+			expect(stack.function).to.be.equal('anonymous');
+			expect(stack.type).to.be.equal('browser');
 			done();
 		});
 	});
