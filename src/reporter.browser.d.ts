@@ -1,5 +1,11 @@
 declare class notErrorReporter{
-  constructor(envFirst?: boolean);
+  constructor(opt:{
+		envFirst?: Boolean,
+		origin?: any,
+		url?:string,
+		key?:string,
+		registerAll?: boolean
+	});
   setKey(key:string):notErrorReporter;
   setURL(url:string):notErrorReporter;
   setOrigin(origin:any):void;
