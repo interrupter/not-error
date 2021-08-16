@@ -113,8 +113,8 @@ const FILE_LINE_PARSERS = [
 
 
 const LOG = window.console;
-const NOT_NODE_ERROR_URL_BROWSER = 'https://appmon.ru/api/key/collect';
-const NOT_NODE_ERROR_KEY = '';
+const NOT_NODE_ERROR_URL_BROWSER = '/browser/api';
+const NOT_NODE_ERROR_KEY = 'test.key';
 import notError from './error.browser.js';
 
 
