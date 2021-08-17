@@ -10,7 +10,7 @@ declare class notErrorReporter{
   setURL(url:string):notErrorReporter;
   setOrigin(origin:any):void;
   setRegisterAll(registerAll?:boolean):void;
-  report(error:any, notSecure:boolean):any;
+  report(error:any, notSecure?:boolean):any;
   reportError(name:string, opts: any, parent:any, notSecure:boolean):any;
   isLineParasite(line:string):boolean;
   trunkStack(stack:string):Array<string>;
