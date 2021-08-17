@@ -148,6 +148,7 @@ const DEFAULT_OPTIONS = {
 * @module not-error/error
 */
 class notErrorReporter{
+	static notError = notError;
 
 	constructor(opts = DEFAULT_OPTIONS){
 		let {envFirst, origin,	url, key,registerAll } = opts;
@@ -208,7 +209,6 @@ class notErrorReporter{
 		}
 		return lines;
 	}
-
 
 	__stackFirstLineParser(line){
 		let result;

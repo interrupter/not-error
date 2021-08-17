@@ -131,6 +131,7 @@ const DEFAULT_OPTIONS = {
 * @module not-error/error
 */
 class notErrorReporter{
+	static notError;
 
 	constructor(opts = DEFAULT_OPTIONS){
 		let {envFirst, origin,	url, key,registerAll } = opts;
@@ -140,9 +141,9 @@ class notErrorReporter{
 		this.setKey(key);
 		this.setURL(url);
 		this.setRegisterAll(registerAll);
-		
+
 		window.addEventListener('error', this.registerError.bind(this));
-		
+
 		return this;
 	}
 
@@ -369,4 +370,3 @@ class notErrorReporter{
 
 
 export default notErrorReporter;
-
