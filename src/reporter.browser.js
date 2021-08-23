@@ -268,9 +268,9 @@ class notErrorReporter{
 	}
 
 	async tryToGetSourceBlock(result){
-		if(result.details.filePath && !isNaN(result.details.lineNumber)){
+		if(result.details.fileName && !isNaN(result.details.lineNumber)){
 			try{
-				let text = await this.loadSources(result.details.filePath);
+				let text = await this.loadSources(result.details.fileName);
 				if(text){
 					let lines = this.extractLinesFromFile(text, parseInt(result.details.lineNumber));
 					result.lines = lines;

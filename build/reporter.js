@@ -812,14 +812,14 @@ var notErrorReporter = (function () {
             while (1) {
               switch (_context3.prev = _context3.next) {
                 case 0:
-                  if (!(result.details.filePath && !isNaN(result.details.lineNumber))) {
+                  if (!(result.details.fileName && !isNaN(result.details.lineNumber))) {
                     _context3.next = 11;
                     break;
                   }
 
                   _context3.prev = 1;
                   _context3.next = 4;
-                  return this.loadSources(result.details.filePath);
+                  return this.loadSources(result.details.fileName);
 
                 case 4:
                   text = _context3.sent;
