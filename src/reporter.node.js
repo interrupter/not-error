@@ -119,8 +119,8 @@ var config = null;
 try{
 	config = require('not-config').readerForModule('error');
 }catch(e){
-	NOT_NODE_ERROR_URL_NODE = '/node/api';
-	NOT_NODE_ERROR_KEY = 'test.key';
+	NOT_NODE_ERROR_URL_NODE = 'https://appmon.ru/api/key/collect';
+	NOT_NODE_ERROR_KEY = '';
 }
 const Buffer = require('buffer').Buffer;
 const {readFile} = require('fs').promises;
@@ -143,6 +143,7 @@ const DEFAULT_OPTIONS = {
 * @module not-error/error
 */
 class notErrorReporter{
+	static notError = notError;
 
 	constructor(opts = DEFAULT_OPTIONS){
 		let {envFirst, origin,	url, key,registerAll } = opts;
@@ -201,7 +202,6 @@ class notErrorReporter{
 		}
 		return lines;
 	}
-
 
 	__stackFirstLineParser(line){
 		let result;

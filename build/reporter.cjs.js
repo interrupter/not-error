@@ -243,8 +243,7 @@ const FILE_LINE_PARSERS = [{
   }
 }];
 const LOG = window.console;
-const NOT_NODE_ERROR_URL_BROWSER = '/browser/api';
-const NOT_NODE_ERROR_KEY = 'test.key';
+const NOT_NODE_ERROR_URL_BROWSER = 'https://appmon.ru/api/key/collect';
 const DEFAULT_OPTIONS = {
   envFirst: false,
   origin: {},
@@ -258,6 +257,8 @@ const DEFAULT_OPTIONS = {
 */
 
 class notErrorReporter {
+  static notError = notError;
+
   constructor(opts = DEFAULT_OPTIONS) {
     let {
       envFirst,
@@ -495,8 +496,6 @@ class notErrorReporter {
       return this.key;
     } else if (window.NOT_NODE_ERROR_KEY && window.NOT_NODE_ERROR_KEY.length > 0) {
       return window.NOT_NODE_ERROR_KEY;
-    } else if (NOT_NODE_ERROR_KEY.length > 0) {
-      return NOT_NODE_ERROR_KEY;
     } else {
       return '';
     }

@@ -547,8 +547,7 @@ var notErrorReporter = (function () {
     }
   }];
   var LOG = window.console;
-  var NOT_NODE_ERROR_URL_BROWSER = '/browser/api';
-  var NOT_NODE_ERROR_KEY = 'test.key';
+  var NOT_NODE_ERROR_URL_BROWSER = 'https://appmon.ru/api/key/collect';
   var DEFAULT_OPTIONS = {
     envFirst: false,
     origin: {},
@@ -910,8 +909,6 @@ var notErrorReporter = (function () {
           return this.key;
         } else if (window.NOT_NODE_ERROR_KEY && window.NOT_NODE_ERROR_KEY.length > 0) {
           return window.NOT_NODE_ERROR_KEY;
-        } else if (NOT_NODE_ERROR_KEY.length > 0) {
-          return NOT_NODE_ERROR_KEY;
         } else {
           return '';
         }
@@ -989,6 +986,8 @@ var notErrorReporter = (function () {
 
     return notErrorReporter;
   }();
+
+  _defineProperty(notErrorReporter, "notError", notError);
 
   return notErrorReporter;
 
