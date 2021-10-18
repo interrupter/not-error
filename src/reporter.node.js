@@ -119,8 +119,8 @@ var config = null;
 try{
 	config = require('not-config').readerForModule('error');
 }catch(e){
-	NOT_NODE_ERROR_URL_NODE = 'https://appmon.ru/api/key/collect';
-	NOT_NODE_ERROR_KEY = '';
+	NOT_NODE_ERROR_URL_NODE = '/node/api';
+	NOT_NODE_ERROR_KEY = 'test.key';
 }
 const Buffer = require('buffer').Buffer;
 const {readFile} = require('fs').promises;
@@ -128,6 +128,8 @@ const https = require('https');
 const http = require('http');
 const LOG = require('not-log')(module, 'notReporter');
 const notError = require('./error.node.js');
+const notValidationError = require('./validation.error.node.js');
+const notRequestError = require('./request.error.node.js');
 
 
 const DEFAULT_OPTIONS = {
@@ -144,6 +146,8 @@ const DEFAULT_OPTIONS = {
 */
 class notErrorReporter{
 	static notError = notError;
+	static notValidationError = notValidationError;
+	static notRequestError = notRequestError;
 
 	constructor(opts = DEFAULT_OPTIONS){
 		let {envFirst, origin,	url, key,registerAll } = opts;
@@ -177,9 +181,13 @@ class notErrorReporter{
 		return this;
 	}
 
+	errorIsReportable(error){
+		return error instanceof notError;
+	}
+
 	async report(error, notSecure){
 		let local = false;
-		if(error.constructor.name !== 'notError'){
+		if(!this.errorIsReportable(error)){
 			error = new notError(error.message, {}, error);
 			local = true;
 		}

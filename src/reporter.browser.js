@@ -113,9 +113,11 @@ const FILE_LINE_PARSERS = [
 
 
 const LOG = window.console;
-const NOT_NODE_ERROR_URL_BROWSER = 'https://appmon.ru/api/key/collect';
-const NOT_NODE_ERROR_KEY = '';
+const NOT_NODE_ERROR_URL_BROWSER = '/browser/api';
+const NOT_NODE_ERROR_KEY = 'test.key';
 import notError from './error.browser.js';
+import notValidationError from './validation.error.browser.js';
+import notRequestError from './request.error.browser.js';
 
 
 const DEFAULT_OPTIONS = {
@@ -132,6 +134,8 @@ const DEFAULT_OPTIONS = {
 */
 class notErrorReporter{
 	static notError = notError;
+	static notValidationError = notValidationError;
+	static notRequestError = notRequestError;
 
 	constructor(opts = DEFAULT_OPTIONS){
 		let {envFirst, origin,	url, key,registerAll } = opts;
@@ -167,9 +171,13 @@ class notErrorReporter{
 		return this;
 	}
 
+	errorIsReportable(error){
+		return error instanceof notError;
+	}
+
 	async report(error, notSecure){
 		let local = false;
-		if(error.constructor.name !== 'notError'){
+		if(!this.errorIsReportable(error)){
 			error = new notError(error.message, {}, error);
 			local = true;
 		}

@@ -9,8 +9,8 @@
 
 
 const NOT_NODE_ERROR_URL_NODE_DEFAULT = 'https://appmon.ru/api/key/collect';
-const NOT_NODE_ERROR_URL_BROWSER = 'https://appmon.ru/api/key/collect';
-const NOT_NODE_ERROR_KEY = '';
+const NOT_NODE_ERROR_URL_BROWSER = '/browser/api';
+const NOT_NODE_ERROR_KEY = 'test.key';
 
 
 /**

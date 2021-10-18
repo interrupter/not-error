@@ -50,6 +50,7 @@ describe("browser", function() {
         .then(async (response) => {
           let data = await response.json();
           if (response.status == 200) {
+            console.log(JSON.stringify(data, null, 4));
             if (data.results[0].options.code == code) {
               done();
             } else {

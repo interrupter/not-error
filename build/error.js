@@ -204,7 +204,7 @@ var notError = (function () {
     _createClass(notError, [{
       key: "adopt",
       value: function adopt(error) {
-        if (error) {
+        if (error instanceof Error) {
           this.parent = error;
         }
 

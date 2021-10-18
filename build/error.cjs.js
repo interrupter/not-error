@@ -30,7 +30,7 @@ class notError extends Error {
 
 
   adopt(error) {
-    if (error) {
+    if (error instanceof Error) {
       this.parent = error;
     }
 

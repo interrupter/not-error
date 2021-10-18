@@ -26,7 +26,7 @@ class notError extends Error {
 	*	@return {notError}		chainable
 	*/
 	adopt(error){
-		if(error){
+		if(error instanceof Error){
 			this.parent = error;
 		}
 		return this;

@@ -54,6 +54,14 @@ const TEMPLATE_ERROR = path.join(__dirname, '../tmpl/error.ejs');
 const OUTPUT_NODE_ERROR = path.join(opts.out, 'error.node.js');
 const OUTPUT_BROWSER_ERROR = path.join(opts.out, 'error.browser.js');
 
+const TEMPLATE_VALIDATION_ERROR = path.join(__dirname, '../tmpl/validation.error.ejs');
+const OUTPUT_NODE_VALIDATION_ERROR = path.join(opts.out, 'validation.error.node.js');
+const OUTPUT_BROWSER_VALIDATION_ERROR = path.join(opts.out, 'validation.error.browser.js');
+
+const TEMPLATE_REQUEST_ERROR = path.join(__dirname, '../tmpl/request.error.ejs');
+const OUTPUT_NODE_REQUEST_ERROR = path.join(opts.out, 'request.error.node.js');
+const OUTPUT_BROWSER_REQUEST_ERROR = path.join(opts.out, 'request.error.browser.js');
+
 const TEMPLATE_STANDALONE = path.join(__dirname, '../tmpl/standalone.ejs');
 const OUTPUT_NODE_STANDALONE = path.join(opts.out, 'standalone.node.js');
 const OUTPUT_BROWSER_STANDALONE = path.join(opts.out, 'standalone.browser.js');
@@ -96,6 +104,46 @@ let tasks = [
 		},
 		OUTPUT_BROWSER_ERROR
 	),
+
+  renderScript(
+		TEMPLATE_VALIDATION_ERROR,
+		{
+			env: 'node',
+			key: opts.key,
+			url: opts['url-node'],
+		},
+		OUTPUT_NODE_VALIDATION_ERROR
+	),
+	renderScript(
+		TEMPLATE_VALIDATION_ERROR,
+		{
+			env: 'browser',
+			key: opts.key,
+			url: opts['url-browser'],
+		},
+		OUTPUT_BROWSER_VALIDATION_ERROR
+	),
+
+
+  renderScript(
+		TEMPLATE_REQUEST_ERROR,
+		{
+			env: 'node',
+			key: opts.key,
+			url: opts['url-node'],
+		},
+		OUTPUT_NODE_REQUEST_ERROR
+	),
+	renderScript(
+		TEMPLATE_REQUEST_ERROR,
+		{
+			env: 'browser',
+			key: opts.key,
+			url: opts['url-browser'],
+		},
+		OUTPUT_BROWSER_REQUEST_ERROR
+	),
+
 	renderScript(
 		TEMPLATE_REPORTER,
 		{

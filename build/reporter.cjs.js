@@ -30,7 +30,7 @@ class notError extends Error {
 
 
   adopt(error) {
-    if (error) {
+    if (error instanceof Error) {
       this.parent = error;
     }
 
@@ -124,6 +124,69 @@ class notError extends Error {
       }
     };
     return this;
+  }
+
+}
+
+class notValidationError extends notError {
+  constructor(message, fields = {}, err = null) {
+    super(message, {
+      fields
+    }, err);
+    return this;
+  }
+  /**
+   * Sets hash of fields errors messages for usage in forms
+   *	@return {Object}	hash of field->errors [key:string]: Array<string>
+   */
+
+
+  setFieldsErrors(messages) {
+    this.options.fields = messages;
+  }
+  /**
+   * Returns hash of errors
+   *	@return {Object}	hash of field->errors [key:string]: Array<string>
+   */
+
+
+  getFieldsErrors() {
+    return this.options.fields;
+  }
+
+}
+
+class notRequestError extends notError {
+  constructor(message, code = 500, errors = {}) {
+    super(message, {
+      code,
+      errors
+    });
+    return this;
+  }
+
+  setCode(code) {
+    this.options.code = code;
+  }
+
+  getCode() {
+    return this.options.code;
+  }
+
+  setErrors(list) {
+    this.options.errors = list;
+  }
+
+  getErrors() {
+    return this.options.errors;
+  }
+
+  getResult() {
+    return {
+      message: this.message,
+      code: this.getCode(),
+      errors: this.getErrors()
+    };
   }
 
 }
@@ -243,7 +306,8 @@ const FILE_LINE_PARSERS = [{
   }
 }];
 const LOG = window.console;
-const NOT_NODE_ERROR_URL_BROWSER = 'https://appmon.ru/api/key/collect';
+const NOT_NODE_ERROR_URL_BROWSER = '/browser/api';
+const NOT_NODE_ERROR_KEY = 'test.key';
 const DEFAULT_OPTIONS = {
   envFirst: false,
   origin: {},
@@ -258,6 +322,8 @@ const DEFAULT_OPTIONS = {
 
 class notErrorReporter {
   static notError = notError;
+  static notValidationError = notValidationError;
+  static notRequestError = notRequestError;
 
   constructor(opts = DEFAULT_OPTIONS) {
     let {
@@ -297,10 +363,14 @@ class notErrorReporter {
     return this;
   }
 
+  errorIsReportable(error) {
+    return error instanceof notError;
+  }
+
   async report(error, notSecure) {
     let local = false;
 
-    if (error.constructor.name !== 'notError') {
+    if (!this.errorIsReportable(error)) {
       error = new notError(error.message, {}, error);
       local = true;
     }
@@ -496,6 +566,8 @@ class notErrorReporter {
       return this.key;
     } else if (window.NOT_NODE_ERROR_KEY && window.NOT_NODE_ERROR_KEY.length > 0) {
       return window.NOT_NODE_ERROR_KEY;
+    } else if (NOT_NODE_ERROR_KEY.length > 0) {
+      return NOT_NODE_ERROR_KEY;
     } else {
       return '';
     }

@@ -326,7 +326,7 @@ var notErrorReporter = (function () {
     _createClass(notError, [{
       key: "adopt",
       value: function adopt(error) {
-        if (error) {
+        if (error instanceof Error) {
           this.parent = error;
         }
 
@@ -429,6 +429,104 @@ var notErrorReporter = (function () {
 
     return notError;
   }( /*#__PURE__*/_wrapNativeSuper(Error));
+
+  var notValidationError = /*#__PURE__*/function (_notError) {
+    _inherits(notValidationError, _notError);
+
+    var _super = _createSuper(notValidationError);
+
+    function notValidationError(message) {
+      var _this;
+
+      var fields = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+      var err = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+
+      _classCallCheck(this, notValidationError);
+
+      _this = _super.call(this, message, {
+        fields: fields
+      }, err);
+      return _possibleConstructorReturn(_this, _assertThisInitialized(_this));
+    }
+    /**
+    * Sets hash of fields errors messages for usage in forms
+    *	@return {Object}	hash of field->errors [key:string]: Array<string>
+    */
+
+
+    _createClass(notValidationError, [{
+      key: "setFieldsErrors",
+      value: function setFieldsErrors(messages) {
+        this.options.fields = messages;
+      }
+      /**
+      * Returns hash of errors
+      *	@return {Object}	hash of field->errors [key:string]: Array<string>
+      */
+
+    }, {
+      key: "getFieldsErrors",
+      value: function getFieldsErrors() {
+        return this.options.fields;
+      }
+    }]);
+
+    return notValidationError;
+  }(notError);
+
+  var notRequestError = /*#__PURE__*/function (_notError) {
+    _inherits(notRequestError, _notError);
+
+    var _super = _createSuper(notRequestError);
+
+    function notRequestError(message) {
+      var _this;
+
+      var code = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 500;
+      var errors = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+
+      _classCallCheck(this, notRequestError);
+
+      _this = _super.call(this, message, {
+        code: code,
+        errors: errors
+      });
+      return _possibleConstructorReturn(_this, _assertThisInitialized(_this));
+    }
+
+    _createClass(notRequestError, [{
+      key: "setCode",
+      value: function setCode(code) {
+        this.options.code = code;
+      }
+    }, {
+      key: "getCode",
+      value: function getCode() {
+        return this.options.code;
+      }
+    }, {
+      key: "setErrors",
+      value: function setErrors(list) {
+        this.options.errors = list;
+      }
+    }, {
+      key: "getErrors",
+      value: function getErrors() {
+        return this.options.errors;
+      }
+    }, {
+      key: "getResult",
+      value: function getResult() {
+        return {
+          message: this.message,
+          code: this.getCode(),
+          errors: this.getErrors()
+        };
+      }
+    }]);
+
+    return notRequestError;
+  }(notError);
 
   /**
   *  Template of reporter.js
@@ -547,7 +645,8 @@ var notErrorReporter = (function () {
     }
   }];
   var LOG = window.console;
-  var NOT_NODE_ERROR_URL_BROWSER = 'https://appmon.ru/api/key/collect';
+  var NOT_NODE_ERROR_URL_BROWSER = '/browser/api';
+  var NOT_NODE_ERROR_KEY = 'test.key';
   var DEFAULT_OPTIONS = {
     envFirst: false,
     origin: {},
@@ -607,6 +706,11 @@ var notErrorReporter = (function () {
         return this;
       }
     }, {
+      key: "errorIsReportable",
+      value: function errorIsReportable(error) {
+        return error instanceof notError;
+      }
+    }, {
       key: "report",
       value: function () {
         var _report2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(error, notSecure) {
@@ -617,7 +721,7 @@ var notErrorReporter = (function () {
                 case 0:
                   local = false;
 
-                  if (error.constructor.name !== 'notError') {
+                  if (!this.errorIsReportable(error)) {
                     error = new notError(error.message, {}, error);
                     local = true;
                   }
@@ -909,6 +1013,8 @@ var notErrorReporter = (function () {
           return this.key;
         } else if (window.NOT_NODE_ERROR_KEY && window.NOT_NODE_ERROR_KEY.length > 0) {
           return window.NOT_NODE_ERROR_KEY;
+        } else if (NOT_NODE_ERROR_KEY.length > 0) {
+          return NOT_NODE_ERROR_KEY;
         } else {
           return '';
         }
@@ -988,6 +1094,10 @@ var notErrorReporter = (function () {
   }();
 
   _defineProperty(notErrorReporter, "notError", notError);
+
+  _defineProperty(notErrorReporter, "notValidationError", notValidationError);
+
+  _defineProperty(notErrorReporter, "notRequestError", notRequestError);
 
   return notErrorReporter;
 
