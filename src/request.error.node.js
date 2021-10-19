@@ -6,17 +6,27 @@ const notError = require('./error.node.js');
 class notRequestError extends notError{
   constructor(
     message,
-    code = 500,
-    errors = {}
+    {code, errors, redirect} = {code:500, errors:{}, redirect: false},
+    error = null
     ){
     super(
       message,
       {
         code,
-        errors
-      }
+        errors,
+        redirect
+      },
+      error
     );
     return this;
+  }
+
+  setRedirect(url){
+    this.options.redirect = url;
+  }
+
+  getRedirect(){
+    return this.options.redirect;
   }
 
   setCode(code){
@@ -39,7 +49,8 @@ class notRequestError extends notError{
     return {
       message:  this.message,
       code:     this.getCode(),
-      errors:   this.getErrors()
+      errors:   this.getErrors(),
+      redirect: this.getRedirect(),
     };
   }
 

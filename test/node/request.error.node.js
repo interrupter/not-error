@@ -24,13 +24,14 @@ describe("node request error", function() {
 			};
 			let err = new notRequestError(
 				'some error',
-				404,
 				{
-				...errors
+					code: 404,
+					errors
 				}
 			);
 			expect(err.message).to.be.equal('some error');
 			expect(err.getCode()).to.be.equal(404);
+			expect(err.getRedirect()).to.be.undefined;
 			expect(err.getErrors()).to.be.deep.equal({...errors});
 			expect(err).to.be.instanceof(notRequestError);
 		});
@@ -48,10 +49,13 @@ describe("node request error", function() {
 			expect(err.getErrors()).to.be.deep.equal({...errors});
 			err.setCode(403);
 			expect(err.getCode()).to.be.deep.equal(403);
+			err.setRedirect('/false');
+			expect(err.getRedirect()).to.be.deep.equal('/false');
 			expect(err.getResult()).to.be.deep.equal({
 				message:  'some error',
 	      code:     403,
-	      errors:   {...errors}
+	      errors:   {...errors},
+				redirect: '/false'
 			});
 			expect(err).to.be.instanceof(notRequestError);
 		});

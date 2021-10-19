@@ -482,19 +482,38 @@ var notErrorReporter = (function () {
     function notRequestError(message) {
       var _this;
 
-      var code = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 500;
-      var errors = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+      var _ref = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {
+        code: 500,
+        errors: {},
+        redirect: false
+      },
+          code = _ref.code,
+          errors = _ref.errors,
+          redirect = _ref.redirect;
+
+      var error = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
 
       _classCallCheck(this, notRequestError);
 
       _this = _super.call(this, message, {
         code: code,
-        errors: errors
-      });
+        errors: errors,
+        redirect: redirect
+      }, error);
       return _possibleConstructorReturn(_this, _assertThisInitialized(_this));
     }
 
     _createClass(notRequestError, [{
+      key: "setRedirect",
+      value: function setRedirect(url) {
+        this.options.redirect = url;
+      }
+    }, {
+      key: "getRedirect",
+      value: function getRedirect() {
+        return this.options.redirect;
+      }
+    }, {
       key: "setCode",
       value: function setCode(code) {
         this.options.code = code;
@@ -520,7 +539,8 @@ var notErrorReporter = (function () {
         return {
           message: this.message,
           code: this.getCode(),
-          errors: this.getErrors()
+          errors: this.getErrors(),
+          redirect: this.getRedirect()
         };
       }
     }]);
@@ -645,8 +665,7 @@ var notErrorReporter = (function () {
     }
   }];
   var LOG = window.console;
-  var NOT_NODE_ERROR_URL_BROWSER = '/browser/api';
-  var NOT_NODE_ERROR_KEY = 'test.key';
+  var NOT_NODE_ERROR_URL_BROWSER = 'https://appmon.ru/api/key/collect';
   var DEFAULT_OPTIONS = {
     envFirst: false,
     origin: {},
@@ -1013,8 +1032,6 @@ var notErrorReporter = (function () {
           return this.key;
         } else if (window.NOT_NODE_ERROR_KEY && window.NOT_NODE_ERROR_KEY.length > 0) {
           return window.NOT_NODE_ERROR_KEY;
-        } else if (NOT_NODE_ERROR_KEY.length > 0) {
-          return NOT_NODE_ERROR_KEY;
         } else {
           return '';
         }
@@ -1101,4 +1118,4 @@ var notErrorReporter = (function () {
 
   return notErrorReporter;
 
-}());
+})();

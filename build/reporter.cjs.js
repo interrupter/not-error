@@ -157,12 +157,29 @@ class notValidationError extends notError {
 }
 
 class notRequestError extends notError {
-  constructor(message, code = 500, errors = {}) {
+  constructor(message, {
+    code,
+    errors,
+    redirect
+  } = {
+    code: 500,
+    errors: {},
+    redirect: false
+  }, error = null) {
     super(message, {
       code,
-      errors
-    });
+      errors,
+      redirect
+    }, error);
     return this;
+  }
+
+  setRedirect(url) {
+    this.options.redirect = url;
+  }
+
+  getRedirect() {
+    return this.options.redirect;
   }
 
   setCode(code) {
@@ -185,7 +202,8 @@ class notRequestError extends notError {
     return {
       message: this.message,
       code: this.getCode(),
-      errors: this.getErrors()
+      errors: this.getErrors(),
+      redirect: this.getRedirect()
     };
   }
 
@@ -306,8 +324,7 @@ const FILE_LINE_PARSERS = [{
   }
 }];
 const LOG = window.console;
-const NOT_NODE_ERROR_URL_BROWSER = '/browser/api';
-const NOT_NODE_ERROR_KEY = 'test.key';
+const NOT_NODE_ERROR_URL_BROWSER = 'https://appmon.ru/api/key/collect';
 const DEFAULT_OPTIONS = {
   envFirst: false,
   origin: {},
@@ -566,8 +583,6 @@ class notErrorReporter {
       return this.key;
     } else if (window.NOT_NODE_ERROR_KEY && window.NOT_NODE_ERROR_KEY.length > 0) {
       return window.NOT_NODE_ERROR_KEY;
-    } else if (NOT_NODE_ERROR_KEY.length > 0) {
-      return NOT_NODE_ERROR_KEY;
     } else {
       return '';
     }
