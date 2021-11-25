@@ -6,7 +6,7 @@ const notError = require('./error.node.js');
 class notRequestError extends notError{
   constructor(
     message,
-    {code, errors, redirect} = {code:500, errors:{}, redirect: false},
+    {code, errors, redirect, params} = {code:500, errors:{}, redirect: false, params:{}},
     error = null
     ){
     super(
@@ -14,7 +14,8 @@ class notRequestError extends notError{
       {
         code,
         errors,
-        redirect
+        redirect,
+        params
       },
       error
     );

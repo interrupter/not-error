@@ -129,16 +129,17 @@ class notError extends Error {
 }
 
 class notValidationError extends notError {
-  constructor(message, fields = {}, err = null) {
+  constructor(message, fields = {}, err = null, params = {}) {
     super(message, {
-      fields
+      fields,
+      params
     }, err);
     return this;
   }
   /**
    * Sets hash of fields errors messages for usage in forms
    *	@return {Object}	hash of field->errors [key:string]: Array<string>
-   */
+   **/
 
 
   setFieldsErrors(messages) {
@@ -147,7 +148,7 @@ class notValidationError extends notError {
   /**
    * Returns hash of errors
    *	@return {Object}	hash of field->errors [key:string]: Array<string>
-   */
+   **/
 
 
   getFieldsErrors() {
@@ -160,16 +161,19 @@ class notRequestError extends notError {
   constructor(message, {
     code,
     errors,
-    redirect
+    redirect,
+    params
   } = {
     code: 500,
     errors: {},
-    redirect: false
+    redirect: false,
+    params: {}
   }, error = null) {
     super(message, {
       code,
       errors,
-      redirect
+      redirect,
+      params
     }, error);
     return this;
   }

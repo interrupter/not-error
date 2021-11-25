@@ -440,18 +440,20 @@ var notErrorReporter = (function () {
 
       var fields = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
       var err = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+      var params = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
 
       _classCallCheck(this, notValidationError);
 
       _this = _super.call(this, message, {
-        fields: fields
+        fields: fields,
+        params: params
       }, err);
       return _possibleConstructorReturn(_this, _assertThisInitialized(_this));
     }
     /**
     * Sets hash of fields errors messages for usage in forms
     *	@return {Object}	hash of field->errors [key:string]: Array<string>
-    */
+    **/
 
 
     _createClass(notValidationError, [{
@@ -462,7 +464,7 @@ var notErrorReporter = (function () {
       /**
       * Returns hash of errors
       *	@return {Object}	hash of field->errors [key:string]: Array<string>
-      */
+      **/
 
     }, {
       key: "getFieldsErrors",
@@ -485,11 +487,13 @@ var notErrorReporter = (function () {
       var _ref = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {
         code: 500,
         errors: {},
-        redirect: false
+        redirect: false,
+        params: {}
       },
           code = _ref.code,
           errors = _ref.errors,
-          redirect = _ref.redirect;
+          redirect = _ref.redirect,
+          params = _ref.params;
 
       var error = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
 
@@ -498,7 +502,8 @@ var notErrorReporter = (function () {
       _this = _super.call(this, message, {
         code: code,
         errors: errors,
-        redirect: redirect
+        redirect: redirect,
+        params: params
       }, error);
       return _possibleConstructorReturn(_this, _assertThisInitialized(_this));
     }

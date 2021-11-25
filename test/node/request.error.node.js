@@ -26,7 +26,11 @@ describe("node request error", function() {
 				'some error',
 				{
 					code: 404,
-					errors
+					errors,
+					params: {
+						let: 'me',
+						off: 1
+					}
 				}
 			);
 			expect(err.message).to.be.equal('some error');
@@ -34,6 +38,10 @@ describe("node request error", function() {
 			expect(err.getRedirect()).to.be.undefined;
 			expect(err.getErrors()).to.be.deep.equal({...errors});
 			expect(err).to.be.instanceof(notRequestError);
+			expect(err.options.params).to.be.deep.equal({
+				let: 'me',
+				off: 1
+			});
 		});
 
 		it("without code and errors messages, added after", function() {

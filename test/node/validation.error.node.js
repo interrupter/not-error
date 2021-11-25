@@ -22,10 +22,17 @@ describe("node validation error", function() {
 			};
 			let err = new notValidationError('some error', {
 				...errors
+			}, null, {
+				let: 'me',
+				off: 1
 			});
 			expect(err.message).to.be.equal('some error');
 			expect(err.getFieldsErrors()).to.be.deep.equal({...errors});
 			expect(err).to.be.instanceof(notValidationError);
+			expect(err.options.params).to.be.deep.equal({
+				let: 'me',
+				off: 1
+			});
 		});
 
 		it("without errors messages, added after", function() {
