@@ -24,9 +24,13 @@ export default {
 				'@babel/plugin-proposal-object-rest-spread'
 			],
 			presets:[
-        "@babel/preset-env",
-        "@babel/preset-react"
-    	]
+				[
+					"@babel/preset-env",
+					{
+						targets: "> 0.25%, not dead"
+					}
+				]
+			]
 		}),
 		filesize()
 	]

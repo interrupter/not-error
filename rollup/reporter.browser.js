@@ -19,7 +19,15 @@ export default {
 		}),
 		babel({
 			babelrc: true,
-			exclude: ['tmpl/**','build/**', 'node_modules/**', 'css/**', 'js/**', 'test/**', 'bower_components/**', 'assets/*', 'dist/**']
+			exclude: ['tmpl/**','build/**', 'node_modules/**', 'css/**', 'js/**', 'test/**', 'bower_components/**', 'assets/*', 'dist/**'],
+			presets:[
+				[
+					"@babel/preset-env",
+					{
+						targets: "> 0.25%, not dead"
+					}
+				]
+    	]
 		}),
 		filesize()
 	]

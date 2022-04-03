@@ -609,7 +609,7 @@ var notError = (function (exports) {
           path: filePath,
           line: lineNumber,
           column: columnNumber,
-          "function": functionName,
+          function: functionName,
           type: fileDir
         };
       } else {
@@ -661,7 +661,7 @@ var notError = (function (exports) {
           path: filePath,
           line: lineNumber,
           column: columnNumber,
-          "function": functionName,
+          function: functionName,
           type: fileDir
         };
       } else {
@@ -670,8 +670,7 @@ var notError = (function (exports) {
     }
   }];
   var LOG = window.console;
-  var NOT_NODE_ERROR_URL_BROWSER$1 = '/browser/api';
-  var NOT_NODE_ERROR_KEY$1 = 'test.key';
+  var NOT_NODE_ERROR_URL_BROWSER$1 = 'https://appmon.ru/api/key/collect';
   var DEFAULT_OPTIONS = {
     envFirst: false,
     origin: {},
@@ -1038,8 +1037,6 @@ var notError = (function (exports) {
           return this.key;
         } else if (window.NOT_NODE_ERROR_KEY && window.NOT_NODE_ERROR_KEY.length > 0) {
           return window.NOT_NODE_ERROR_KEY;
-        } else if (NOT_NODE_ERROR_KEY$1.length > 0) {
-          return NOT_NODE_ERROR_KEY$1;
         } else {
           return '';
         }
@@ -1133,8 +1130,7 @@ var notError = (function (exports) {
   *	@param {string}	key	key to indetificate reporter
   **/
   var NOT_NODE_ERROR_URL_NODE_DEFAULT = 'https://appmon.ru/api/key/collect';
-  var NOT_NODE_ERROR_URL_BROWSER = '/browser/api';
-  var NOT_NODE_ERROR_KEY = 'test.key';
+  var NOT_NODE_ERROR_URL_BROWSER = 'https://appmon.ru/api/key/collect';
   /**
   * Error reporting with features, saving browser info, uri and so on.
   * @module not-error/error
@@ -1274,8 +1270,6 @@ var notError = (function (exports) {
       value: function getReportKey() {
         if (window.NOT_NODE_ERROR_KEY && window.NOT_NODE_ERROR_KEY.length > 0) {
           return window.NOT_NODE_ERROR_KEY;
-        } else if (NOT_NODE_ERROR_KEY.length > 0) {
-          return NOT_NODE_ERROR_KEY;
         } else {
           return '';
         }

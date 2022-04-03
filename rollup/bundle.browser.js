@@ -3,6 +3,7 @@ import babel from 'rollup-plugin-babel';
 import {eslint} from 'rollup-plugin-eslint';
 import { terser } from "rollup-plugin-terser";
 import filesize from 'rollup-plugin-filesize';
+import sizes from "rollup-plugin-sizes";
 
 export default {
 	input: 'src/index.browser.js',
@@ -20,14 +21,16 @@ export default {
 		babel({
 			babelrc: false,
 			exclude: ['tmpl/**','build/**', 'node_modules/**', 'css/**', 'js/**', 'test/**', 'bower_components/**', 'assets/*', 'dist/**'],
-			plugins:[
-				'@babel/plugin-proposal-object-rest-spread'
-			],
 			presets:[
-        "@babel/preset-env",
-        "@babel/preset-react"
+				[
+					"@babel/preset-env",
+					{
+						targets: "> 0.25%, not dead"
+					}
+				]
     	]
 		}),
-		filesize()
+		filesize(),
+    sizes()
 	]
 };
