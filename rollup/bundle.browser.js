@@ -1,5 +1,8 @@
 // Rollup plugins
+import commonjs from "@rollup/plugin-commonjs";
 import babel from 'rollup-plugin-babel';
+
+import resolve from 'rollup-plugin-node-resolve'
 import {
   eslint
 } from 'rollup-plugin-eslint';
@@ -17,6 +20,19 @@ export default {
   plugins: [
     eslint({
       fix: true,
+      exclude: ['tmpl/**', 'build/**', 'node_modules/**', 'css/**', 'js/**', 'test/**', 'bower_components/**', 'assets/*', 'dist/**']
+    }),
+    resolve(),
+    commonjs(),
+    babel({
+      runtimeHelpers: true,
+      presets: ["@babel/preset-env"],
+      "plugins": [
+        "@babel/plugin-proposal-class-properties",
+        ["@babel/plugin-transform-runtime", {
+          "regenerator": true
+        }]
+      ],
       exclude: ['tmpl/**', 'build/**', 'node_modules/**', 'css/**', 'js/**', 'test/**', 'bower_components/**', 'assets/*', 'dist/**']
     }),
     filesize(),
