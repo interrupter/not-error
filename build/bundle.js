@@ -1,1313 +1,744 @@
 var notError = (function (exports) {
-  'use strict';
-
-  function ownKeys(object, enumerableOnly) {
-    var keys = Object.keys(object);
-
-    if (Object.getOwnPropertySymbols) {
-      var symbols = Object.getOwnPropertySymbols(object);
-
-      if (enumerableOnly) {
-        symbols = symbols.filter(function (sym) {
-          return Object.getOwnPropertyDescriptor(object, sym).enumerable;
-        });
-      }
-
-      keys.push.apply(keys, symbols);
-    }
-
-    return keys;
-  }
-
-  function _objectSpread2(target) {
-    for (var i = 1; i < arguments.length; i++) {
-      var source = arguments[i] != null ? arguments[i] : {};
-
-      if (i % 2) {
-        ownKeys(Object(source), true).forEach(function (key) {
-          _defineProperty(target, key, source[key]);
-        });
-      } else if (Object.getOwnPropertyDescriptors) {
-        Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
-      } else {
-        ownKeys(Object(source)).forEach(function (key) {
-          Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
-        });
-      }
-    }
-
-    return target;
-  }
-
-  function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) {
-    try {
-      var info = gen[key](arg);
-      var value = info.value;
-    } catch (error) {
-      reject(error);
-      return;
-    }
-
-    if (info.done) {
-      resolve(value);
-    } else {
-      Promise.resolve(value).then(_next, _throw);
-    }
-  }
-
-  function _asyncToGenerator(fn) {
-    return function () {
-      var self = this,
-          args = arguments;
-      return new Promise(function (resolve, reject) {
-        var gen = fn.apply(self, args);
-
-        function _next(value) {
-          asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value);
-        }
-
-        function _throw(err) {
-          asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err);
-        }
-
-        _next(undefined);
-      });
-    };
-  }
-
-  function _classCallCheck(instance, Constructor) {
-    if (!(instance instanceof Constructor)) {
-      throw new TypeError("Cannot call a class as a function");
-    }
-  }
-
-  function _defineProperties(target, props) {
-    for (var i = 0; i < props.length; i++) {
-      var descriptor = props[i];
-      descriptor.enumerable = descriptor.enumerable || false;
-      descriptor.configurable = true;
-      if ("value" in descriptor) descriptor.writable = true;
-      Object.defineProperty(target, descriptor.key, descriptor);
-    }
-  }
-
-  function _createClass(Constructor, protoProps, staticProps) {
-    if (protoProps) _defineProperties(Constructor.prototype, protoProps);
-    if (staticProps) _defineProperties(Constructor, staticProps);
-    return Constructor;
-  }
-
-  function _defineProperty(obj, key, value) {
-    if (key in obj) {
-      Object.defineProperty(obj, key, {
-        value: value,
-        enumerable: true,
-        configurable: true,
-        writable: true
-      });
-    } else {
-      obj[key] = value;
-    }
-
-    return obj;
-  }
-
-  function _inherits(subClass, superClass) {
-    if (typeof superClass !== "function" && superClass !== null) {
-      throw new TypeError("Super expression must either be null or a function");
-    }
-
-    subClass.prototype = Object.create(superClass && superClass.prototype, {
-      constructor: {
-        value: subClass,
-        writable: true,
-        configurable: true
-      }
-    });
-    if (superClass) _setPrototypeOf(subClass, superClass);
-  }
-
-  function _getPrototypeOf(o) {
-    _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) {
-      return o.__proto__ || Object.getPrototypeOf(o);
-    };
-    return _getPrototypeOf(o);
-  }
-
-  function _setPrototypeOf(o, p) {
-    _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) {
-      o.__proto__ = p;
-      return o;
-    };
-
-    return _setPrototypeOf(o, p);
-  }
-
-  function _isNativeReflectConstruct() {
-    if (typeof Reflect === "undefined" || !Reflect.construct) return false;
-    if (Reflect.construct.sham) return false;
-    if (typeof Proxy === "function") return true;
-
-    try {
-      Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {}));
-      return true;
-    } catch (e) {
-      return false;
-    }
-  }
-
-  function _construct(Parent, args, Class) {
-    if (_isNativeReflectConstruct()) {
-      _construct = Reflect.construct;
-    } else {
-      _construct = function _construct(Parent, args, Class) {
-        var a = [null];
-        a.push.apply(a, args);
-        var Constructor = Function.bind.apply(Parent, a);
-        var instance = new Constructor();
-        if (Class) _setPrototypeOf(instance, Class.prototype);
-        return instance;
-      };
-    }
-
-    return _construct.apply(null, arguments);
-  }
-
-  function _isNativeFunction(fn) {
-    return Function.toString.call(fn).indexOf("[native code]") !== -1;
-  }
-
-  function _wrapNativeSuper(Class) {
-    var _cache = typeof Map === "function" ? new Map() : undefined;
-
-    _wrapNativeSuper = function _wrapNativeSuper(Class) {
-      if (Class === null || !_isNativeFunction(Class)) return Class;
-
-      if (typeof Class !== "function") {
-        throw new TypeError("Super expression must either be null or a function");
-      }
-
-      if (typeof _cache !== "undefined") {
-        if (_cache.has(Class)) return _cache.get(Class);
-
-        _cache.set(Class, Wrapper);
-      }
-
-      function Wrapper() {
-        return _construct(Class, arguments, _getPrototypeOf(this).constructor);
-      }
-
-      Wrapper.prototype = Object.create(Class.prototype, {
-        constructor: {
-          value: Wrapper,
-          enumerable: false,
-          writable: true,
-          configurable: true
-        }
-      });
-      return _setPrototypeOf(Wrapper, Class);
-    };
-
-    return _wrapNativeSuper(Class);
-  }
-
-  function _assertThisInitialized(self) {
-    if (self === void 0) {
-      throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
-    }
-
-    return self;
-  }
-
-  function _possibleConstructorReturn(self, call) {
-    if (call && (typeof call === "object" || typeof call === "function")) {
-      return call;
-    }
-
-    return _assertThisInitialized(self);
-  }
-
-  function _createSuper(Derived) {
-    var hasNativeReflectConstruct = _isNativeReflectConstruct();
-
-    return function _createSuperInternal() {
-      var Super = _getPrototypeOf(Derived),
-          result;
-
-      if (hasNativeReflectConstruct) {
-        var NewTarget = _getPrototypeOf(this).constructor;
-
-        result = Reflect.construct(Super, arguments, NewTarget);
-      } else {
-        result = Super.apply(this, arguments);
-      }
-
-      return _possibleConstructorReturn(this, result);
-    };
-  }
-
-  function _toConsumableArray(arr) {
-    return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread();
-  }
-
-  function _arrayWithoutHoles(arr) {
-    if (Array.isArray(arr)) return _arrayLikeToArray(arr);
-  }
-
-  function _iterableToArray(iter) {
-    if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter);
-  }
-
-  function _unsupportedIterableToArray(o, minLen) {
-    if (!o) return;
-    if (typeof o === "string") return _arrayLikeToArray(o, minLen);
-    var n = Object.prototype.toString.call(o).slice(8, -1);
-    if (n === "Object" && o.constructor) n = o.constructor.name;
-    if (n === "Map" || n === "Set") return Array.from(o);
-    if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
-  }
-
-  function _arrayLikeToArray(arr, len) {
-    if (len == null || len > arr.length) len = arr.length;
-
-    for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i];
-
-    return arr2;
-  }
-
-  function _nonIterableSpread() {
-    throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
-  }
-
-  /**
-  *	Template of error.js
-  *	For building for specific environment.
-  *	Node.js or Browser
-  *	@param {string}	env	node|browser in wich env it will be running
-  *	@param {string}	url	URL of report collector
-  *	@param {string}	key	key to indetificate reporter
-  */
-
-  /**
-  * Error reporting with features, saving browser info, uri and so on.
-  * @module not-error/error
-  */
-  var notError = /*#__PURE__*/function (_Error) {
-    _inherits(notError, _Error);
-
-    var _super = _createSuper(notError);
-
-    function notError(message) {
-      var _this;
-
-      var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-      var error = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
-
-      _classCallCheck(this, notError);
-
-      _this = _super.call(this, message);
-      _this.options = options;
-
-      _this.adopt(error);
-
-      _this.fill();
-
-      _this.getTime();
-
-      return _possibleConstructorReturn(_this, _assertThisInitialized(_this));
-    }
-    /**
-    *	Adopting native error object
-    *	@param {Error}	error 	Error object
-    *	@return {notError}		chainable
-    */
-
-
-    _createClass(notError, [{
-      key: "adopt",
-      value: function adopt(error) {
-        if (error instanceof Error) {
-          this.parent = error;
-        }
-
-        return this;
-      }
-    }, {
-      key: "getStack",
-      value: function getStack() {
-        if (this.parent) {
-          return this.parent.stack;
-        } else {
-          return this.stack;
-        }
-      }
-    }, {
-      key: "getDetails",
-      value: function getDetails() {
-        var src = this;
-
-        if (this.parent) {
-          src = this.parent;
-        }
-
-        return {
-          columnNumber: src.columnNumber,
-          fileName: src.fileName,
-          lineNumber: src.lineNumber,
-          name: src.name,
-          message: src.message,
-          stack: src.stack
-        };
-      }
-      /**
-      *	Updating this.env.date property
-      *	@return  {object}	{timestamp, offset}
-      */
-
-    }, {
-      key: "getTime",
-      value: function getTime() {
-        var date = new Date();
-        this.env.date = {
-          timestamp: date.getTime(),
-          offset: date.getTimezoneOffset()
-        };
-        return this.env.date;
-      }
-      /**
-      ******************************************************************************************************
-      ******************************************************************************************************
-      ***	Browser Section
-      ******************************************************************************************************
-      ******************************************************************************************************
-      **/
-
-      /**
-      *	Collecting information specific for browsers
-      *	@return {notError}		chainable
-      */
-
-    }, {
-      key: "fill",
-      value: function fill() {
-        this.env = {
-          browser: true,
-          node: false,
-          document: {
-            title: document.title
-          },
-          location: {
-            hash: window.location.hash,
-            port: window.location.port,
-            protocol: window.location.protocol,
-            search: window.location.search,
-            host: window.location.host,
-            url: window.location.url,
-            href: window.location.href,
-            hostname: window.location.hostname,
-            pathname: window.location.pathname
-          },
-          navigator: {
-            appName: navigator.appName,
-            appCodeName: navigator.appCodeName,
-            appVersion: navigator.appVersion,
-            userAgent: navigator.userAgent,
-            platform: navigator.platform,
-            language: navigator.language,
-            product: navigator.product,
-            onLine: navigator.onLine,
-            cookieEnabled: navigator.cookieEnabled
-          },
-          window: {
-            height: window.innerHeight,
-            width: window.innerWidth
-          }
-        };
-        return this;
-      }
-    }]);
-
-    return notError;
-  }( /*#__PURE__*/_wrapNativeSuper(Error));
-
-  var notValidationError = /*#__PURE__*/function (_notError) {
-    _inherits(notValidationError, _notError);
-
-    var _super = _createSuper(notValidationError);
-
-    function notValidationError(message) {
-      var _this;
-
-      var fields = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-      var err = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
-      var params = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
-
-      _classCallCheck(this, notValidationError);
-
-      _this = _super.call(this, message, {
-        fields: fields,
-        params: params
-      }, err);
-      return _possibleConstructorReturn(_this, _assertThisInitialized(_this));
-    }
-    /**
-    * Sets hash of fields errors messages for usage in forms
-    *	@return {Object}	hash of field->errors [key:string]: Array<string>
-    **/
-
-
-    _createClass(notValidationError, [{
-      key: "setFieldsErrors",
-      value: function setFieldsErrors(messages) {
-        this.options.fields = messages;
-      }
-      /**
-      * Returns hash of errors
-      *	@return {Object}	hash of field->errors [key:string]: Array<string>
-      **/
-
-    }, {
-      key: "getFieldsErrors",
-      value: function getFieldsErrors() {
-        return this.options.fields;
-      }
-    }]);
-
-    return notValidationError;
-  }(notError);
-
-  var notRequestError = /*#__PURE__*/function (_notError) {
-    _inherits(notRequestError, _notError);
-
-    var _super = _createSuper(notRequestError);
-
-    function notRequestError(message) {
-      var _this;
-
-      var _ref = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {
-        code: 500,
-        errors: {},
-        redirect: false,
-        params: {}
-      },
-          code = _ref.code,
-          errors = _ref.errors,
-          redirect = _ref.redirect,
-          params = _ref.params;
-
-      var error = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
-
-      _classCallCheck(this, notRequestError);
-
-      _this = _super.call(this, message, {
-        code: code,
-        errors: errors,
-        redirect: redirect,
-        params: params
-      }, error);
-      return _possibleConstructorReturn(_this, _assertThisInitialized(_this));
-    }
-
-    _createClass(notRequestError, [{
-      key: "setRedirect",
-      value: function setRedirect(url) {
-        this.options.redirect = url;
-      }
-    }, {
-      key: "getRedirect",
-      value: function getRedirect() {
-        return this.options.redirect;
-      }
-    }, {
-      key: "setCode",
-      value: function setCode(code) {
-        this.options.code = code;
-      }
-    }, {
-      key: "getCode",
-      value: function getCode() {
-        return this.options.code;
-      }
-    }, {
-      key: "setErrors",
-      value: function setErrors(list) {
-        this.options.errors = list;
-      }
-    }, {
-      key: "getErrors",
-      value: function getErrors() {
-        return this.options.errors;
-      }
-    }, {
-      key: "getResult",
-      value: function getResult() {
-        return {
-          message: this.message,
-          code: this.getCode(),
-          errors: this.getErrors(),
-          redirect: this.getRedirect()
-        };
-      }
-    }]);
-
-    return notRequestError;
-  }(notError);
-
-  /**
-  *  Template of reporter.js
-  *  For building for specific environment.
-  *  Node.js or Browser
-  *  @param {string}  env  node|browser in wich env it will be running
-  *  @param {string}  url  URL of report collector
-  *  @param {string}  key  key to indetificate reporter
-  */
-  var PARASITES = ['report@', 'notError@'];
-  var LINES_TO_CAPTURE = 6;
-  var STACK_PROPS = ['file', 'path', 'type', 'line', 'column', 'function'];
-  var FILE_LINE_PARSERS = [{
-    test: function test(line) {
-      var tester = /(.*)@(.+):(\d+):(\d+)/gi;
-
-      var matches = _toConsumableArray(line.matchAll(tester));
-
-      if (matches.length) {
-        var res = matches[0];
-
-        if (res && res.length > 2) {
-          return res;
-        }
-      }
-
-      return false;
-    },
-    parse: function parse(res) {
-      if (res) {
-        //separation of different types of data
-        var functionFullPath = res[1].split('.');
-        var file = res[2]; //extraction of exact values
-
-        var pathParts = file.split('/');
-        var fileName = pathParts[pathParts.length - 1];
-        pathParts.pop();
-        var filePath = pathParts.join('/');
-        var lineNumber = parseInt(res[3]);
-        var columnNumber = parseInt(res[4]);
-        var functionName = functionFullPath[functionFullPath.length - 1];
-
-        if (functionName.replaceAll) {
-          functionName = functionName.replaceAll('/', '').replaceAll('\\', '').replaceAll('>', '').replaceAll('<', '');
-        }
-
-        var fileDir;
-
-        if (pathParts && pathParts.length) {
-          fileDir = pathParts.pop();
-        }
-
-        return {
-          file: fileName,
-          path: filePath,
-          line: lineNumber,
-          column: columnNumber,
-          function: functionName,
-          type: fileDir
-        };
-      } else {
-        return false;
-      }
-    }
-  }, {
-    test: function test(line) {
-      var tester = /\sat\s(.+)\s\((.+)\)/gi;
-
-      var matches = _toConsumableArray(line.matchAll(tester));
-
-      if (matches.length) {
-        var res = matches[0];
-
-        if (res && res.length > 2) {
-          return res;
-        }
-      }
-
-      return false;
-    },
-    parse: function parse(res) {
-      if (res) {
-        //separation of different types of data
-        var functionFullPath = res[1].split('.');
-        var file = res[2].split(':'); //extraction of exact values
-
-        var pathParts = file[0].split('/');
-        var fileName = pathParts[pathParts.length - 1];
-        pathParts.pop();
-        var filePath = pathParts.join('/');
-        var lineNumber = parseInt(file[1]);
-        var columnNumber = parseInt(file[2]);
-        var functionName = functionFullPath[functionFullPath.length - 1];
-
-        if (functionName.replaceAll) {
-          functionName = functionName.replaceAll('/', '').replaceAll('\\', '').replaceAll('>', '').replaceAll('<', '');
-        }
-
-        var fileDir;
-
-        if (pathParts && pathParts.length) {
-          fileDir = pathParts.pop();
-        }
-
-        return {
-          file: fileName,
-          path: filePath,
-          line: lineNumber,
-          column: columnNumber,
-          function: functionName,
-          type: fileDir
-        };
-      } else {
-        return false;
-      }
-    }
-  }];
-  var LOG = window.console;
-  var NOT_NODE_ERROR_URL_BROWSER$1 = 'https://appmon.ru/api/key/collect';
-  var DEFAULT_OPTIONS = {
-    envFirst: false,
-    origin: {},
-    url: undefined,
-    key: undefined,
-    registerAll: true
-  };
-  /**
-  * Error reporting with features, saving browser info, uri and so on.
-  * @module not-error/error
-  */
-
-  var notErrorReporter = /*#__PURE__*/function () {
-    function notErrorReporter() {
-      var opts = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : DEFAULT_OPTIONS;
-
-      _classCallCheck(this, notErrorReporter);
-
-      var envFirst = opts.envFirst,
-          origin = opts.origin,
-          url = opts.url,
-          key = opts.key,
-          registerAll = opts.registerAll;
-      this.envFirst = envFirst;
-      this.processWatching = false;
-      this.setOrigin(origin);
-      this.setKey(key);
-      this.setURL(url);
-      this.setRegisterAll(registerAll);
-      window.addEventListener('error', this.registerError.bind(this));
-      return this;
-    }
-
-    _createClass(notErrorReporter, [{
-      key: "setOrigin",
-      value: function setOrigin(origin) {
-        this.origin = origin;
-        return this;
-      }
-    }, {
-      key: "setKey",
-      value: function setKey(key) {
-        this.key = key;
-        return this;
-      }
-    }, {
-      key: "setURL",
-      value: function setURL(url) {
-        this.url = url;
-        return this;
-      }
-    }, {
-      key: "setRegisterAll",
-      value: function setRegisterAll() {
-        var registerAll = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
-        this.registerAll = registerAll;
-        return this;
-      }
-    }, {
-      key: "errorIsReportable",
-      value: function errorIsReportable(error) {
-        return error instanceof notError;
-      }
-    }, {
-      key: "report",
-      value: function () {
-        var _report2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(error, notSecure) {
-          var local, data;
-          return regeneratorRuntime.wrap(function _callee$(_context) {
-            while (1) {
-              switch (_context.prev = _context.next) {
-                case 0:
-                  local = false;
-
-                  if (!this.errorIsReportable(error)) {
-                    error = new notError(error.message, {}, error);
-                    local = true;
-                  }
-
-                  _context.next = 4;
-                  return this.packError(error, local);
-
-                case 4:
-                  data = _context.sent;
-                  _context.next = 7;
-                  return this._report(data, this.getReportURL(), notSecure, 'error');
-
-                case 7:
-                  return _context.abrupt("return", _context.sent);
-
-                case 8:
-                case "end":
-                  return _context.stop();
-              }
-            }
-          }, _callee, this);
-        }));
-
-        function report(_x, _x2) {
-          return _report2.apply(this, arguments);
-        }
-
-        return report;
-      }()
-    }, {
-      key: "reportError",
-      value: function reportError(name) {
-        var opts = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-        var parent = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
-        var notSecure = arguments.length > 3 ? arguments[3] : undefined;
-        return this.report(new notError(name, opts, parent), notSecure);
-      }
-    }, {
-      key: "isLineParasite",
-      value: function isLineParasite(line) {
-        return PARASITES.some(function (str) {
-          return line.includes(str);
-        });
-      }
-    }, {
-      key: "trunkStack",
-      value: function trunkStack(stack) {
-        var lines = stack.split("\n");
-
-        while (lines.length && this.isLineParasite(lines[0])) {
-          lines.shift();
-        }
-
-        return lines;
-      }
-    }, {
-      key: "__stackFirstLineParser",
-      value: function __stackFirstLineParser(line) {
-        var result;
-        var parser = FILE_LINE_PARSERS.find(function (itm) {
-          return result = itm.test(line);
-        });
-
-        if (parser) {
-          return parser.parse(result);
-        }
-
-        return false;
-      }
-    }, {
-      key: "__stackFirstLineSearcher",
-      value: function __stackFirstLineSearcher(stack) {
-        for (var i = 0; stack.length > i; i++) {
-          var line = stack[i];
-
-          if (!line) {
-            continue;
-          }
-
-          var res = this.__stackFirstLineParser(line);
-
-          if (res) {
-            return res;
-          } else {
-            continue;
-          }
-        }
-
-        return false;
-      }
-    }, {
-      key: "parseStack",
-      value: function parseStack(rawStack) {
-        try {
-          var stack = this.trunkStack(rawStack);
-
-          var res = this.__stackFirstLineSearcher(stack);
-
-          if (!res) {
-            return {
-              stack: stack
-            };
-          }
-
-          var fileinfo = this.__stackFirstLineSearcher(stack);
-
-          if (!fileinfo) {
-            return {
-              stack: stack
-            };
-          }
-
-          return _objectSpread2({
-            stack: stack
-          }, fileinfo);
-        } catch (e) {
-          LOG.error(e);
-          return false;
-        }
-      }
-    }, {
-      key: "extractDataFromError",
-      value: function extractDataFromError(err, local) {
-        var res = err.getDetails();
-
-        if (res.stack) {
-          var stackInfo = this.parseStack(res.stack);
-
-          if (stackInfo && stackInfo.stack) {
-            if (local) {
-              res.stack = stackInfo.stack.join("\n");
-              STACK_PROPS.forEach(function (j) {
-                if (stackInfo[j]) {
-                  res[j] = stackInfo[j];
-                }
-              });
-            } else {
-              STACK_PROPS.forEach(function (j) {
-                if (!res[j]) {
-                  res[j] = stackInfo[j];
-                }
-              });
-            }
-          }
-        }
-
-        return res;
-      }
-    }, {
-      key: "packError",
-      value: function () {
-        var _packError = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(error) {
-          var local,
-              result,
-              _args2 = arguments;
-          return regeneratorRuntime.wrap(function _callee2$(_context2) {
-            while (1) {
-              switch (_context2.prev = _context2.next) {
-                case 0:
-                  local = _args2.length > 1 && _args2[1] !== undefined ? _args2[1] : false;
-                  result = {};
-                  result.details = this.extractDataFromError(error, local);
-                  _context2.next = 5;
-                  return this.tryToGetSourceBlock(result);
-
-                case 5:
-                  result.options = error.options;
-                  result.env = error.env;
-                  result.origin = this.origin ? this.origin : {};
-                  return _context2.abrupt("return", result);
-
-                case 9:
-                case "end":
-                  return _context2.stop();
-              }
-            }
-          }, _callee2, this);
-        }));
-
-        function packError(_x3) {
-          return _packError.apply(this, arguments);
-        }
-
-        return packError;
-      }()
-    }, {
-      key: "tryToGetSourceBlock",
-      value: function () {
-        var _tryToGetSourceBlock = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3(result) {
-          var text, lines;
-          return regeneratorRuntime.wrap(function _callee3$(_context3) {
-            while (1) {
-              switch (_context3.prev = _context3.next) {
-                case 0:
-                  if (!(result.details.fileName && !isNaN(result.details.lineNumber))) {
-                    _context3.next = 11;
-                    break;
-                  }
-
-                  _context3.prev = 1;
-                  _context3.next = 4;
-                  return this.loadSources(result.details.fileName);
-
-                case 4:
-                  text = _context3.sent;
-
-                  if (text) {
-                    lines = this.extractLinesFromFile(text, parseInt(result.details.lineNumber));
-                    result.lines = lines;
-                  }
-
-                  _context3.next = 11;
-                  break;
-
-                case 8:
-                  _context3.prev = 8;
-                  _context3.t0 = _context3["catch"](1);
-                  return _context3.abrupt("return", false);
-
-                case 11:
-                case "end":
-                  return _context3.stop();
-              }
-            }
-          }, _callee3, this, [[1, 8]]);
-        }));
-
-        function tryToGetSourceBlock(_x4) {
-          return _tryToGetSourceBlock.apply(this, arguments);
-        }
-
-        return tryToGetSourceBlock;
-      }()
-    }, {
-      key: "extractLinesFromFile",
-      value: function extractLinesFromFile(text, targetLine) {
-        var lines = text.split("\n");
-        targetLine = parseInt(targetLine) - 1;
-        var fromLine = targetLine - LINES_TO_CAPTURE;
-        var toLine = targetLine + LINES_TO_CAPTURE;
-
-        if (fromLine < 0) {
-          fromLine = 0;
-        }
-
-        if (toLine > lines.length - 1) {
-          toLine = lines.length - 1;
-        }
-
-        var result = [];
-
-        for (var t = fromLine; t < toLine; t++) {
-          result.push({
-            l: t + 1,
-            txt: lines[t],
-            color: {
-              danger: targetLine === t
-            }
-          });
-        }
-
-        return result;
-      }
-      /**
-      ******************************************************************************************************
-      ******************************************************************************************************
-      ***	Browser Section
-      ******************************************************************************************************
-      ******************************************************************************************************
-      **/
-
-    }, {
-      key: "getReportURL",
-      value: function getReportURL() {
-        if (typeof this.url !== 'undefined') {
-          return this.url;
-        } else if (window.NOT_NODE_ERROR_URL_BROWSER && window.NOT_NODE_ERROR_URL_BROWSER.length > 0) {
-          return window.NOT_NODE_ERROR_URL_BROWSER;
-        } else if (NOT_NODE_ERROR_URL_BROWSER$1.length > 0) {
-          return NOT_NODE_ERROR_URL_BROWSER$1;
-        } else {
-          return '/api/error';
-        }
-      }
-    }, {
-      key: "getReportKey",
-      value: function getReportKey() {
-        if (typeof this.key !== 'undefined') {
-          return this.key;
-        } else if (window.NOT_NODE_ERROR_KEY && window.NOT_NODE_ERROR_KEY.length > 0) {
-          return window.NOT_NODE_ERROR_KEY;
-        } else {
-          return '';
-        }
-      }
-    }, {
-      key: "_report",
-      value: function _report(data, url) {
-        var report = {
-          report: data,
-          type: 'error',
-          key: this.getReportKey()
-        };
-        return fetch(url, {
-          method: 'PUT',
-          cache: 'no-cache',
-          headers: {
-            'Content-Type': 'application/json; charset=utf-8'
-          },
-          redirect: 'follow',
-          referrer: 'no-referrer',
-          body: JSON.stringify(report)
-        });
-      }
-    }, {
-      key: "loadSources",
-      value: function () {
-        var _loadSources = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4(filePath) {
-          var res;
-          return regeneratorRuntime.wrap(function _callee4$(_context4) {
-            while (1) {
-              switch (_context4.prev = _context4.next) {
-                case 0:
-                  _context4.next = 2;
-                  return fetch(filePath);
-
-                case 2:
-                  res = _context4.sent;
-
-                  if (!(parseInt(res.status) === 200)) {
-                    _context4.next = 9;
-                    break;
-                  }
-
-                  _context4.next = 6;
-                  return res.text();
-
-                case 6:
-                  return _context4.abrupt("return", _context4.sent);
-
-                case 9:
-                  return _context4.abrupt("return", false);
-
-                case 10:
-                case "end":
-                  return _context4.stop();
-              }
-            }
-          }, _callee4);
-        }));
-
-        function loadSources(_x5) {
-          return _loadSources.apply(this, arguments);
-        }
-
-        return loadSources;
-      }()
-    }, {
-      key: "registerError",
-      value: function registerError(ev) {
-        if (this.registerAll) {
-          this.report(ev.error);
-        }
-      }
-    }]);
-
-    return notErrorReporter;
-  }();
-
-  _defineProperty(notErrorReporter, "notError", notError);
-
-  _defineProperty(notErrorReporter, "notValidationError", notValidationError);
-
-  _defineProperty(notErrorReporter, "notRequestError", notRequestError);
-
-  /**
-  *	Template of error.js
-  *	For building for specific environment.
-  *	Node.js or Browser
-  *	@param {string}	env	node|browser in wich env it will be running
-  *	@param {string}	url	URL of report collector
-  *	@param {string}	key	key to indetificate reporter
-  **/
-  var NOT_NODE_ERROR_URL_NODE_DEFAULT = 'https://appmon.ru/api/key/collect';
-  var NOT_NODE_ERROR_URL_BROWSER = 'https://appmon.ru/api/key/collect';
-  /**
-  * Error reporting with features, saving browser info, uri and so on.
-  * @module not-error/error
-  */
-
-  var notErrorStandalone = /*#__PURE__*/function (_Error) {
-    _inherits(notErrorStandalone, _Error);
-
-    var _super = _createSuper(notErrorStandalone);
-
-    function notErrorStandalone(message) {
-      var _this;
-
-      var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
-      _classCallCheck(this, notErrorStandalone);
-
-      _this = _super.call(this, message);
-      _this.options = options;
-
-      _this.fill();
-
-      _this.getTime();
-
-      return _possibleConstructorReturn(_this, _assertThisInitialized(_this));
-    }
-    /**
-    *	Adopting native error object
-    *	@param {Error}	error 	Error object
-    *	@return {notError}		chainable
-    */
-
-
-    _createClass(notErrorStandalone, [{
-      key: "adopt",
-      value: function adopt(error) {
-        this.parent = error;
-        return this;
-      }
-      /**
-      *	Updating this.env.date property
-      *	@return  {object}	{timestamp, offset}
-      */
-
-    }, {
-      key: "getTime",
-      value: function getTime() {
-        var date = new Date();
-        this.env.date = {
-          timestamp: date.getTime(),
-          offset: date.getTimezoneOffset()
-        };
-        return this.env.date;
-      }
-    }, {
-      key: "report",
-      value: function report() {
-        //pack error
-        var data = this.packError(); //send report to collector
-
-        return this._report(data, this.getReportURL());
-      }
-    }, {
-      key: "packError",
-      value: function packError() {
-        var result = {};
-
-        if (this.parent) {
-          result.parent = {
-            columnNumber: this.parent.columnNumber,
-            fileName: this.parent.fileName,
-            lineNumber: this.parent.lineNumber,
-            message: this.parent.message,
-            name: this.parent.name,
-            stack: this.parent.stack
-          };
-        }
-
-        result.details = {
-          columnNumber: this.columnNumber,
-          fileName: this.fileName,
-          lineNumber: this.lineNumber,
-          name: this.name,
-          message: this.message,
-          stack: this.stack
-        };
-        result.options = this.options;
-        result.env = this.env;
-        return result;
-      }
-      /**
-      ******************************************************************************************************
-      ******************************************************************************************************
-      ***	Browser Section
-      ******************************************************************************************************
-      ******************************************************************************************************
-      **/
-
-      /**
-      *	Collecting information specific for browsers
-      *	@return {notError}		chainable
-      */
-
-    }, {
-      key: "fill",
-      value: function fill() {
-        this.env = {
-          browser: true,
-          node: false,
-          location: {
-            hash: window.location.hash,
-            port: window.location.port,
-            protocol: window.location.protocol,
-            search: window.location.search,
-            host: window.location.host,
-            url: window.location.url,
-            href: window.location.href,
-            hostname: window.location.hostname,
-            pathname: window.location.pathname
-          }
-        };
-        return this;
-      }
-    }, {
-      key: "getReportURL",
-      value: function getReportURL() {
-        if (window.NOT_NODE_ERROR_URL_BROWSER && window.NOT_NODE_ERROR_URL_BROWSER.length > 0) {
-          return window.NOT_NODE_ERROR_URL_BROWSER;
-        } else if (NOT_NODE_ERROR_URL_BROWSER.length > 0) {
-          return NOT_NODE_ERROR_URL_BROWSER;
-        } else {
-          return NOT_NODE_ERROR_URL_NODE_DEFAULT;
-        }
-      }
-    }, {
-      key: "getReportKey",
-      value: function getReportKey() {
-        if (window.NOT_NODE_ERROR_KEY && window.NOT_NODE_ERROR_KEY.length > 0) {
-          return window.NOT_NODE_ERROR_KEY;
-        } else {
-          return '';
-        }
-      }
-    }, {
-      key: "_report",
-      value: function _report(data, url) {
-        var report = {
-          key: this.getReportKey(),
-          report: data,
-          type: 'error'
-        };
-        return fetch(url, {
-          method: 'PUT',
-          cache: 'no-cache',
-          headers: {
-            'Content-Type': 'application/json; charset=utf-8'
-          },
-          redirect: 'follow',
-          referrer: 'no-referrer',
-          body: JSON.stringify(report)
-        });
-      }
-    }]);
-
-    return notErrorStandalone;
-  }( /*#__PURE__*/_wrapNativeSuper(Error));
-
-  var service = new notErrorStandalone();
-
-  exports.notError = notError;
-  exports.notErrorStandalone = service;
-  exports.notReporter = notErrorReporter;
-  exports.notRequestError = notRequestError;
-  exports.notValidationError = notValidationError;
-
-  Object.defineProperty(exports, '__esModule', { value: true });
-
-  return exports;
+	'use strict';
+
+	/**
+	*	Template of error.js
+	*	For building for specific environment.
+	*	Node.js or Browser
+	*	@param {string}	env	node|browser in wich env it will be running
+	*	@param {string}	url	URL of report collector
+	*	@param {string}	key	key to indetificate reporter
+	*/
+	/**
+	* Error reporting with features, saving browser info, uri and so on.
+	* @module not-error/error
+	*/
+	class notError extends Error {
+		constructor(message, options = {}, error = null){
+			super(message);
+			this.options = options;
+			this.adopt(error);
+			this.fill();
+			this.getTime();
+			return this;
+		}
+
+		/**
+		*	Adopting native error object
+		*	@param {Error}	error 	Error object
+		*	@return {notError}		chainable
+		*/
+		adopt(error){
+			if(error instanceof Error){
+				this.parent = error;
+			}
+			return this;
+		}
+
+		getStack(){
+			if(this.parent){
+				return this.parent.stack;
+			}else {
+				return this.stack;
+			}
+		}
+
+		getDetails(){
+			let src = this;
+			if(this.parent){
+				src = this.parent;
+			}
+			return {
+				columnNumber:    	src.columnNumber,
+				fileName:        	src.fileName,
+				lineNumber:      	src.lineNumber,
+				name:            	src.name,
+				message:        	src.message,
+				stack:          	src.stack
+			};
+		}
+
+		/**
+		*	Updating this.env.date property
+		*	@return  {object}	{timestamp, offset}
+		*/
+		getTime(){
+			let date = new Date();
+			this.env.date = {
+				timestamp : date.getTime(),
+				offset: date.getTimezoneOffset()
+			};
+			return this.env.date;
+		}
+
+
+		/**
+		******************************************************************************************************
+		******************************************************************************************************
+		***	Browser Section
+		******************************************************************************************************
+		******************************************************************************************************
+		**/
+
+		/**
+		*	Collecting information specific for browsers
+		*	@return {notError}		chainable
+		*/
+		fill(){
+			this.env = {
+				browser: true,
+				node: false,
+				document: {
+					title: document.title
+				},
+				location: {
+					hash: 			window.location.hash,
+					port:				window.location.port,
+					protocol:		window.location.protocol,
+					search:			window.location.search,
+					host:				window.location.host,
+					url:				window.location.url,
+					href:				window.location.href,
+					hostname: 	window.location.hostname,
+					pathname: 	window.location.pathname,
+				},
+				navigator:{
+					appName: 				navigator.appName,
+					appCodeName: 		navigator.appCodeName,
+					appVersion: 		navigator.appVersion,
+					userAgent: 			navigator.userAgent,
+					platform: 			navigator.platform,
+					language: 			navigator.language,
+					product: 				navigator.product,
+					onLine: 				navigator.onLine,
+					cookieEnabled:	navigator.cookieEnabled,
+				},
+				window:{
+					height: 				window.innerHeight,
+					width: 					window.innerWidth,
+				}
+			};
+			return this;
+		}
+
+
+	}
+
+	//reportable
+	class notValidationError extends notError{
+	  constructor(message, fields = {}, err = null, params = {}){
+	    super(message, {fields, params}, err);
+	    return this;
+	  }
+
+	  /**
+	  * Sets hash of fields errors messages for usage in forms
+	  *	@return {Object}	hash of field->errors [key:string]: Array<string>
+	  **/
+	  setFieldsErrors(messages){
+	    this.options.fields = messages;
+	  }
+
+	  /**
+	  * Returns hash of errors
+	  *	@return {Object}	hash of field->errors [key:string]: Array<string>
+	  **/
+	  getFieldsErrors(){
+	    return this.options.fields;
+	  }
+
+	}
+
+	//reportable
+	class notRequestError extends notError{
+	  constructor(
+	    message,
+	    {code, errors, redirect, params} = {code:500, errors:{}, redirect: false, params:{}},
+	    error = null
+	    ){
+	    super(
+	      message,
+	      {
+	        code,
+	        errors,
+	        redirect,
+	        params
+	      },
+	      error
+	    );
+	    return this;
+	  }
+
+	  setRedirect(url){
+	    this.options.redirect = url;
+	  }
+
+	  getRedirect(){
+	    return this.options.redirect;
+	  }
+
+	  setCode(code){
+	    this.options.code = code;
+	  }
+
+	  getCode(){
+	    return this.options.code;
+	  }
+
+	  setErrors(list){
+	    this.options.errors = list;
+	  }
+
+	  getErrors(){
+	    return this.options.errors;
+	  }
+
+	  getResult(){
+	    return {
+	      message:  this.message,
+	      code:     this.getCode(),
+	      errors:   this.getErrors(),
+	      redirect: this.getRedirect(),
+	    };
+	  }
+
+	}
+
+	/**
+	*  Template of reporter.js
+	*  For building for specific environment.
+	*  Node.js or Browser
+	*  @param {string}  env  node|browser in wich env it will be running
+	*  @param {string}  url  URL of report collector
+	*  @param {string}  key  key to indetificate reporter
+	*/
+
+	const PARASITES = ['report@', 'notError@'];
+	const LINES_TO_CAPTURE = 6;
+	const STACK_PROPS = [
+		'file',
+		'path',
+		'type',
+		'line',
+		'column',
+		'function',
+	];
+
+	const FILE_LINE_PARSERS = [
+		{
+			test: (line)=>{
+				const tester = /(.*)@(.+):(\d+):(\d+)/gi;
+				let matches = [...line.matchAll(tester)];
+				if(matches.length){
+					let res = matches[0];
+					if(res && res.length > 2 ){
+						return res;
+					}
+				}
+				return false;
+			},
+			parse: (res)=>{
+				if(res){
+					//separation of different types of data
+					let functionFullPath = res[1].split('.');
+					let file = res[2];
+					//extraction of exact values
+					let pathParts = file.split('/');
+					let fileName = pathParts[pathParts.length - 1];
+					pathParts.pop();
+					let filePath = pathParts.join('/');
+					let lineNumber = parseInt(res[3]);
+					let columnNumber = parseInt(res[4]);
+					let functionName = functionFullPath[functionFullPath.length - 1];
+					if (functionName.replaceAll){
+						functionName = functionName.replaceAll('/' , '').replaceAll('\\' , '').replaceAll('>', '').replaceAll('<', '');
+					}
+					let fileDir;
+					if(pathParts && pathParts.length){
+						fileDir = pathParts.pop();
+					}
+					return {
+						file: fileName,
+						path: filePath,
+						line: lineNumber,
+						column: columnNumber,
+						function: functionName,
+						type: fileDir,
+					};
+				}else {
+					return false;
+				}
+			}
+		},
+		{
+			test: (line)=>{
+				const tester = /\sat\s(.+)\s\((.+)\)/gi;
+				let matches = [...line.matchAll(tester)];
+				if(matches.length){
+					let res = matches[0];
+					if(res && res.length > 2 ){
+						return res;
+					}
+				}
+				return false;
+			},
+			parse: (res)=>{
+				if(res){
+					//separation of different types of data
+					let functionFullPath = res[1].split('.');
+					let file = res[2].split(':');
+					//extraction of exact values
+					let pathParts = file[0].split('/');
+					let fileName = pathParts[pathParts.length - 1];
+					pathParts.pop();
+					let filePath = pathParts.join('/');
+					let lineNumber = parseInt(file[1]);
+					let columnNumber = parseInt(file[2]);
+					let functionName = functionFullPath[functionFullPath.length - 1];
+					if (functionName.replaceAll){
+						functionName = functionName.replaceAll('/' , '').replaceAll('\\' , '').replaceAll('>', '').replaceAll('<', '');
+					}
+					let fileDir;
+					if(pathParts && pathParts.length){
+						fileDir = pathParts.pop();
+					}
+					return {
+						file: fileName,
+						path: filePath,
+						line: lineNumber,
+						column: columnNumber,
+						function: functionName,
+						type: fileDir,
+					};
+				}else {
+					return false;
+				}
+			}
+		},
+	];
+
+
+	const LOG = window.console;
+	const NOT_NODE_ERROR_URL_BROWSER$1 = 'https://appmon.ru/api/key/collect';
+
+
+	const DEFAULT_OPTIONS = {
+			envFirst: false,
+			origin: {},
+			url:undefined,
+			key:undefined,
+			registerAll: true
+		};
+
+	/**
+	* Error reporting with features, saving browser info, uri and so on.
+	* @module not-error/error
+	*/
+	class notErrorReporter{
+		static notError = notError;
+		static notValidationError = notValidationError;
+		static notRequestError = notRequestError;
+
+		constructor(opts = DEFAULT_OPTIONS){
+			let {envFirst, origin,	url, key,registerAll } = opts;
+			this.envFirst = envFirst;
+			this.processWatching = false;
+			this.setOrigin(origin);
+			this.setKey(key);
+			this.setURL(url);
+			this.setRegisterAll(registerAll);
+			
+			window.addEventListener('error', this.registerError.bind(this));
+			
+			return this;
+		}
+
+		setOrigin(origin){
+			this.origin = origin;
+			return this;
+		}
+
+		setKey(key){
+			this.key = key;
+			return this;
+		}
+
+		setURL(url){
+			this.url = url;
+			return this;
+		}
+
+		setRegisterAll(registerAll = true){
+			this.registerAll = registerAll;
+			return this;
+		}
+
+		errorIsReportable(error){
+			return error instanceof notError;
+		}
+
+		async report(error, notSecure){
+			let local = false;
+			if(!this.errorIsReportable(error)){
+				error = new notError(error.message, {}, error);
+				local = true;
+			}
+			let data = await this.packError(error, local);
+			return await this._report(data, this.getReportURL(), notSecure, 'error');
+		}
+
+		reportError(name, opts = {}, parent = null, notSecure){
+			return this.report(new notError(name, opts, parent), notSecure);
+		}
+
+		isLineParasite(line){
+			return PARASITES.some((str) => line.includes(str));
+		}
+
+		trunkStack(stack){
+			let lines = stack.split("\n");
+			while(lines.length && this.isLineParasite(lines[0])){
+				lines.shift();
+			}
+			return lines;
+		}
+
+		__stackFirstLineParser(line){
+			let result;
+			let parser = FILE_LINE_PARSERS.find((itm) =>{ return result = itm.test(line);});
+			if(parser){
+				return parser.parse(result);
+			}
+			return false;
+		}
+
+		__stackFirstLineSearcher(stack){
+			for(let i = 0; stack.length > i; i++){
+				let	line = stack[i];
+				if(!line){continue;}
+				let res = this.__stackFirstLineParser(line);
+				if(res){
+					return res;
+				}else {
+					continue;
+				}
+			}
+			return false;
+		}
+
+		parseStack(rawStack){
+			try{
+				let stack = this.trunkStack(rawStack);
+				let res = this.__stackFirstLineSearcher(stack);
+				if(!res){
+					return {stack};
+				}
+				let fileinfo = this.__stackFirstLineSearcher(stack);
+				if(!fileinfo){
+					return {stack};
+				}
+				return {
+					stack,
+					...fileinfo
+				};
+			}catch(e){
+				LOG.error(e);
+				return false;
+			}
+		}
+
+		extractDataFromError(err, local){
+			let res = err.getDetails();
+			if(res.stack){
+				let stackInfo = this.parseStack(res.stack);
+				if(stackInfo && stackInfo.stack){
+					if(local){
+						res.stack = stackInfo.stack.join("\n");
+						STACK_PROPS.forEach((j) => {
+							if(stackInfo[j]){ res[j] = stackInfo[j];}
+						});
+					}else {
+						STACK_PROPS.forEach((j) => {
+							if(!res[j]){res[j] = stackInfo[j];}
+						});
+					}
+				}
+			}
+			return res;
+		}
+
+		async packError(error, local = false){
+			let result = {};
+			result.details   = this.extractDataFromError(error, local);
+			await this.tryToGetSourceBlock(result);
+			result.options   = error.options;
+			result.env       = error.env;
+			result.origin   = this.origin?this.origin:{};
+			return result;
+		}
+
+		async tryToGetSourceBlock(result){
+			if(result.details.fileName && !isNaN(result.details.lineNumber)){
+				try{
+					let text = await this.loadSources(result.details.fileName);
+					if(text){
+						let lines = this.extractLinesFromFile(text, parseInt(result.details.lineNumber));
+						result.lines = lines;
+					}
+				}catch(e){
+					return false;
+				}
+			}
+		}
+
+		extractLinesFromFile(text, targetLine){
+			let lines = text.split("\n");
+			targetLine = parseInt(targetLine) - 1;
+			let fromLine = (targetLine - LINES_TO_CAPTURE);
+			let toLine = (targetLine + LINES_TO_CAPTURE);
+			if(fromLine < 0){
+				fromLine = 0;
+			}
+			if(toLine > lines.length - 1){
+				toLine = lines.length - 1;
+			}
+			let result = [];
+			for(let t = fromLine; t < toLine; t++){
+				result.push({l: t + 1, txt: lines[t], color: { danger: targetLine === t} });
+			}
+			return result;
+		}
+
+
+		/**
+		******************************************************************************************************
+		******************************************************************************************************
+		***	Browser Section
+		******************************************************************************************************
+		******************************************************************************************************
+		**/
+		getReportURL(){
+			if(typeof this.url !== 'undefined'){
+				return this.url;
+			}else	if(window.NOT_NODE_ERROR_URL_BROWSER && window.NOT_NODE_ERROR_URL_BROWSER.length>0){
+				return window.NOT_NODE_ERROR_URL_BROWSER;
+			}else if(NOT_NODE_ERROR_URL_BROWSER$1.length>0){
+				return NOT_NODE_ERROR_URL_BROWSER$1;
+			}else {
+				return '/api/error';
+			}
+		}
+
+		getReportKey(){
+			if(typeof this.key !== 'undefined'){
+				return this.key;
+			}else	if(window.NOT_NODE_ERROR_KEY && window.NOT_NODE_ERROR_KEY.length > 0){
+				return window.NOT_NODE_ERROR_KEY;
+			}else {
+				return '';
+			}
+		}
+
+		_report(data, url){
+			let report = {
+				report: data,
+				type: 'error',
+				key: this.getReportKey(),
+			};
+			return fetch(url, {
+				method: 			'PUT',
+				cache: 				'no-cache',
+				headers: 			{
+					'Content-Type': 'application/json; charset=utf-8'
+				},
+				redirect: 		'follow',
+				referrer: 		'no-referrer',
+				body: 				JSON.stringify(report),
+			});
+		}
+
+		async loadSources(filePath){
+			let res = await fetch(filePath);
+			if(parseInt(res.status) === 200){
+				return await res.text();
+			}else {
+				return false;
+			}
+		}
+
+		registerError(ev){
+			if(this.registerAll){
+				this.report(ev.error);
+			}
+		}
+
+
+	}
+
+	/**
+	*	Template of error.js
+	*	For building for specific environment.
+	*	Node.js or Browser
+	*	@param {string}	env	node|browser in wich env it will be running
+	*	@param {string}	url	URL of report collector
+	*	@param {string}	key	key to indetificate reporter
+	**/
+
+
+	const NOT_NODE_ERROR_URL_NODE_DEFAULT = 'https://appmon.ru/api/key/collect';
+	const NOT_NODE_ERROR_URL_BROWSER = 'https://appmon.ru/api/key/collect';
+
+
+	/**
+	* Error reporting with features, saving browser info, uri and so on.
+	* @module not-error/error
+	*/
+	class notErrorStandalone extends Error {
+		constructor(message, options = {}){
+			super(message);
+			this.options = options;
+			this.fill();
+			this.getTime();
+			return this;
+		}
+		/**
+		*	Adopting native error object
+		*	@param {Error}	error 	Error object
+		*	@return {notError}		chainable
+		*/
+		adopt(error){
+			this.parent = error;
+			return this;
+		}
+
+		/**
+		*	Updating this.env.date property
+		*	@return  {object}	{timestamp, offset}
+		*/
+		getTime(){
+			let date = new Date();
+			this.env.date = {
+				timestamp : date.getTime(),
+				offset: date.getTimezoneOffset()
+			};
+			return this.env.date;
+		}
+
+		report(){
+			//pack error
+			let data = this.packError();
+			//send report to collector
+			return this._report(data, this.getReportURL());
+		}
+
+		packError(){
+			let result = {};
+			if (this.parent){
+				result.parent = {
+					columnNumber:		this.parent.columnNumber,
+					fileName:				this.parent.fileName,
+					lineNumber:			this.parent.lineNumber,
+					message:				this.parent.message,
+					name:						this.parent.name,
+					stack:					this.parent.stack
+				};
+			}
+
+			result.details = {
+				columnNumber:		this.columnNumber,
+				fileName:				this.fileName,
+				lineNumber:			this.lineNumber,
+				name:						this.name,
+				message:				this.message,
+				stack:					this.stack
+			};
+
+			result.options 	= this.options;
+			result.env 			= this.env;
+			return result;
+		}
+
+		/**
+		******************************************************************************************************
+		******************************************************************************************************
+		***	Browser Section
+		******************************************************************************************************
+		******************************************************************************************************
+		**/
+
+		/**
+		*	Collecting information specific for browsers
+		*	@return {notError}		chainable
+		*/
+		fill(){
+			this.env = {
+				browser: true,
+				node: false,
+				location: {
+					hash: 			window.location.hash,
+					port:				window.location.port,
+					protocol:		window.location.protocol,
+					search:			window.location.search,
+					host:				window.location.host,
+					url:				window.location.url,
+					href:				window.location.href,
+					hostname: 	window.location.hostname,
+					pathname: 	window.location.pathname,
+				}
+			};
+			return this;
+		}
+
+		getReportURL(){
+			if(window.NOT_NODE_ERROR_URL_BROWSER && window.NOT_NODE_ERROR_URL_BROWSER.length>0){
+				return window.NOT_NODE_ERROR_URL_BROWSER;
+			}else if(NOT_NODE_ERROR_URL_BROWSER.length>0){
+				return NOT_NODE_ERROR_URL_BROWSER;
+			}else {
+				return NOT_NODE_ERROR_URL_NODE_DEFAULT;
+			}
+		}
+
+		getReportKey(){
+			if(window.NOT_NODE_ERROR_KEY && window.NOT_NODE_ERROR_KEY.length > 0){
+				return window.NOT_NODE_ERROR_KEY;
+			}else {
+				return '';
+			}
+		}
+
+		_report(data, url){
+			let report = {
+				key: this.getReportKey(),
+				report: data,
+				type: 'error'
+			};
+
+			return fetch(url, {
+				method: 			'PUT',
+				cache: 				'no-cache',
+				headers: 			{
+					'Content-Type': 'application/json; charset=utf-8'
+				},
+				redirect: 		'follow',
+				referrer: 		'no-referrer',
+				body: 				JSON.stringify(report),
+			});
+		}
+
+	}
+
+
+	const service = new notErrorStandalone();
+
+	exports.notError = notError;
+	exports.notErrorStandalone = service;
+	exports.notReporter = notErrorReporter;
+	exports.notRequestError = notRequestError;
+	exports.notValidationError = notValidationError;
+
+	Object.defineProperty(exports, '__esModule', { value: true });
+
+	return exports;
 
 })({});
