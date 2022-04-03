@@ -1,6 +1,6 @@
 {
 		"name": "not-error",
-		"version": "0.2.3",
+		"version": "0.2.4",
 		"description": "not-* family error in not- environment",
 		"main": "index.js",
 		"types": "./build/types.d.ts",
