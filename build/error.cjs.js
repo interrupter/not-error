@@ -78,50 +78,47 @@ class notError extends Error {
   /**
   ******************************************************************************************************
   ******************************************************************************************************
-  ***	Browser Section
+  ***	Node.js Section
   ******************************************************************************************************
   ******************************************************************************************************
   **/
 
   /**
-  *	Collecting information specific for browsers
+  *	Filtering out key by `white` list
+  *	@param {object} object hash to be copied according filter `white` list
+  *	@param {array} filter array of sting, which represents keys we want to be
+  *						copied in resulting object from source
+  *	@return {object}		white listed hash
+  */
+
+
+  filterEnv(object, filter) {
+    let result = {};
+
+    for (let t of filter) {
+      if (Object.prototype.hasOwnProperty.call(object, t)) {
+        result[t] = object[t];
+      }
+    }
+
+    return result;
+  }
+  /**
+  *	Collecting information specific for Node.js V8
   *	@return {notError}		chainable
   */
 
 
   fill() {
+    /**
+    *	You want some fields from env but not all, cause there are passwords
+    *	from db, api keys and etc
+    */
     this.env = {
-      browser: true,
-      node: false,
-      document: {
-        title: document.title
-      },
-      location: {
-        hash: window.location.hash,
-        port: window.location.port,
-        protocol: window.location.protocol,
-        search: window.location.search,
-        host: window.location.host,
-        url: window.location.url,
-        href: window.location.href,
-        hostname: window.location.hostname,
-        pathname: window.location.pathname
-      },
-      navigator: {
-        appName: navigator.appName,
-        appCodeName: navigator.appCodeName,
-        appVersion: navigator.appVersion,
-        userAgent: navigator.userAgent,
-        platform: navigator.platform,
-        language: navigator.language,
-        product: navigator.product,
-        onLine: navigator.onLine,
-        cookieEnabled: navigator.cookieEnabled
-      },
-      window: {
-        height: window.innerHeight,
-        width: window.innerWidth
-      }
+      browser: false,
+      node: true,
+      versions: Object.assign({}, process.versions),
+      vars: this.filterEnv(process.env, this.options.whitelist || ['NODE_ENV'])
     };
     return this;
   }

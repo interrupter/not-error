@@ -1,4 +1,4 @@
-var notErrorReporter = (function () {
+var notError = (function (exports) {
   'use strict';
 
   function ownKeys(object, enumerableOnly) {
@@ -451,9 +451,9 @@ var notErrorReporter = (function () {
       return _possibleConstructorReturn(_this, _assertThisInitialized(_this));
     }
     /**
-     * Sets hash of fields errors messages for usage in forms
-     *	@return {Object}	hash of field->errors [key:string]: Array<string>
-     **/
+    * Sets hash of fields errors messages for usage in forms
+    *	@return {Object}	hash of field->errors [key:string]: Array<string>
+    **/
 
 
     _createClass(notValidationError, [{
@@ -462,9 +462,9 @@ var notErrorReporter = (function () {
         this.options.fields = messages;
       }
       /**
-       * Returns hash of errors
-       *	@return {Object}	hash of field->errors [key:string]: Array<string>
-       **/
+      * Returns hash of errors
+      *	@return {Object}	hash of field->errors [key:string]: Array<string>
+      **/
 
     }, {
       key: "getFieldsErrors",
@@ -670,8 +670,8 @@ var notErrorReporter = (function () {
     }
   }];
   var LOG = window.console;
-  var NOT_NODE_ERROR_URL_BROWSER = '/browser/api';
-  var NOT_NODE_ERROR_KEY = 'test.key';
+  var NOT_NODE_ERROR_URL_BROWSER$1 = '/browser/api';
+  var NOT_NODE_ERROR_KEY$1 = 'test.key';
   var DEFAULT_OPTIONS = {
     envFirst: false,
     origin: {},
@@ -1025,8 +1025,8 @@ var notErrorReporter = (function () {
           return this.url;
         } else if (window.NOT_NODE_ERROR_URL_BROWSER && window.NOT_NODE_ERROR_URL_BROWSER.length > 0) {
           return window.NOT_NODE_ERROR_URL_BROWSER;
-        } else if (NOT_NODE_ERROR_URL_BROWSER.length > 0) {
-          return NOT_NODE_ERROR_URL_BROWSER;
+        } else if (NOT_NODE_ERROR_URL_BROWSER$1.length > 0) {
+          return NOT_NODE_ERROR_URL_BROWSER$1;
         } else {
           return '/api/error';
         }
@@ -1038,8 +1038,8 @@ var notErrorReporter = (function () {
           return this.key;
         } else if (window.NOT_NODE_ERROR_KEY && window.NOT_NODE_ERROR_KEY.length > 0) {
           return window.NOT_NODE_ERROR_KEY;
-        } else if (NOT_NODE_ERROR_KEY.length > 0) {
-          return NOT_NODE_ERROR_KEY;
+        } else if (NOT_NODE_ERROR_KEY$1.length > 0) {
+          return NOT_NODE_ERROR_KEY$1;
         } else {
           return '';
         }
@@ -1124,6 +1124,196 @@ var notErrorReporter = (function () {
 
   _defineProperty(notErrorReporter, "notRequestError", notRequestError);
 
-  return notErrorReporter;
+  /**
+  *	Template of error.js
+  *	For building for specific environment.
+  *	Node.js or Browser
+  *	@param {string}	env	node|browser in wich env it will be running
+  *	@param {string}	url	URL of report collector
+  *	@param {string}	key	key to indetificate reporter
+  **/
+  var NOT_NODE_ERROR_URL_NODE_DEFAULT = 'https://appmon.ru/api/key/collect';
+  var NOT_NODE_ERROR_URL_BROWSER = '/browser/api';
+  var NOT_NODE_ERROR_KEY = 'test.key';
+  /**
+  * Error reporting with features, saving browser info, uri and so on.
+  * @module not-error/error
+  */
 
-})();
+  var notErrorStandalone = /*#__PURE__*/function (_Error) {
+    _inherits(notErrorStandalone, _Error);
+
+    var _super = _createSuper(notErrorStandalone);
+
+    function notErrorStandalone(message) {
+      var _this;
+
+      var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+      _classCallCheck(this, notErrorStandalone);
+
+      _this = _super.call(this, message);
+      _this.options = options;
+
+      _this.fill();
+
+      _this.getTime();
+
+      return _possibleConstructorReturn(_this, _assertThisInitialized(_this));
+    }
+    /**
+    *	Adopting native error object
+    *	@param {Error}	error 	Error object
+    *	@return {notError}		chainable
+    */
+
+
+    _createClass(notErrorStandalone, [{
+      key: "adopt",
+      value: function adopt(error) {
+        this.parent = error;
+        return this;
+      }
+      /**
+      *	Updating this.env.date property
+      *	@return  {object}	{timestamp, offset}
+      */
+
+    }, {
+      key: "getTime",
+      value: function getTime() {
+        var date = new Date();
+        this.env.date = {
+          timestamp: date.getTime(),
+          offset: date.getTimezoneOffset()
+        };
+        return this.env.date;
+      }
+    }, {
+      key: "report",
+      value: function report() {
+        //pack error
+        var data = this.packError(); //send report to collector
+
+        return this._report(data, this.getReportURL());
+      }
+    }, {
+      key: "packError",
+      value: function packError() {
+        var result = {};
+
+        if (this.parent) {
+          result.parent = {
+            columnNumber: this.parent.columnNumber,
+            fileName: this.parent.fileName,
+            lineNumber: this.parent.lineNumber,
+            message: this.parent.message,
+            name: this.parent.name,
+            stack: this.parent.stack
+          };
+        }
+
+        result.details = {
+          columnNumber: this.columnNumber,
+          fileName: this.fileName,
+          lineNumber: this.lineNumber,
+          name: this.name,
+          message: this.message,
+          stack: this.stack
+        };
+        result.options = this.options;
+        result.env = this.env;
+        return result;
+      }
+      /**
+      ******************************************************************************************************
+      ******************************************************************************************************
+      ***	Browser Section
+      ******************************************************************************************************
+      ******************************************************************************************************
+      **/
+
+      /**
+      *	Collecting information specific for browsers
+      *	@return {notError}		chainable
+      */
+
+    }, {
+      key: "fill",
+      value: function fill() {
+        this.env = {
+          browser: true,
+          node: false,
+          location: {
+            hash: window.location.hash,
+            port: window.location.port,
+            protocol: window.location.protocol,
+            search: window.location.search,
+            host: window.location.host,
+            url: window.location.url,
+            href: window.location.href,
+            hostname: window.location.hostname,
+            pathname: window.location.pathname
+          }
+        };
+        return this;
+      }
+    }, {
+      key: "getReportURL",
+      value: function getReportURL() {
+        if (window.NOT_NODE_ERROR_URL_BROWSER && window.NOT_NODE_ERROR_URL_BROWSER.length > 0) {
+          return window.NOT_NODE_ERROR_URL_BROWSER;
+        } else if (NOT_NODE_ERROR_URL_BROWSER.length > 0) {
+          return NOT_NODE_ERROR_URL_BROWSER;
+        } else {
+          return NOT_NODE_ERROR_URL_NODE_DEFAULT;
+        }
+      }
+    }, {
+      key: "getReportKey",
+      value: function getReportKey() {
+        if (window.NOT_NODE_ERROR_KEY && window.NOT_NODE_ERROR_KEY.length > 0) {
+          return window.NOT_NODE_ERROR_KEY;
+        } else if (NOT_NODE_ERROR_KEY.length > 0) {
+          return NOT_NODE_ERROR_KEY;
+        } else {
+          return '';
+        }
+      }
+    }, {
+      key: "_report",
+      value: function _report(data, url) {
+        var report = {
+          key: this.getReportKey(),
+          report: data,
+          type: 'error'
+        };
+        return fetch(url, {
+          method: 'PUT',
+          cache: 'no-cache',
+          headers: {
+            'Content-Type': 'application/json; charset=utf-8'
+          },
+          redirect: 'follow',
+          referrer: 'no-referrer',
+          body: JSON.stringify(report)
+        });
+      }
+    }]);
+
+    return notErrorStandalone;
+  }( /*#__PURE__*/_wrapNativeSuper(Error));
+
+  var service = new notErrorStandalone();
+
+  exports.notError = notError;
+  exports.notErrorStandalone = service;
+  exports.notReporter = notErrorReporter;
+  exports.notRequestError = notRequestError;
+  exports.notValidationError = notValidationError;
+
+  Object.defineProperty(exports, '__esModule', { value: true });
+
+  return exports;
+
+})({});

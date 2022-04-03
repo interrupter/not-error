@@ -5,11 +5,11 @@ import { terser } from "rollup-plugin-terser";
 import filesize from 'rollup-plugin-filesize';
 
 export default {
-	input: 'src/error.node.js',
+	input: 'src/index.browser.js',
 	output:{
 		name: 'notError',
-		format: 'cjs',
-		file: 'build/error.cjs.js',
+		format: 'iife',
+		file: 'build/bundle.js',
 		sourcemap: false,
 	},
 	plugins: [
@@ -19,7 +19,14 @@ export default {
 		}),
 		babel({
 			babelrc: false,
-			exclude: ['tmpl/**','build/**', 'node_modules/**', 'css/**', 'js/**', 'test/**', 'bower_components/**', 'assets/*', 'dist/**']
+			exclude: ['tmpl/**','build/**', 'node_modules/**', 'css/**', 'js/**', 'test/**', 'bower_components/**', 'assets/*', 'dist/**'],
+			plugins:[
+				'@babel/plugin-proposal-object-rest-spread'
+			],
+			presets:[
+        "@babel/preset-env",
+        "@babel/preset-react"
+    	]
 		}),
 		filesize()
 	]
