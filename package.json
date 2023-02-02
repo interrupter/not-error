@@ -1,8 +1,8 @@
 {
 	"name": "not-error",
-	"version": "0.2.6",
+	"version": "0.2.7",
 	"description": "not-* family error in not- environment",
-	"main": "index.js",
+	"main": "index.cjs",
 	"types": "./build/types.d.ts",
 	"type": "module",
 	"bin": {

@@ -1,5 +1,5 @@
 
-import notError from './error.browser.js';
+import notError from './error.browser.mjs';
 
 
 //reportable

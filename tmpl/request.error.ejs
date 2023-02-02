@@ -1,7 +1,7 @@
 <% if (env === 'node'){ %>
-const notError = require('./error.node.js');
+const notError = require('./error.node.cjs');
 <% }else{ %>
-import notError from './error.browser.js';
+import notError from './error.browser.mjs';
 <% } %>
 
 //reportable

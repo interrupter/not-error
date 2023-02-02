@@ -8,7 +8,7 @@ import filesize from "rollup-plugin-filesize";
 import sizes from "rollup-plugin-sizes";
 
 export default {
-    input: "src/index.browser.js",
+    input: "src/index.browser.mjs",
     output: {
         name: "notError",
         format: "iife",
@@ -33,16 +33,16 @@ export default {
         resolve(),
         commonjs(),
         babel({
-            runtimeHelpers: true,
+            babelHelpers: "runtime",
             presets: ["@babel/preset-env"],
             plugins: [
                 "@babel/plugin-proposal-class-properties",
-                /*[
+                [
                     "@babel/plugin-transform-runtime",
                     {
                         regenerator: true,
                     },
-                ],*/
+                ],
             ],
             exclude: [
                 "tmpl/**",

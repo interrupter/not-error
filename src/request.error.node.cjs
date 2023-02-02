@@ -1,5 +1,5 @@
 
-const notError = require('./error.node.js');
+const notError = require('./error.node.cjs');
 
 
 //reportable

@@ -282,9 +282,9 @@ var notValidationError = (function () {
     }
 
     /**
-    * Sets hash of fields errors messages for usage in forms
-    *	@return {Object}	hash of field->errors [key:string]: Array<string>
-    **/
+     * Sets hash of fields errors messages for usage in forms
+     *	@return {Object}	hash of field->errors [key:string]: Array<string>
+     **/
     _createClass(notValidationError, [{
       key: "setFieldsErrors",
       value: function setFieldsErrors(messages) {
@@ -292,9 +292,9 @@ var notValidationError = (function () {
       }
 
       /**
-      * Returns hash of errors
-      *	@return {Object}	hash of field->errors [key:string]: Array<string>
-      **/
+       * Returns hash of errors
+       *	@return {Object}	hash of field->errors [key:string]: Array<string>
+       **/
     }, {
       key: "getFieldsErrors",
       value: function getFieldsErrors() {

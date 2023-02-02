@@ -115,9 +115,9 @@ const FILE_LINE_PARSERS = [
 const LOG = window.console;
 const NOT_NODE_ERROR_URL_BROWSER = 'https://appmon.ru/api/key/collect';
 const NOT_NODE_ERROR_KEY = '';
-import notError from './error.browser.js';
-import notValidationError from './validation.error.browser.js';
-import notRequestError from './request.error.browser.js';
+import notError from './error.browser.mjs';
+import notValidationError from './validation.error.browser.mjs';
+import notRequestError from './request.error.browser.mjs';
 
 
 const DEFAULT_OPTIONS = {

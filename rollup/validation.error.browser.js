@@ -4,7 +4,7 @@ import eslint from "@rollup/plugin-eslint";
 import filesize from "rollup-plugin-filesize";
 
 export default {
-    input: "src/validation.error.browser.js",
+    input: "src/validation.error.browser.mjs",
     output: {
         name: "notValidationError",
         format: "iife",

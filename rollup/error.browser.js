@@ -4,7 +4,7 @@ import eslint from "@rollup/plugin-eslint";
 import filesize from "rollup-plugin-filesize";
 
 export default {
-    input: "src/error.browser.js",
+    input: "src/error.browser.mjs",
     output: {
         name: "notError",
         format: "iife",

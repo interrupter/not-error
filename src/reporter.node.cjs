@@ -127,9 +127,9 @@ const {readFile} = require('fs').promises;
 const https = require('https');
 const http = require('http');
 const LOG = require('not-log')(module, 'notReporter');
-const notError = require('./error.node.js');
-const notValidationError = require('./validation.error.node.js');
-const notRequestError = require('./request.error.node.js');
+const notError = require('./error.node.cjs');
+const notValidationError = require('./validation.error.node.cjs');
+const notRequestError = require('./request.error.node.cjs');
 
 
 const DEFAULT_OPTIONS = {

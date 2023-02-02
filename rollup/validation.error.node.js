@@ -4,7 +4,7 @@ import eslint from "@rollup/plugin-eslint";
 import filesize from "rollup-plugin-filesize";
 
 export default {
-    input: "src/validation.error.node.js",
+    input: "src/validation.error.node.cjs",
     output: {
         name: "notError",
         format: "cjs",
