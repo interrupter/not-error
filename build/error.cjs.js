@@ -8,7 +8,6 @@
 *	@param {string}	url	URL of report collector
 *	@param {string}	key	key to indetificate reporter
 */
-
 /**
 * Error reporting with features, saving browser info, uri and so on.
 * @module not-error/error
@@ -22,21 +21,18 @@ class notError extends Error {
     this.getTime();
     return this;
   }
+
   /**
   *	Adopting native error object
   *	@param {Error}	error 	Error object
   *	@return {notError}		chainable
   */
-
-
   adopt(error) {
     if (error instanceof Error) {
       this.parent = error;
     }
-
     return this;
   }
-
   getStack() {
     if (this.parent) {
       return this.parent.stack;
@@ -44,14 +40,11 @@ class notError extends Error {
       return this.stack;
     }
   }
-
   getDetails() {
     let src = this;
-
     if (this.parent) {
       src = this.parent;
     }
-
     return {
       columnNumber: src.columnNumber,
       fileName: src.fileName,
@@ -61,12 +54,11 @@ class notError extends Error {
       stack: src.stack
     };
   }
+
   /**
   *	Updating this.env.date property
   *	@return  {object}	{timestamp, offset}
   */
-
-
   getTime() {
     let date = new Date();
     this.env.date = {
@@ -75,6 +67,7 @@ class notError extends Error {
     };
     return this.env.date;
   }
+
   /**
   ******************************************************************************************************
   ******************************************************************************************************
@@ -90,25 +83,20 @@ class notError extends Error {
   *						copied in resulting object from source
   *	@return {object}		white listed hash
   */
-
-
   filterEnv(object, filter) {
     let result = {};
-
     for (let t of filter) {
       if (Object.prototype.hasOwnProperty.call(object, t)) {
         result[t] = object[t];
       }
     }
-
     return result;
   }
+
   /**
   *	Collecting information specific for Node.js V8
   *	@return {notError}		chainable
   */
-
-
   fill() {
     /**
     *	You want some fields from env but not all, cause there are passwords
@@ -122,7 +110,5 @@ class notError extends Error {
     };
     return this;
   }
-
 }
-
 module.exports = notError;

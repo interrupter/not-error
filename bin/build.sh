@@ -21,7 +21,7 @@ case $i in
 esac
 done
 
-NODE_ENV=$ENV ./bin/not-error.js --key $KEY --url-node $URL_NODE --url-browser $URL_BROWSER --out $OUT
+NODE_ENV=$ENV ./bin/not-error.cjs --key $KEY --url-node $URL_NODE --url-browser $URL_BROWSER --out $OUT
 NODE_ENV=$ENV ./node_modules/.bin/eslint ./src/**.js
 NODE_ENV=$ENV ./node_modules/.bin/rollup -c ./rollup/bundle.browser.js
 NODE_ENV=$ENV ./node_modules/.bin/terser --compress --mangle -- build/bundle.js > ./build/bundle.min.js

@@ -8,7 +8,6 @@
 *	@param {string}	url	URL of report collector
 *	@param {string}	key	key to indetificate reporter
 */
-
 /**
 * Error reporting with features, saving browser info, uri and so on.
 * @module not-error/error
@@ -22,21 +21,18 @@ class notError extends Error {
     this.getTime();
     return this;
   }
+
   /**
   *	Adopting native error object
   *	@param {Error}	error 	Error object
   *	@return {notError}		chainable
   */
-
-
   adopt(error) {
     if (error instanceof Error) {
       this.parent = error;
     }
-
     return this;
   }
-
   getStack() {
     if (this.parent) {
       return this.parent.stack;
@@ -44,14 +40,11 @@ class notError extends Error {
       return this.stack;
     }
   }
-
   getDetails() {
     let src = this;
-
     if (this.parent) {
       src = this.parent;
     }
-
     return {
       columnNumber: src.columnNumber,
       fileName: src.fileName,
@@ -61,12 +54,11 @@ class notError extends Error {
       stack: src.stack
     };
   }
+
   /**
   *	Updating this.env.date property
   *	@return  {object}	{timestamp, offset}
   */
-
-
   getTime() {
     let date = new Date();
     this.env.date = {
@@ -75,6 +67,7 @@ class notError extends Error {
     };
     return this.env.date;
   }
+
   /**
   ******************************************************************************************************
   ******************************************************************************************************
@@ -87,8 +80,6 @@ class notError extends Error {
   *	Collecting information specific for browsers
   *	@return {notError}		chainable
   */
-
-
   fill() {
     this.env = {
       browser: true,
@@ -125,9 +116,9 @@ class notError extends Error {
     };
     return this;
   }
-
 }
 
+//reportable
 class notValidationError extends notError {
   constructor(message, fields = {}, err = null, params = {}) {
     super(message, {
@@ -136,27 +127,25 @@ class notValidationError extends notError {
     }, err);
     return this;
   }
+
   /**
    * Sets hash of fields errors messages for usage in forms
    *	@return {Object}	hash of field->errors [key:string]: Array<string>
    **/
-
-
   setFieldsErrors(messages) {
     this.options.fields = messages;
   }
+
   /**
    * Returns hash of errors
    *	@return {Object}	hash of field->errors [key:string]: Array<string>
    **/
-
-
   getFieldsErrors() {
     return this.options.fields;
   }
-
 }
 
+//reportable
 class notRequestError extends notError {
   constructor(message, {
     code,
@@ -177,31 +166,24 @@ class notRequestError extends notError {
     }, error);
     return this;
   }
-
   setRedirect(url) {
     this.options.redirect = url;
   }
-
   getRedirect() {
     return this.options.redirect;
   }
-
   setCode(code) {
     this.options.code = code;
   }
-
   getCode() {
     return this.options.code;
   }
-
   setErrors(list) {
     this.options.errors = list;
   }
-
   getErrors() {
     return this.options.errors;
   }
-
   getResult() {
     return {
       message: this.message,
@@ -210,7 +192,6 @@ class notRequestError extends notError {
       redirect: this.getRedirect()
     };
   }
-
 }
 
 /**
@@ -221,6 +202,7 @@ class notRequestError extends notError {
 *  @param {string}  url  URL of report collector
 *  @param {string}  key  key to indetificate reporter
 */
+
 const PARASITES = ['report@', 'notError@'];
 const LINES_TO_CAPTURE = 6;
 const STACK_PROPS = ['file', 'path', 'type', 'line', 'column', 'function'];
@@ -228,23 +210,20 @@ const FILE_LINE_PARSERS = [{
   test: line => {
     const tester = /(.*)@(.+):(\d+):(\d+)/gi;
     let matches = [...line.matchAll(tester)];
-
     if (matches.length) {
       let res = matches[0];
-
       if (res && res.length > 2) {
         return res;
       }
     }
-
     return false;
   },
   parse: res => {
     if (res) {
       //separation of different types of data
       let functionFullPath = res[1].split('.');
-      let file = res[2]; //extraction of exact values
-
+      let file = res[2];
+      //extraction of exact values
       let pathParts = file.split('/');
       let fileName = pathParts[pathParts.length - 1];
       pathParts.pop();
@@ -252,17 +231,13 @@ const FILE_LINE_PARSERS = [{
       let lineNumber = parseInt(res[3]);
       let columnNumber = parseInt(res[4]);
       let functionName = functionFullPath[functionFullPath.length - 1];
-
       if (functionName.replaceAll) {
         functionName = functionName.replaceAll('/', '').replaceAll('\\', '').replaceAll('>', '').replaceAll('<', '');
       }
-
       let fileDir;
-
       if (pathParts && pathParts.length) {
         fileDir = pathParts.pop();
       }
-
       return {
         file: fileName,
         path: filePath,
@@ -279,23 +254,20 @@ const FILE_LINE_PARSERS = [{
   test: line => {
     const tester = /\sat\s(.+)\s\((.+)\)/gi;
     let matches = [...line.matchAll(tester)];
-
     if (matches.length) {
       let res = matches[0];
-
       if (res && res.length > 2) {
         return res;
       }
     }
-
     return false;
   },
   parse: res => {
     if (res) {
       //separation of different types of data
       let functionFullPath = res[1].split('.');
-      let file = res[2].split(':'); //extraction of exact values
-
+      let file = res[2].split(':');
+      //extraction of exact values
       let pathParts = file[0].split('/');
       let fileName = pathParts[pathParts.length - 1];
       pathParts.pop();
@@ -303,17 +275,13 @@ const FILE_LINE_PARSERS = [{
       let lineNumber = parseInt(file[1]);
       let columnNumber = parseInt(file[2]);
       let functionName = functionFullPath[functionFullPath.length - 1];
-
       if (functionName.replaceAll) {
         functionName = functionName.replaceAll('/', '').replaceAll('\\', '').replaceAll('>', '').replaceAll('<', '');
       }
-
       let fileDir;
-
       if (pathParts && pathParts.length) {
         fileDir = pathParts.pop();
       }
-
       return {
         file: fileName,
         path: filePath,
@@ -336,16 +304,15 @@ const DEFAULT_OPTIONS = {
   key: undefined,
   registerAll: true
 };
+
 /**
 * Error reporting with features, saving browser info, uri and so on.
 * @module not-error/error
 */
-
 class notErrorReporter {
   static notError = notError;
   static notValidationError = notValidationError;
   static notRequestError = notRequestError;
-
   constructor(opts = DEFAULT_OPTIONS) {
     let {
       envFirst,
@@ -363,114 +330,87 @@ class notErrorReporter {
     window.addEventListener('error', this.registerError.bind(this));
     return this;
   }
-
   setOrigin(origin) {
     this.origin = origin;
     return this;
   }
-
   setKey(key) {
     this.key = key;
     return this;
   }
-
   setURL(url) {
     this.url = url;
     return this;
   }
-
   setRegisterAll(registerAll = true) {
     this.registerAll = registerAll;
     return this;
   }
-
   errorIsReportable(error) {
     return error instanceof notError;
   }
-
   async report(error, notSecure) {
     let local = false;
-
     if (!this.errorIsReportable(error)) {
       error = new notError(error.message, {}, error);
       local = true;
     }
-
     let data = await this.packError(error, local);
     return await this._report(data, this.getReportURL(), notSecure, 'error');
   }
-
   reportError(name, opts = {}, parent = null, notSecure) {
     return this.report(new notError(name, opts, parent), notSecure);
   }
-
   isLineParasite(line) {
     return PARASITES.some(str => line.includes(str));
   }
-
   trunkStack(stack) {
     let lines = stack.split("\n");
-
     while (lines.length && this.isLineParasite(lines[0])) {
       lines.shift();
     }
-
     return lines;
   }
-
   __stackFirstLineParser(line) {
     let result;
     let parser = FILE_LINE_PARSERS.find(itm => {
       return result = itm.test(line);
     });
-
     if (parser) {
       return parser.parse(result);
     }
-
     return false;
   }
-
   __stackFirstLineSearcher(stack) {
     for (let i = 0; stack.length > i; i++) {
       let line = stack[i];
-
       if (!line) {
         continue;
       }
-
       let res = this.__stackFirstLineParser(line);
-
       if (res) {
         return res;
       } else {
         continue;
       }
     }
-
     return false;
   }
-
   parseStack(rawStack) {
     try {
       let stack = this.trunkStack(rawStack);
-
       let res = this.__stackFirstLineSearcher(stack);
-
       if (!res) {
         return {
           stack
         };
       }
-
       let fileinfo = this.__stackFirstLineSearcher(stack);
-
       if (!fileinfo) {
         return {
           stack
         };
       }
-
       return {
         stack,
         ...fileinfo
@@ -480,13 +420,10 @@ class notErrorReporter {
       return false;
     }
   }
-
   extractDataFromError(err, local) {
     let res = err.getDetails();
-
     if (res.stack) {
       let stackInfo = this.parseStack(res.stack);
-
       if (stackInfo && stackInfo.stack) {
         if (local) {
           res.stack = stackInfo.stack.join("\n");
@@ -504,10 +441,8 @@ class notErrorReporter {
         }
       }
     }
-
     return res;
   }
-
   async packError(error, local = false) {
     let result = {};
     result.details = this.extractDataFromError(error, local);
@@ -517,12 +452,10 @@ class notErrorReporter {
     result.origin = this.origin ? this.origin : {};
     return result;
   }
-
   async tryToGetSourceBlock(result) {
     if (result.details.fileName && !isNaN(result.details.lineNumber)) {
       try {
         let text = await this.loadSources(result.details.fileName);
-
         if (text) {
           let lines = this.extractLinesFromFile(text, parseInt(result.details.lineNumber));
           result.lines = lines;
@@ -532,23 +465,18 @@ class notErrorReporter {
       }
     }
   }
-
   extractLinesFromFile(text, targetLine) {
     let lines = text.split("\n");
     targetLine = parseInt(targetLine) - 1;
     let fromLine = targetLine - LINES_TO_CAPTURE;
     let toLine = targetLine + LINES_TO_CAPTURE;
-
     if (fromLine < 0) {
       fromLine = 0;
     }
-
     if (toLine > lines.length - 1) {
       toLine = lines.length - 1;
     }
-
     let result = [];
-
     for (let t = fromLine; t < toLine; t++) {
       result.push({
         l: t + 1,
@@ -558,9 +486,9 @@ class notErrorReporter {
         }
       });
     }
-
     return result;
   }
+
   /**
   ******************************************************************************************************
   ******************************************************************************************************
@@ -568,8 +496,6 @@ class notErrorReporter {
   ******************************************************************************************************
   ******************************************************************************************************
   **/
-
-
   getReportURL() {
     if (typeof this.url !== 'undefined') {
       return this.url;
@@ -581,7 +507,6 @@ class notErrorReporter {
       return '/api/error';
     }
   }
-
   getReportKey() {
     if (typeof this.key !== 'undefined') {
       return this.key;
@@ -591,7 +516,6 @@ class notErrorReporter {
       return '';
     }
   }
-
   _report(data, url) {
     let report = {
       report: data,
@@ -609,23 +533,19 @@ class notErrorReporter {
       body: JSON.stringify(report)
     });
   }
-
   async loadSources(filePath) {
     let res = await fetch(filePath);
-
     if (parseInt(res.status) === 200) {
       return await res.text();
     } else {
       return false;
     }
   }
-
   registerError(ev) {
     if (this.registerAll) {
       this.report(ev.error);
     }
   }
-
 }
 
 module.exports = notErrorReporter;

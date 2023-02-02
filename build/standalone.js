@@ -6,7 +6,6 @@ var notErrorStandalone = (function () {
       throw new TypeError("Cannot call a class as a function");
     }
   }
-
   function _defineProperties(target, props) {
     for (var i = 0; i < props.length; i++) {
       var descriptor = props[i];
@@ -16,18 +15,15 @@ var notErrorStandalone = (function () {
       Object.defineProperty(target, descriptor.key, descriptor);
     }
   }
-
   function _createClass(Constructor, protoProps, staticProps) {
     if (protoProps) _defineProperties(Constructor.prototype, protoProps);
     if (staticProps) _defineProperties(Constructor, staticProps);
     return Constructor;
   }
-
   function _inherits(subClass, superClass) {
     if (typeof superClass !== "function" && superClass !== null) {
       throw new TypeError("Super expression must either be null or a function");
     }
-
     subClass.prototype = Object.create(superClass && superClass.prototype, {
       constructor: {
         value: subClass,
@@ -37,28 +33,23 @@ var notErrorStandalone = (function () {
     });
     if (superClass) _setPrototypeOf(subClass, superClass);
   }
-
   function _getPrototypeOf(o) {
     _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) {
       return o.__proto__ || Object.getPrototypeOf(o);
     };
     return _getPrototypeOf(o);
   }
-
   function _setPrototypeOf(o, p) {
     _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) {
       o.__proto__ = p;
       return o;
     };
-
     return _setPrototypeOf(o, p);
   }
-
   function _isNativeReflectConstruct() {
     if (typeof Reflect === "undefined" || !Reflect.construct) return false;
     if (Reflect.construct.sham) return false;
     if (typeof Proxy === "function") return true;
-
     try {
       Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {}));
       return true;
@@ -66,7 +57,6 @@ var notErrorStandalone = (function () {
       return false;
     }
   }
-
   function _construct(Parent, args, Class) {
     if (_isNativeReflectConstruct()) {
       _construct = Reflect.construct;
@@ -80,34 +70,25 @@ var notErrorStandalone = (function () {
         return instance;
       };
     }
-
     return _construct.apply(null, arguments);
   }
-
   function _isNativeFunction(fn) {
     return Function.toString.call(fn).indexOf("[native code]") !== -1;
   }
-
   function _wrapNativeSuper(Class) {
     var _cache = typeof Map === "function" ? new Map() : undefined;
-
     _wrapNativeSuper = function _wrapNativeSuper(Class) {
       if (Class === null || !_isNativeFunction(Class)) return Class;
-
       if (typeof Class !== "function") {
         throw new TypeError("Super expression must either be null or a function");
       }
-
       if (typeof _cache !== "undefined") {
         if (_cache.has(Class)) return _cache.get(Class);
-
         _cache.set(Class, Wrapper);
       }
-
       function Wrapper() {
         return _construct(Class, arguments, _getPrototypeOf(this).constructor);
       }
-
       Wrapper.prototype = Object.create(Class.prototype, {
         constructor: {
           value: Wrapper,
@@ -118,41 +99,31 @@ var notErrorStandalone = (function () {
       });
       return _setPrototypeOf(Wrapper, Class);
     };
-
     return _wrapNativeSuper(Class);
   }
-
   function _assertThisInitialized(self) {
     if (self === void 0) {
       throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
     }
-
     return self;
   }
-
   function _possibleConstructorReturn(self, call) {
     if (call && (typeof call === "object" || typeof call === "function")) {
       return call;
     }
-
     return _assertThisInitialized(self);
   }
-
   function _createSuper(Derived) {
     var hasNativeReflectConstruct = _isNativeReflectConstruct();
-
     return function _createSuperInternal() {
       var Super = _getPrototypeOf(Derived),
-          result;
-
+        result;
       if (hasNativeReflectConstruct) {
         var NewTarget = _getPrototypeOf(this).constructor;
-
         result = Reflect.construct(Super, arguments, NewTarget);
       } else {
         result = Super.apply(this, arguments);
       }
-
       return _possibleConstructorReturn(this, result);
     };
   }
@@ -165,32 +136,25 @@ var notErrorStandalone = (function () {
   *	@param {string}	url	URL of report collector
   *	@param {string}	key	key to indetificate reporter
   **/
+
   var NOT_NODE_ERROR_URL_NODE_DEFAULT = 'https://appmon.ru/api/key/collect';
   var NOT_NODE_ERROR_URL_BROWSER = 'https://appmon.ru/api/key/collect';
+
   /**
   * Error reporting with features, saving browser info, uri and so on.
   * @module not-error/error
   */
-
   var notErrorStandalone = /*#__PURE__*/function (_Error) {
     _inherits(notErrorStandalone, _Error);
-
     var _super = _createSuper(notErrorStandalone);
-
     function notErrorStandalone(message) {
       var _this;
-
       var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
       _classCallCheck(this, notErrorStandalone);
-
       _this = _super.call(this, message);
       _this.options = options;
-
       _this.fill();
-
       _this.getTime();
-
       return _possibleConstructorReturn(_this, _assertThisInitialized(_this));
     }
     /**
@@ -198,19 +162,17 @@ var notErrorStandalone = (function () {
     *	@param {Error}	error 	Error object
     *	@return {notError}		chainable
     */
-
-
     _createClass(notErrorStandalone, [{
       key: "adopt",
       value: function adopt(error) {
         this.parent = error;
         return this;
       }
+
       /**
       *	Updating this.env.date property
       *	@return  {object}	{timestamp, offset}
       */
-
     }, {
       key: "getTime",
       value: function getTime() {
@@ -225,15 +187,14 @@ var notErrorStandalone = (function () {
       key: "report",
       value: function report() {
         //pack error
-        var data = this.packError(); //send report to collector
-
+        var data = this.packError();
+        //send report to collector
         return this._report(data, this.getReportURL());
       }
     }, {
       key: "packError",
       value: function packError() {
         var result = {};
-
         if (this.parent) {
           result.parent = {
             columnNumber: this.parent.columnNumber,
@@ -244,7 +205,6 @@ var notErrorStandalone = (function () {
             stack: this.parent.stack
           };
         }
-
         result.details = {
           columnNumber: this.columnNumber,
           fileName: this.fileName,
@@ -257,6 +217,7 @@ var notErrorStandalone = (function () {
         result.env = this.env;
         return result;
       }
+
       /**
       ******************************************************************************************************
       ******************************************************************************************************
@@ -269,7 +230,6 @@ var notErrorStandalone = (function () {
       *	Collecting information specific for browsers
       *	@return {notError}		chainable
       */
-
     }, {
       key: "fill",
       value: function fill() {
@@ -330,10 +290,8 @@ var notErrorStandalone = (function () {
         });
       }
     }]);
-
     return notErrorStandalone;
   }( /*#__PURE__*/_wrapNativeSuper(Error));
-
   var service = new notErrorStandalone();
 
   return service;
