@@ -1,0 +1,197 @@
+const { MODULE_NAME } = require("../const");
+const { firstLetterToLower } = require("not-node").Common;
+const ACTION_SIGNATURES = require('not-node/src/auth/const').ACTION_SIGNATURES;
+const MODEL_NAME = "<%- ModelName %>";
+const modelName = firstLetterToLower(MODEL_NAME);
+
+const FIELDS = [
+	["_id", "not-node//_id"],
+	<% if (increment){ %>["<%- modelName %>ID", "not-node//ID"],<% } %>
+	<%- fields.map((itm) => `"${itm}"`).join(",\n\t") %>
+];
+
+const actionNamePath = "/:actionName";
+const idActionPath = "/:record[_id]/:actionName";
+
+module.exports = {
+	model: modelName,
+	url: "/api/:modelName",
+	fields: FIELDS,
+	privateFields: [],
+	actions: {
+		<% if (Object.hasOwn(actions, 'create')){ %>
+		create: {
+			method: "put",
+			actionSignature: ACTION_SIGNATURES.CREATE,
+			title: "not-node:crud_create_action_form_title",
+			description: "not-node:crud_create_action_form_description",
+			rules: [
+				{
+					auth: true,
+					role: "admin",
+					fields: [<%- fieldsShortNames.map((entry) => `"${entry}"`).join(',')  %>,<% if (ownage){ %>"owner",<% } %>],
+				},
+				{
+					auth: true,
+					role: ["client", "confirmed"],
+					fields: [<%- fieldsShortNames.map((entry) => `"${entry}"`).join(',')  %>],
+				},
+			],
+			data: ["data"],
+			postFix: actionNamePath,
+		},
+		<% } %>
+		<% if (Object.hasOwn(actions,'get')){ %>
+		get: {
+			method: "get",
+			actionSignature: ACTION_SIGNATURES.READ,
+			title: "not-node:crud_read_action_form_title",
+			description: "not-node:crud_read_action_form_description",
+			rules: [
+				{
+					auth: true,
+					role: "admin",
+					fields: [
+						"_id",
+						<% if (increment){ %>"<%- modelName %>ID",<% } %>
+						<%- fieldsShortNames.map((entry) => `"${entry}"`).join(',')  %>,
+						<% if (ownage){ %>"owner","ownerModel",<% } %>
+						<% if (dates){ %>"createdAt","updatedAt",<% } %>
+					],
+				},
+				{
+					auth: true,
+					role: ["client", "confirmed"],
+					fields: [
+						"_id",
+						<% if (increment){ %>"<%- modelName %>ID",<% } %>
+						<%- fieldsShortNames.map((entry) => `"${entry}"`).join(',')  %>,
+						<% if (dates){ %>"createdAt","updatedAt",<% } %>
+					],
+				},
+			],
+			postFix: idActionPath,
+		},
+		<% } %>
+		<% if (Object.hasOwn(actions,'getRaw')){ %>
+		getRaw: {
+			method: "get",
+			actionSignature: ACTION_SIGNATURES.READ,
+			title: "not-node:crud_read_action_form_title",
+			description: "not-node:crud_read_action_form_description",
+			rules: [
+				{
+					auth: true,
+					role: "admin",
+					fields: [
+						"_id",
+						<% if (increment){ %>"<%- modelName %>ID",<% } %>
+						<%- fieldsShortNames.map((entry) => `"${entry}"`).join(',')  %>,
+						<% if (ownage){ %>"owner","ownerModel",<% } %>
+						<% if (dates){ %>"createdAt","updatedAt",<% } %>
+					],
+				},
+				{
+					auth: true,
+					role: ["client", "confirmed"],
+					fields: [
+						<% if (increment){ %>"<%- modelName %>ID",<% } %>
+						<%- fieldsShortNames.map((entry) => `"${entry}"`).join(',')  %>,
+						<% if (dates){ %>"createdAt","updatedAt",<% } %>
+					],
+				},
+			],
+			postFix: idActionPath,
+		},
+		<% } %>
+		<% if (Object.hasOwn(actions,'update')){ %>
+		update: {
+			title: "not-node:crud_update_action_form_title",
+			description: "not-node:crud_update_action_form_description",
+			actionSignature: ACTION_SIGNATURES.UPDATE,
+			method: "post",
+			rules: [
+				{
+					auth: true,
+					role: ["admin"],
+					fields: [
+						<%- fieldsShortNames.map((entry) => `"${entry}"`).join(',')  %>,
+						<% if (ownage){ %>"owner", "ownerModel",<% } %>
+					],
+				},
+				{
+					auth: true,
+					role: ["client", "confirmed"],
+					fields: [<%- fieldsShortNames.map((entry) => `"${entry}"`).join(',')  %>],
+				},
+			],
+			data: ["data"],
+			postFix: idActionPath,
+		},
+		<% } %>
+		<% if (Object.hasOwn(actions,'delete')){ %>
+		delete: {
+			actionSignature: ACTION_SIGNATURES.DELETE,
+			title: "not-node:crud_delete_action_form_title",
+			description: "not-node:crud_delete_action_form_description",
+			method: "delete",
+			rules: [
+				{
+					auth: true,
+					role: ["admin"],
+				},
+				{
+					auth: true,
+					role: ["client", "confirmed"],
+				},
+			],
+			data: ["data"],
+			postFix: idActionPath,
+		},
+		<% } %>
+		<% if (Object.hasOwn(actions,'listAndCount')){ %>
+		listAndCount: {
+			method: "get",
+			actionSignature: ACTION_SIGNATURES.READ,
+			title: "not-node:crud_listAndCount_action_form_title",
+			description: "not-node:crud_listAndCount_action_form_description",
+			data: ["pager", "sorter", "filter", "search"],
+			rules: [
+				{
+					auth: true,
+					role: ["admin"],
+				},
+				{
+					auth: true
+				},
+			],
+			postFix: actionNamePath,
+		},
+		<% } %>
+		<% if (Object.hasOwn(actions,'listAll')){ %>
+		listAll: {
+			method: "get",
+			actionSignature: ACTION_SIGNATURES.READ,
+			data: ["data", "sorter"],
+			title: "not-node:crud_listAll_action_form_title",
+			description: "not-node:crud_listAll_action_form_description",
+			fields: [
+				<%- fieldsShortNames.map((entry) => `"${entry}"`).join(',')  %>,
+				<% if (dates){ %>"createdAt","updatedAt",<% } %>
+			],
+			postFix: actionNamePath,
+			rules: [
+				{
+					auth: true,
+					role: ["manager"],
+				},
+				{
+					auth: true,
+				},
+			],
+		},
+		<% } %>
+	},
+};
+
+

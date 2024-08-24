@@ -48,7 +48,11 @@ let opts = {
         argv["url-browser"] ||
         process.env.NOT_NODE_ERROR_URL_BROWSER ||
         defOpts["url-browser"],
-    key: argv["key"] || process.env.NOT_NODE_ERROR_KEY || defOpts["key"],
+    key:
+        argv["key"] ||
+        process.env.NOT_NODE_ERROR_KEY ||
+        process.env.APPMON_KEY ||
+        defOpts["key"],
     out: argv.out || defOpts["out"],
 };
 /**

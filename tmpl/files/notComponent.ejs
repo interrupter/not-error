@@ -1,0 +1,57 @@
+import UI<%- ComponentName %> from "./<%- componentName %>.svelte";
+
+class not<%- ComponentName %> extends notBase{
+
+    static UIConstructor = UI<%- ComponentName %>;
+ 
+    constructor({
+      target = null,
+      name = "Default",
+      options = {},
+      working = {},
+      data = {},
+    }){
+      super({
+        working: {
+            name: `${name}<%- ComponentName %>`,
+            ...working,
+        },
+        options,
+        data,
+      });
+      if (target) {
+        this.setOptions("target", target);
+      }
+      this.render();
+    }
+  
+    render(){
+      this.remove();
+      if(this.UIConstructor){
+        this.ui = new this.UIConstructor({
+          target: this.getOptions('target'),
+          props:{
+            /* props */
+          }
+        });
+      }
+    }    
+  
+    update(){
+      if(this.ui){
+        this.ui.$set({ /* update props */ });
+      }
+    }
+  
+    remove(){
+      if (this.ui) {
+        this.ui.$destroy();
+        this.ui = null;
+      }
+      return this;
+    }
+  
+  }
+  
+  export default not<%- ComponentName %>;
+  

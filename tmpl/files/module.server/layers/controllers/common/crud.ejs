@@ -1,0 +1,78 @@
+import { MODULE_NAME } from "../../const.js";
+import Validators from "../common/validators.js";
+import { Frame } from "not-bulma";
+import CRUDActionList from "not-bulma/src/frame/crud/actions/list";
+
+const { notCRUD } = Frame;
+
+const MODEL_NAME = "<%- ModelName %>";
+
+const LABELS = {
+    plural: `${MODULE_NAME}:${MODEL_NAME}_label_plural`,
+    single: `${MODULE_NAME}:${MODEL_NAME}_label_single`,
+};
+
+class nc<%- ModelName %>Common extends notCRUD {
+    static MODULE_NAME = MODULE_NAME;
+    static MODEL_NAME = MODEL_NAME;
+    constructor(app, params) {
+        super(app, `${MODULE_NAME}.${MODEL_NAME}`);
+        this.setModuleName(MODULE_NAME);
+        this.setModelName(MODEL_NAME);
+        this.setOptions("names", LABELS);
+        this.setOptions("Validators", Validators);
+        this.setOptions("params", params);
+        this.setOptions("list", {
+            interface: {
+                combined: true,
+                factory: this.make.<%- modelName %>,
+            },
+            endless: false,
+            preload: {},
+            sorter: {
+                id: -1,
+            },
+            showSearch: true,
+            idField: "_id",
+            fields: [
+                <% if (increment) { %>
+                {
+                    path: ":<%- modelName %>ID",
+                    title: "ID",
+                    searchable: true,
+                    sortable: true,
+                },
+                <% } %>
+                <% for (let fieldNameShort of fieldsShortNames){ %>
+                {
+                    path: ":<%- fieldNameShort %>",
+                    title: `${MODULE_NAME}:<%- `${modelName}_field_${fieldNameShort}_label` %>`,
+                    searchable: true,
+                    sortable: true,
+                },
+                <% } %>
+                {
+                    path: ":_id",
+                    title: "Действия",
+                    type: "button",
+                    preprocessor: (value) => CRUDActionList.createActionsButtons(this, value),
+                },
+            ],
+        });
+
+        this.start();
+        return this;
+    }
+
+    createDefault() {
+        let newRecord = this.getModel({
+            <% for (let fieldName of fieldsShortNames){ %><%- fieldName %>: undefined,
+            <% } %>
+        });
+        return newRecord;
+    }
+}
+
+export default nc<%- ModelName %>Common;
+
+

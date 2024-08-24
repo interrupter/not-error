@@ -1,0 +1,51 @@
+//DB related validation tools
+const Form = require("not-node").Form;
+
+const { MODULE_NAME } = require("../const");
+const MODEL_NAME = '<%- ModelName %>';
+const actionName = 'create';
+const FORM_NAME = Form.createName(MODULE_NAME, MODEL_NAME, actionName);
+
+//form
+const FIELDS = [
+	["identity", "not-node//identity"],
+	["data", `${MODULE_NAME}//_<%- modelName %>`],
+];
+
+/**
+ *
+**/
+class <%- ModelName %>CreateForm extends Form {
+	constructor({ app }) {
+		super({MODULE_NAME, MODEL_NAME,FIELDS, FORM_NAME, app });
+	}
+
+	/**
+	* Extracts data
+	* @param {import('not-node/src/types.js').notNodeExpressRequest} req expressjs request object
+	* @return {Promise<Object>} form data
+	**/
+	async extract(req) {		
+		const data = this.extractByInstructionsFromRouteActionFields(
+			req,			//request object 
+			["fromBody", "xss"], 	//extraction common pipe [extractor, ...transformers]
+			{}			//exceptions {fieldName: [extractor, ...transformers],...}
+		);
+		//contains targetId, identity and some more. look full list in not-node/src/form/env_extractors/index.js
+		const envs = this.extractRequestEnvs(req);
+		<% if ( ownage ) { %>
+		//admin could change ownage for others hardwired
+		if (!identity.admin) {
+			data.owner = identity.uid;
+			data.ownerModel = 'User';
+		}
+		<% } %>
+		return	{
+			...envs,
+			data
+		};	
+	}
+}
+
+module.exports = <%- ModelName %>CreateForm;
+

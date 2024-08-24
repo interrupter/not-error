@@ -1,0 +1,44 @@
+const MODEL_NAME = "<%- ModelName %>";
+const { MODULE_NAME } = require("../const.js");
+const notNode = require("not-node");
+const {
+	Log,
+	LogAction,
+	say,
+	phrase,
+	config,
+	getModel,
+	getModelSchema,
+	getLogic,
+	getModelUser,
+	} = notNode.Bootstrap.notBootstrapLogic({
+		target: module,
+		MODEL_NAME,
+		MODULE_NAME,
+	});
+
+const populateBuilders = {};
+
+const <%- ModelName %>GenericLogic = notNode.Generic.GenericLogic({
+        	MODEL_NAME,
+        	MODULE_NAME,
+        	Log,
+	        LogAction,
+        	say,
+	        phrase,
+        	config,
+	        getModel,
+        	getModelSchema,
+	        getLogic,
+        	getModelUser,
+        	populateBuilders,
+	});
+	
+module.exports.thisLogicName = MODEL_NAME;
+
+class <%- ModelName %>Logic extends <%- ModelName %>GenericLogic {
+	
+}
+
+module.exports[MODEL_NAME] = <%- ModelName %>Logic;
+

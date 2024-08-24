@@ -1,0 +1,9 @@
+const { MODULE_NAME } = require("../const");
+//DB related validation tools
+const notNode = require("not-node");
+
+module.exports = notNode.Generic.GenericGetByIdForm({
+    MODULE_NAME,
+    MODEL_NAME: '<%- ModelName %>',
+    actionName: "get",
+});

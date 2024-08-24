@@ -1,0 +1,39 @@
+  const INTERVAL = 360;
+  const INIT_UPDATE_DELAY = 5;
+  
+  class ns<%- ServiceName %> {
+    #INTERVAL = INTERVAL;
+    #INIT_UPDATE_DELAY = INIT_UPDATE_DELAY;
+  
+    constructor(app) {
+      this.app = app;      
+      <% if(modelName){ %>
+      this.interface = this.app.getInterface("<%- modelName %>"");
+      if(this.interface){
+        this.init();
+      }else{
+        app.error('no network interface');
+      }
+      <% }else{ %>
+      this.init();
+      <% } %>
+    };
+  
+    init() {
+      setTimeout(this.update.bind(this), this.#INIT_UPDATE_DELAY * 100);
+      this.int = setInterval(this.update.bind(this), this.#INTERVAL * 1000);
+      window.addEventListener('unload', () => {
+        clearInterval(this.int);
+        delete this.app;
+        <% if(modelName){ %>
+        delete this.interface;
+        <% } %>
+      });
+    }
+  
+    update() {
+      //serve
+    }}
+
+
+export default ns<%- ServiceName %>;

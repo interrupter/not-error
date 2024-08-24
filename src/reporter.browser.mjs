@@ -320,6 +320,8 @@ class notErrorReporter{
 			return this.url;
 		}else	if(window.NOT_NODE_ERROR_URL_BROWSER && window.NOT_NODE_ERROR_URL_BROWSER.length>0){
 			return window.NOT_NODE_ERROR_URL_BROWSER;
+		}if(window.APPMON_URL && typeof window.APPMON_URL === 'string' && window.APPMON_URL.length>0){
+			return window.APPMON_URL;
 		}else if(NOT_NODE_ERROR_URL_BROWSER && NOT_NODE_ERROR_URL_BROWSER.length>0){
 			return NOT_NODE_ERROR_URL_BROWSER;
 		}else{
@@ -332,6 +334,8 @@ class notErrorReporter{
 			return this.key;
 		}else	if(window.NOT_NODE_ERROR_KEY && window.NOT_NODE_ERROR_KEY.length > 0){
 			return window.NOT_NODE_ERROR_KEY;
+		}else	if(window.APPMON_KEY && typeof window.APPMON_KEY === 'string' && window.APPMON_KEY.length > 0){
+			return window.APPMON_KEY;
 		}else if(NOT_NODE_ERROR_KEY && NOT_NODE_ERROR_KEY.length > 0){
 			return NOT_NODE_ERROR_KEY;
 		}else{

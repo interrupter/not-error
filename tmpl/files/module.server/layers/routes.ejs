@@ -1,0 +1,31 @@
+const { MODULE_NAME } = require("../const");
+const MODEL_NAME = "<%- ModelName %>";
+const notNode = require("not-node");
+
+const {
+	//	say,
+	//	config,
+	//	Log,
+	before,
+	after,
+	getLogic,
+	//	getModel,
+	//	getModelSchema,
+} = notNode.Bootstrap.notBootstrapRoute({
+	target: module,
+	MODEL_NAME,
+	MODULE_NAME,
+	defaultAccessRule: true,
+});
+
+const <%- ModelName %>GenericRoute = notNode.Generic.GenericRoute({
+	before, //<-this prepares `prepared`
+	after,
+	getLogic,
+});
+
+class <%- ModelName %>Route extends <%- ModelName %>GenericRoute {
+	static restrictRootAccess = true;
+}
+
+module.exports = <%- ModelName %>Route;

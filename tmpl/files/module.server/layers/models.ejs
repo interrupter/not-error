@@ -1,0 +1,77 @@
+const MODEL_NAME = "<%- ModelName %>";
+
+module.exports.thisModelName = MODEL_NAME;
+module.exports.keepNotExtended = false;
+
+module.exports.enrich = {
+    versioning: <%= versioning %>,
+    increment: <%= increment?true:false %>,
+    <% if (increment && increment?.options){ %>
+    incrementOptions: {
+        <% if (increment.options?.filter){ %>        
+        filter: [<%- increment.options.filter.map((entry) => `"${entry}"`).join(',') %>],
+        <% } %>
+    },
+    <% } %>
+    validators: <%= validators %>,
+};
+
+const FIELDS = [
+    <% if (fields && Array.isArray(fields)) { %>
+    <% for(let field of fields){ %>
+    "<%- field %>",
+    <% } %>
+    <% } %>
+    <% if (ownage){ %>
+    ["owner", "not-node//owner"],
+    ["ownerModel", "not-node//ownerModel"],
+    <% } %>
+    <% if (dates){ %>
+    ["createdAt", "not-node//createdAt"],
+    ["updatedAt", "not-node//updatedAt"],
+    <% } %>
+];
+
+module.exports.FIELDS = FIELDS;
+
+module.exports.thisStatics = {
+    
+};
+
+module.exports.thisMethods = {
+    
+};
+
+
+module.exports.thisVirtuals = {
+    
+};
+
+module.exports.thisPre = {
+    async updateOne(){
+    	<% if (dates){ %>this.updatedAt = new Date();<% } %>
+        //	console.debug('model pre updateOne');
+    },
+    async insert(){    
+        //console.log('model pre insert');
+        <% if (dates){ %>this.updatedAt = new Date();
+        this.createdAt = new Date();<% } %>
+    },
+    async save(){
+        //console.log('model pre save');
+        <% if (dates){ %>this.updatedAt = new Date();<% } %>
+    },
+    async update(){
+        //console.log('model pre update' );
+        <% if (dates){ %>this.updatedAt = new Date();<% } %>
+    },
+};
+
+module.exports.thisPost = {
+    async save(){
+        //console.log('model post save');
+    },
+    async update(){
+        //console.log('model post update');
+    },
+};
